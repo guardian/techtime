@@ -1,11 +1,37 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: 'Techtime'
+Description: 'Bucket for storing techtime recordings and the user frontend'
 
 Resources:
 
   TechtimeBucket:
     Type: "AWS::S3::Bucket"
     Properties: 
-      BucketName: "techtime-ba532ee7" 
+      BucketName: "techtime-1"
+      AccessControl: Private
 
+  BucketAccessPolicy:
+    Type: "AWS::S3::BucketPolicy"
+    DependsOn: TechtimeBucket
+    Properties: 
+      Bucket: "techtime-1"
+      PolicyDocument:
+        Statement:
+          - 
+            Action:
+              - s3:GetObject
+            Effect: "Allow"
+            Resource: "arn:aws:s3:::techtime-1/*"
+            Principal: "*"
+            Condition: 
+              IpAddress:
+                "aws:SourceIp": "77.91.248.0/21"
+          - 
+            Action:
+              - s3:ListBucket
+            Effect: "Allow"
+            Resource: "arn:aws:s3:::techtime-1"
+            Principal: "*"
+            Condition: 
+              IpAddress:
+                "aws:SourceIp": "77.91.248.0/21"
 
