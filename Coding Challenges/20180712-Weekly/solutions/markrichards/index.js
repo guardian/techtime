@@ -65,16 +65,9 @@ window.onload = function () {
                 console.log(i)
                 var circleSize = 200 - i;
                 for (var x = -i; x <= i && !foundCanvas; x++) {
-                    foundCanvas = testCircle(x+200, -i + 200,img, testCanvas, testContext,circleSize, count)
-                }
-                for (var x = -i; x <= i && !foundCanvas; x++) {
-                    foundCanvas = testCircle(x+200, i + 200,img, testCanvas,  testContext,circleSize, count)
-                }
-                for (var y = -i + 1; y < i && !foundCanvas; y++) {
-                    foundCanvas = testCircle(-i + 200, y+200, img, testCanvas, testContext,circleSize, count)
-                }
-                for (var y = -i + 1; y < i && !foundCanvas; y++) {
-                    foundCanvas = testCircle(i + 200, y+200, img, testCanvas, testContext,circleSize, count)
+                    for (var y = -i ; y <= i && !foundCanvas; y++) {
+                        foundCanvas = testCircle(x + 200, y+200, img, testCanvas, testContext,circleSize, count)
+                    }
                 }
             }
             if (foundCanvas) {
