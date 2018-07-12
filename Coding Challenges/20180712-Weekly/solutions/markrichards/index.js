@@ -12,7 +12,7 @@ function countBlack(data) {
     let pixelCount = (400 * 400);
     for (var i = 0; i < pixelCount; i++) {
         var offset = (i * 4);
-        if (data[offset] == 1 && data[offset + 1] == 1 && data[offset + 2] == 1) {
+        if (data[offset] === 1 && data[offset + 1] === 1 && data[offset + 2] === 1) {
             blackCount++
         }
     }
@@ -22,11 +22,10 @@ function countBlack(data) {
 function drawCircle(context, centerX, centerY, radius) {
     context.beginPath();
     context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
-    context.lineWidth = 1;
-    context.strokeStyle = '#f11';
-    context.stroke();
+    context.stroke()
 
 }
+
 
 
 function forEachHtmlCollection(htmlCollection, func) {
@@ -37,15 +36,19 @@ function forEachHtmlCollection(htmlCollection, func) {
 }
 
 function testCircle(x, y, img, testCanvas, testContext, circleSize, count) {
-    testContext.clearRect(0, 0, testCanvas.width, testCanvas.height);
-    testContext.drawImage(img, 0, 0, img.width, img.height);
+    var offset = (x * 4) + y
+    var data = testContext.getImageData(0,0,400,400).data
+    if (data[offset] === 1 && data[offset + 1] === 1 && data[offset + 2] === 1) {
+        return false;
+    }
     drawCircle(testContext, x, y, circleSize)
     let counted = countBlack(testContext.getImageData(0,0,400,400).data);
     if (counted === count) {
         return testCanvas
     }
     else {
-        testContext.restore()
+        testContext.clearRect(0, 0, 400, 400);
+        testContext.drawImage(img, 0, 0, 400, 400);
         return false;
     }
 }
@@ -57,9 +60,9 @@ window.onload = function () {
             var testCanvas = canvasOnImg(img)
 
             var testContext =testCanvas.getContext('2d')
-            testContext.save()
+            testContext.lineWidth = 1;
+            testContext.strokeStyle = '#f11';
             var count = countBlack(originaldata);
-            console.log(count)
             var foundCanvas = false;
             for (var i = 0; i < 200 && !foundCanvas; i=i+0.5) {
                 console.log(i)
