@@ -18,6 +18,8 @@ An example is the file `image2-circle.png`, which contains a possible circle tha
 
 - You can add any additional files for your solution.
 
+- Your solution must work for both Firefox and Chrome (latest versions). 
+
 ### How to submit your solution ?
 
 1. Check out the "techtime" git repository on your local. 
