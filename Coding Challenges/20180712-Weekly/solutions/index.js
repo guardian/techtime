@@ -29,8 +29,6 @@ window.onload = function() {
         const context = canvas.getContext('2d');
         const placement = getPlacement(context);
 
-        var pixelData = canvas.getContext('2d').getImageData(1, 1, 1, 1).data;
-
         context.strokeStyle = 'red';
         context.beginPath();
         context.arc(placement[0],placement[1],CIRCLE_RADIUS,0,2*Math.PI);
