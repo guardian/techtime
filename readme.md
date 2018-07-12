@@ -1,2 +1,2 @@
-https://github.com/guardian/techtime
+General repository for everything techtime.
 
