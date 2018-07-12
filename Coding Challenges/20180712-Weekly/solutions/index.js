@@ -21,6 +21,7 @@ window.onload = function() {
 
     function test(element) {
         var canvas = document.createElement('canvas');
+        canvas.setAttribute("style", "z-index: 999; position: absolute;");
         canvas.width = element.width;
         canvas.height = element.height;
         canvas.getContext('2d').drawImage(element, 0, 0, element.width, element.height);
