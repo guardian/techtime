@@ -64,8 +64,8 @@ window.onload = function () {
             for (var i = 0; i < 200 && !foundCanvas; i=i+0.5) {
                 console.log(i)
                 var circleSize = 200 - i;
-                for (var x = -i; x <= i && !foundCanvas; x++) {
-                    for (var y = -i ; y <= i && !foundCanvas; y++) {
+                for (var x = -i; x <= i && !foundCanvas; x = x + 0.5) {
+                    for (var y = -i ; y <= i && !foundCanvas; y = y + 0.5) {
                         foundCanvas = testCircle(x + 200, y+200, img, testCanvas, testContext,circleSize, count)
                     }
                 }
