@@ -1,0 +1,13 @@
+.icell { 
+    margin-bottom: 20px;
+}
+
+.icell img { 
+    border:1px solid red;
+    margin-bottom: 20px;
+}
+
+canvas {
+    z-index: 999;
+    position: absolute;
+}
