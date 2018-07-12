@@ -61,7 +61,7 @@ window.onload = function () {
             var count = countBlack(originaldata);
             console.log(count)
             var foundCanvas = false;
-            for (var i = 0; i < 200 && !foundCanvas; i++) {
+            for (var i = 0; i < 200 && !foundCanvas; i=i+0.5) {
                 console.log(i)
                 var circleSize = 200 - i;
                 for (var x = -i; x <= i && !foundCanvas; x++) {
