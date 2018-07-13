@@ -49,6 +49,7 @@ window.addEventListener('load', () => {
 
     const [{ x, y }, r] = findWhiteBoxCenter(data);
     ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.strokeStyle = 'red';
     ctx.stroke();
 
     img.src = canvas.toDataURL();
