@@ -1,4 +1,4 @@
-const getIsWhite = data => (x, y) => data[(x + y * 400) * 4] === 255;
+const getIsWhite = data => (x, y) => data[(x + y * 400) * 4] !== 0;
 
 const isWhiteBox = (data, x, y, r) => {
   const isWhite = getIsWhite(data);
@@ -19,16 +19,22 @@ const isWhiteBox = (data, x, y, r) => {
 const findWhiteBoxCenter = ({ data, width, height }, w = 1) => {
   let r = 0;
   let pos;
-  for (let x = r + w; x < width - r - w; x++) {
-    for (let y = r + w; y < height - r - w; y++) {
+  let x = r + w;
+  while (x <= width - r - w) {
+    let y = r + w;
+    while (y <= height - r - w) {
       while (true) {
         if (!isWhiteBox(data, x, y, r)) {
+          y++;
           break;
         }
         pos = { x, y };
         r++;
+        x = x - r < 0 ? r : x;
+        y = y - r < 0 ? r : y;
       }
     }
+    x++;
   }
   return [pos, r - 1];
 };
