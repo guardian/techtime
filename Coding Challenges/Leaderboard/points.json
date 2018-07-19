@@ -12,8 +12,8 @@
     { "name": "Richard Beddington", "time": "2018-07-15 13:00:00 +0100", "value": 3 },
     { "name": "Alex Dufournet",     "time": "2018-07-17 15:00:00 +0100", "value": 2 },
 
-
-    { "name": "Francis Carr",       "time": "2018-07-19 12:00:00 +0100", "value": 6 }   
+    { "name": "Richard Beddington", "time": "2018-07-19 12:00:00 +0100", "value": 6 },
+    { "name": "Francis Carr",       "time": "2018-07-19 12:00:00 +0100", "value": 4.1 }
 ]
 
 
