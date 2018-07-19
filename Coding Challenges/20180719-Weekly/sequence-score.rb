@@ -52,10 +52,6 @@ def affinity(n, m)
     levenshtein_distance(trace(n), trace(m))
 end
 
-def positionInSequence(n, sequence)
-    sequence.index(n)
-end
-
 def posdist(n, m, sequence)
     (sequence.index(n)-sequence.index(m)).abs
 end
