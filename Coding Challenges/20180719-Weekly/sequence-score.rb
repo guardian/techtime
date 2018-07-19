@@ -61,14 +61,9 @@ def pairScore(n, m, sequence)
 end
 
 sequenceScore = (0..99).to_a.combination(2)
-    .select{|pair|
-        n = pair[0]
-        m = pair[1]
-        (n < m) and (posdist(n, m, sequence) <= 3)
-    }
-    .map{|pair|
-        pairScore(pair[0], pair[1], sequence)
-    }
+    .map{|pair| pair.sort } # this ensures pair[0] < pair[1]
+    .select{|pair| posdist(pair[0], pair[1], sequence) <= 3 }
+    .map{|pair| pairScore(pair[0], pair[1], sequence) }
     .inject(0, :+)
 
 puts sequenceScore
