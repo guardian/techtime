@@ -34,10 +34,10 @@ affinity(n, m) = Levenshtein(trace(n), trace(m))
 When the numbers are sequenced, for instance, 
 
 ```
-[ ..., 12, 54, 89, 9, ... ]
+[ ..., 12, 54, 89, 91, ... ]
 ```
 
-Then 12 and 54, are at distance 1 of each other, 12 and 89 are at distance 2 etc. This distance is denoted `posdist`, for instance `posdist(12, 9) = 3`.
+Then 12 and 54, are at distance 1 of each other, 12 and 89 are at distance 2 etc. This distance is denoted `posdist`, for instance `posdist(12, 91) = 3`.
 
 ```
 posdist(n: Int, m: Int, sequence: List[Int]): Int 
