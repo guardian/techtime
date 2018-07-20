@@ -9,12 +9,12 @@ import qualified Data.ByteString as B
 import Data.ByteString.Char8 (ByteString, pack)
 import Data.Word8 (isAlpha)
 import Data.Ix (range)
-import Data.List (elemIndex, foldl1', permutations, zip)
+import Data.List (foldl1', zip, permutations, (!!))
 import Data.List.NonEmpty (fromList)
 import Data.Semigroup (Max(..), getMax, sconcat)
 
 -- this data type will carry a sequence with its score
-newtype Candidate = Candidate { getCandidate :: ([Int], Double) }
+newtype Candidate = Candidate { getCandidate :: (Array Int Int, Double) }
 
 -- to make it a Semigroup, we need to install Candidate as Eq and Ord
 instance Eq Candidate where
@@ -25,13 +25,30 @@ instance Ord Candidate where
                                                   | x <  y    = LT
                                                   | otherwise = GT
 
+instance Show Candidate where
+  show (Candidate p) = show p
+
 -- each permutation is assigned its score and pitted against the current winner
 -- until the whole list is consumed
-ms :: ([Int], Double)
-ms = getCandidate . getMax . foldl1' (<>) . map (Max . Candidate . (id &&& score)) . permutations $ [0..99]
+ms :: Candidate
+ms = getMax . foldl1' (<>) . map (Max . Candidate . (id &&& score) . array (0,99) . zip [0..]) . permutations $ [0..99]
 
-score :: [Int] -> Double
-score xs = sum [pairscore n m xs | m <- [1..99], n <- [0..m], let x = posdist n m xs, 0 < x, x <= 3]
+-- permutations :: [Int] -> [Max Candidate]
+-- permutations xs0 = candidate xs0 : perms xs0 []
+--   where
+--     candidate xs    = Max (Candidate (xs, score xs))
+--     perms []     _  = []
+--     perms (t:ts) is = foldr interleave (perms ts (candidate t:is)) (permutations ts)
+--       where 
+--         interleave :: [Int] -> [Max Candidate] -> [Max Candidate]
+--         interleave xs r = let (_,zs) = interleave' id xs r in zs
+--         interleave' :: ([Max Candidate] -> [Max Candidate]) -> [Int] -> [Max Candidate] -> ([Int], [Max Candidate])
+--         interleave' f []     r = (ts, r)
+--         interleave' f (y:ys) r = let (us,zs) = interleave' (candidate y:) ys r
+--                                  in  (y:us, f (candidate t : candidate y: us) : zs)
+
+score :: Array Int Int -> Double
+score xs = sum [pairscore x y (m - n) | n <- [0..98], let o = min 99 (n+3), m <- [n+1..o], let x = xs ! n, let y = xs ! m]
 
 -- computes the SHA1 and filters out digits
 trace :: Int -> ByteString
@@ -43,17 +60,8 @@ affinity n m = let
   y = trace m
   in levenshtein x y
 
-posdist :: Int -> Int -> [Int] -> Int
-posdist n m as | Just i <- elemIndex n as
-               , Just j <- elemIndex m as
-               = if i < j then
-                  length . take (j - i) . drop i $ as
-                else
-                  length . take (i - j) . drop j $ as
-
-
-pairscore :: Int -> Int -> [Int] -> Double
-pairscore n m xs = fromIntegral (affinity n m) / fromIntegral (posdist n m xs)
+pairscore :: Int -> Int -> Int -> Double
+pairscore n m d = fromIntegral (affinity n m) / fromIntegral d
 
 levenshtein :: ByteString -> ByteString -> Int
 levenshtein xs ys = table ! (m,n)
