@@ -33,7 +33,7 @@ ms = getCandidate . getMax . foldl1' (<>) . map (Max . Candidate . (id &&& score
 score :: [Int] -> Double
 score xs = sum [pairscore n m xs | m <- [1..99], n <- [0..m], let x = posdist n m xs, 0 < x, x <= 3]
 
--- computes the SHA1
+-- computes the SHA1 and filters out digits
 trace :: Int -> ByteString
 trace = B.filter isAlpha . convertToBase Base16 . hashWith SHA1 . pack . show
 
