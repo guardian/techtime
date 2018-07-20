@@ -22,8 +22,10 @@ description:         Please see the README on GitHub at <https://github.com/gith
 dependencies:
 - base >= 4.7 && < 5
 - bytestring
-- cryptohash
+- cryptonite
 - array
+- memory
+- word8
 
 library:
   source-dirs: src

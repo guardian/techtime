@@ -1,10 +1,13 @@
 module Lib where
 
 import Control.Arrow ((&&&))
-import Crypto.Hash.SHA1 (hash)
+import Crypto.Hash (hashWith)
+import Crypto.Hash.Algorithms (SHA1(..))
 import Data.Array (Array, array, (!))
+import Data.ByteArray.Encoding (convertToBase, Base(Base16))
 import qualified Data.ByteString as B
 import Data.ByteString.Char8 (ByteString, pack)
+import Data.Word8 (isAlpha)
 import Data.Ix (range)
 import Data.List (elemIndex, foldl1', permutations, zip)
 import Data.List.NonEmpty (fromList)
@@ -28,11 +31,11 @@ ms :: ([Int], Double)
 ms = getCandidate . getMax . foldl1' (<>) . map (Max . Candidate . (id &&& score)) . permutations $ [0..99]
 
 score :: [Int] -> Double
-score xs = sum [pairscore n m xs | m <- [1..99], n <- [0..m], let x = posdist n m xs, x <= 3]
+score xs = sum [pairscore n m xs | m <- [1..99], n <- [0..m], let x = posdist n m xs, 0 < x, x <= 3]
 
 -- computes the SHA1
 trace :: Int -> ByteString
-trace = hash . pack . show
+trace = B.filter isAlpha . convertToBase Base16 . hashWith SHA1 . pack . show
 
 affinity :: Int -> Int -> Int
 affinity n m = let
@@ -67,3 +70,4 @@ levenshtein xs ys = table ! (m,n)
   dist (i,0) = i
   dist (i,j) = minimum [table ! (i-1,j) + 1, table ! (i,j-1) + 1,
     if x ! i == y ! j then table ! (i-1,j-1) else 1 + table ! (i-1,j-1)]
+
