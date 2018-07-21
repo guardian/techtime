@@ -33,20 +33,6 @@ instance Show Candidate where
 ms :: Candidate
 ms = getMax . foldl1' (<>) . map (Max . Candidate . (id &&& score) . array (0,99) . zip [0..]) . permutations $ [0..99]
 
--- permutations :: [Int] -> [Max Candidate]
--- permutations xs0 = candidate xs0 : perms xs0 []
---   where
---     candidate xs    = Max (Candidate (xs, score xs))
---     perms []     _  = []
---     perms (t:ts) is = foldr interleave (perms ts (candidate t:is)) (permutations ts)
---       where 
---         interleave :: [Int] -> [Max Candidate] -> [Max Candidate]
---         interleave xs r = let (_,zs) = interleave' id xs r in zs
---         interleave' :: ([Max Candidate] -> [Max Candidate]) -> [Int] -> [Max Candidate] -> ([Int], [Max Candidate])
---         interleave' f []     r = (ts, r)
---         interleave' f (y:ys) r = let (us,zs) = interleave' (candidate y:) ys r
---                                  in  (y:us, f (candidate t : candidate y: us) : zs)
-
 score :: Array Int Int -> Double
 score xs = sum [pairscore x y (m - n) | n <- [0..98], let o = min 99 (n+3), m <- [n+1..o], let x = xs ! n, let y = xs ! m]
 
