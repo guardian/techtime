@@ -37,8 +37,8 @@ minscore = 2365.33
 -- each permutation is assigned its score and pitted against the current winner
 -- until the whole list is consumed
 ms :: Memo -> Candidate
-ms memo = head . map f . filter (p . f) . permutations $ [0..99]
-  where f = Candidate . (id &&& score memo) . array (0,99) . zip [0..]
+ms memo = head . map f . filter (p . f) . permutations $ [99, 98..0]
+  where f = Candidate . (id &&& score memo . sublists)
         p = (minscore <) . snd . getCandidate
 
 
