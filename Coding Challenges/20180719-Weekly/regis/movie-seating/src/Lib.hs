@@ -14,7 +14,7 @@ import Data.List.NonEmpty (fromList)
 import Data.Semigroup (Max(..), getMax, sconcat)
 
 -- this data type will carry a sequence with its score
-newtype Candidate = Candidate { getCandidate :: (Array Int Int, Double) }
+newtype Candidate = Candidate { getCandidate :: ([Int], Double) }
 
 -- Memoized matrix of affinities (we only use the bottom triangle)
 type Memo = Array (Int, Int) Int
@@ -41,12 +41,17 @@ ms memo = head . map f . filter (p . f) . permutations $ [0..99]
   where f = Candidate . (id &&& score memo) . array (0,99) . zip [0..]
         p = (minscore <) . snd . getCandidate
 
+
+sublists :: [Int] -> [(Int, [Int])]
+sublists [x,y] = [(x, [y])]
+sublists (x:y:xs) = (x, take 3 (y:xs)) : sublists (y:xs)
+
 -- precompute the matrix
 prepare :: Memo
 prepare = array ((0,0),(99,99)) [((i,j), affinity i j) | i <- [1..99], j <- [0..i]]
 
-score :: Memo -> Array Int Int -> Double
-score memo xs = sum [pairscore memo x y (m - n) | n <- [0..98], let o = min 99 (n+3), m <- [n+1..o], let x = xs ! n, let y = xs ! m]
+score :: Memo -> [(Int, [Int])] -> Double
+score memo xs = sum [pairscore memo n m d | (n,ys) <- xs, (d, m) <- zip [1..] ys]
 
 -- computes the SHA1 and filters out digits
 trace :: Int -> ByteString
