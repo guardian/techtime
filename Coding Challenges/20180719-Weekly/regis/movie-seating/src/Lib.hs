@@ -14,7 +14,10 @@ import Data.List.NonEmpty (fromList)
 import Data.Semigroup (Max(..), getMax, sconcat)
 
 -- this data type will carry a sequence with its score
-newtype Candidate = Candidate { getCandidate :: (Array Int Int, Double) }
+newtype Candidate = Candidate { getCandidate :: ([Int], Double) }
+
+-- Memoized matrix of affinities (we only use the bottom triangle)
+type Memo = Array (Int, Int) Int
 
 -- to make it a Semigroup, we need to install Candidate as Eq and Ord
 instance Eq Candidate where
@@ -28,13 +31,27 @@ instance Ord Candidate where
 instance Show Candidate where
   show (Candidate p) = show p
 
+minscore :: Double
+minscore = 2365.33
+
 -- each permutation is assigned its score and pitted against the current winner
 -- until the whole list is consumed
-ms :: Candidate
-ms = getMax . foldl1' (<>) . map (Max . Candidate . (id &&& score) . array (0,99) . zip [0..]) . permutations $ [0..99]
+ms :: Memo -> Candidate
+ms memo = head . map f . filter (p . f) . permutations $ [99, 98..0]
+  where f = Candidate . (id &&& score memo . sublists)
+        p = (minscore <) . snd . getCandidate
 
-score :: Array Int Int -> Double
-score xs = sum [pairscore x y (m - n) | n <- [0..98], let o = min 99 (n+3), m <- [n+1..o], let x = xs ! n, let y = xs ! m]
+
+sublists :: [Int] -> [(Int, [Int])]
+sublists [x,y] = [(x, [y])]
+sublists (x:y:xs) = (x, take 3 (y:xs)) : sublists (y:xs)
+
+-- precompute the matrix
+prepare :: Memo
+prepare = array ((0,0),(99,99)) [((i,j), affinity i j) | i <- [1..99], j <- [0..i]]
+
+score :: Memo -> [(Int, [Int])] -> Double
+score memo xs = sum [pairscore memo n m d | (n,ys) <- xs, (d, m) <- zip [1..] ys]
 
 -- computes the SHA1 and filters out digits
 trace :: Int -> ByteString
@@ -46,8 +63,9 @@ affinity n m = let
   y = trace m
   in levenshtein x y
 
-pairscore :: Int -> Int -> Int -> Double
-pairscore n m d = fromIntegral (affinity n m) / fromIntegral d
+pairscore :: Memo -> Int -> Int -> Int -> Double
+pairscore memo n m d  = fromIntegral aff / fromIntegral d
+  where aff = if n <= m then memo ! (m, n) else memo ! (n, m)
 
 levenshtein :: ByteString -> ByteString -> Int
 levenshtein xs ys = table ! (m,n)
