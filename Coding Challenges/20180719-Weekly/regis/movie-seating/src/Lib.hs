@@ -9,7 +9,7 @@ import qualified Data.ByteString as B
 import Data.ByteString.Char8 (ByteString, pack)
 import Data.Word8 (isAlpha)
 import Data.Ix (range)
-import Data.List (zip, permutations)
+import Data.List (zip)
 
 -- this data type will carry a sequence with its score
 newtype Candidate = Candidate { getCandidate :: ([Int], Double) }
@@ -30,13 +30,12 @@ ms memo = head . map f . filter (p . f) . permutations $ [99, 98..0]
   where f = Candidate . (id &&& score memo . sublists)
         p = (minscore <) . snd . getCandidate
 
--- permutations :: [a] -> [[a]]
--- permutations [] = [[]]
--- permutations (x:xs) = interleave x (permutations xs)
---   where interleave x [] = []
---         interleave x (ys:yss) = interleave' x ys ++ interleave x yss
---         interleave' x [] = [[x]]
---         interleave' x (y:ys) = (x:y:ys) : map (y:) (interleave' x ys)
+permutations :: [a] -> [[a]]
+permutations = foldr interleave [[]]
+  where interleave x [] = []
+        interleave x (ys:yss) = interleave' x ys ++ interleave x yss
+        interleave' x [] = [[x]]
+        interleave' x (y:ys) = (x:y:ys) : map (y:) (interleave' x ys)
 
 sublists :: [Int] -> [(Int, [Int])]
 sublists [x,y] = [(x, [y])]
