@@ -27,5 +27,5 @@ names
     .each{|p|
         name = p["name"]
         score = p["score"]
-        puts "#{name.ljust(20)}: #{score.round(6)}"
+        puts "#{name.ljust(20)}: #{"%9.6f" % score}"
     }

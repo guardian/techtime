@@ -16,6 +16,9 @@ end
 
 if !sequenceIsValid(sequence) then
     puts "Sequence is not valid"
+    puts (sequence.uniq.size == 100)
+    puts (0..99).select{|i| !sequence.include?(i) }.join(", ")
+    puts sequence.sort.join(", ")
     exit
 end
 

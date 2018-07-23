@@ -12,8 +12,12 @@
     { "name": "Richard Beddington", "time": "2018-07-15 13:00:00 +0100", "value": 3 },
     { "name": "Alex Dufournet",     "time": "2018-07-17 15:00:00 +0100", "value": 2 },
 
-    { "name": "Richard Beddington", "time": "2018-07-19 12:00:00 +0100", "value": 6 },
-    { "name": "Francis Carr",       "time": "2018-07-19 12:00:00 +0100", "value": 4.1 }
+    { "name": "Max Spencer",        "time": "2018-07-23 18:00:00 +0100", "value": 6 },
+    { "name": "Richard Beddington", "time": "2018-07-23 18:00:00 +0100", "value": 4.1 },
+    { "name": "Jonathon Herbert",   "time": "2018-07-23 18:00:00 +0100", "value": 2.87 },
+    { "name": "Francis Carr",       "time": "2018-07-23 18:00:00 +0100", "value": 2 },
+    { "name": "Sam Desborough",     "time": "2018-07-23 18:00:00 +0100", "value": 1.4 }
+
 ]
 
 
