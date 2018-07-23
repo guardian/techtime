@@ -1,0 +1,1 @@
+`shuffle([...Array(100).keys()])`
