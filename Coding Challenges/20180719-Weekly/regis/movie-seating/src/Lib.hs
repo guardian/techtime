@@ -26,20 +26,21 @@ minscore = 2365.33
 -- each permutation is assigned its score and pitted against the current winner
 -- until the whole list is consumed
 ms :: Memo -> Candidate
-ms memo = head . map f . filter (p . f) . permutations $ [99, 98..0]
+ms memo = head . filter p . map f . permutations $ [99, 98..0]
   where f = Candidate . (id &&& score memo . sublists)
         p = (minscore <) . snd . getCandidate
 
 permutations :: [a] -> [[a]]
 permutations = foldr interleave [[]]
-  where interleave x [] = []
+  where interleave x []       = []
         interleave x (ys:yss) = interleave' x ys ++ interleave x yss
-        interleave' x [] = [[x]]
-        interleave' x (y:ys) = (x:y:ys) : map (y:) (interleave' x ys)
+        interleave' x []      = [[x]]
+        interleave' x (y:ys)  = (x:y:ys) : map (y:) (interleave' x ys)
 
 sublists :: [Int] -> [(Int, [Int])]
-sublists [x,y] = [(x, [y])]
+sublists [x,y]    = [(x, [y])]
 sublists (x:y:xs) = (x, take 3 (y:xs)) : sublists (y:xs)
+sublists _        = []
 
 -- precompute the matrix
 prepare :: Memo
