@@ -9,24 +9,13 @@ import qualified Data.ByteString as B
 import Data.ByteString.Char8 (ByteString, pack)
 import Data.Word8 (isAlpha)
 import Data.Ix (range)
-import Data.List (foldl1', zip, permutations, (!!))
-import Data.List.NonEmpty (fromList)
-import Data.Semigroup (Max(..), getMax, sconcat)
+import Data.List (zip)
 
 -- this data type will carry a sequence with its score
 newtype Candidate = Candidate { getCandidate :: ([Int], Double) }
 
 -- Memoized matrix of affinities (we only use the bottom triangle)
 type Memo = Array (Int, Int) Int
-
--- to make it a Semigroup, we need to install Candidate as Eq and Ord
-instance Eq Candidate where
-  (Candidate (_, x)) == (Candidate (_, y)) = x == y
-
-instance Ord Candidate where
-  (Candidate (_, x)) `compare` (Candidate (_, y)) | x == y    = EQ
-                                                  | x <  y    = LT
-                                                  | otherwise = GT
 
 instance Show Candidate where
   show (Candidate p) = show p
@@ -41,6 +30,12 @@ ms memo = head . map f . filter (p . f) . permutations $ [99, 98..0]
   where f = Candidate . (id &&& score memo . sublists)
         p = (minscore <) . snd . getCandidate
 
+permutations :: [a] -> [[a]]
+permutations = foldr interleave [[]]
+  where interleave x [] = []
+        interleave x (ys:yss) = interleave' x ys ++ interleave x yss
+        interleave' x [] = [[x]]
+        interleave' x (y:ys) = (x:y:ys) : map (y:) (interleave' x ys)
 
 sublists :: [Int] -> [(Int, [Int])]
 sublists [x,y] = [(x, [y])]
