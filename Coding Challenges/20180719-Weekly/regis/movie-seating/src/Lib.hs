@@ -12,13 +12,10 @@ import Data.Ix (range)
 import Data.List (zip)
 
 -- this data type will carry a sequence with its score
-newtype Candidate = Candidate { getCandidate :: ([Int], Double) }
+type Candidate = ([Int], Double)
 
 -- Memoized matrix of affinities (we only use the bottom triangle)
 type Memo = Array (Int, Int) Int
-
-instance Show Candidate where
-  show (Candidate p) = show p
 
 minscore :: Double
 minscore = 2365.33
@@ -27,8 +24,8 @@ minscore = 2365.33
 -- until the whole list is consumed
 ms :: Memo -> Candidate
 ms memo = head . filter p . map f . permutations $ [99, 98..0]
-  where f = Candidate . (id &&& score memo . sublists)
-        p = (minscore <) . snd . getCandidate
+  where f = (id &&& score memo . sublists)
+        p = (minscore <) . snd
 
 permutations :: [a] -> [[a]]
 permutations = foldr interleave [[]]
