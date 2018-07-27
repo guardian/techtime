@@ -1,3 +1,7 @@
+v0.3.0:
+
+- Enforce one unique game for a pair at a time
+- Better error messages
 
 v0.2.0:
 

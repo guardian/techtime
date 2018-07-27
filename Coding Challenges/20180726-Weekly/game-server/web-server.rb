@@ -229,7 +229,7 @@ get '/game/:personalkey/players' do
     personalkey = params['personalkey']
     if !GameIO::personalKeyIsCurrent(personalkey) then
         status 401
-        return
+        return "Incorrect/Unknown personal key\n"
     end
     content_type 'application/json'
     JSON.generate(GameIO::getPlayerNames())
@@ -240,21 +240,21 @@ get '/game/:personalkey/start/:playername' do
     counterPartyName = params['playername']
     if !GameIO::personalKeyIsCurrent(personalkey) then
         status 401
-        return
+        return "Incorrect/Unknown personal key\n"
     end
     partyName = GameIO::personalKeyToPlayerNameOrNull(personalkey)
     if partyName.nil? then
         status 404
-        return
+        return "Incorrect/Unknown party name\n"
     end
     if !GameIO::getPlayerNames().include?(counterPartyName) then
         status 404
-        return
+        return "Incorrect/Unknown counterparty name\n"
     end
     processedGames = GameIO::getProcessedUserGamesFromDisk(partyName)
     if IPD::trueIfAlreadyOpenGameBetweenPlayers(processedGames, partyName, counterPartyName) then
         status 401
-        return 
+        return "There already is a game on-going between #{partyName} and #{counterPartyName}\n" 
     end
     gameId = SecureRandom.uuid
     game = Utils::spawnGame(gameId, partyName, counterPartyName)
@@ -274,21 +274,21 @@ get '/game/:personalkey/play/:gameid/cooperate' do
     gameId = params['gameid']
     if !GameIO::personalKeyIsCurrent(personalkey) then
         status 401
-        return
+        return "Incorrect/Unknown personal key\n"
     end
     partyName = GameIO::personalKeyToPlayerNameOrNull(personalkey)
     if partyName.nil? then
         status 404
-        return
+        return "Incorrect/Unknown party name\n"
     end
     game = GameIO::getGameFromDiskOrNull(gameId)
     if game.nil? then
         status 404
-        return
+        return "Incorrect/Unknown game identifier\n"
     end  
     if !game["game_metadata"]["players"].include?(partyName) then
         status 401
-        return
+        return "Trying to access a game that you are not a part of\n"
     end 
     content_type 'application/json'  
     if game[partyName].size < 10 then
@@ -305,21 +305,21 @@ get '/game/:personalkey/play/:gameid/betray' do
     gameId = params['gameid']
     if !GameIO::personalKeyIsCurrent(personalkey) then
         status 401
-        return
+        return "Incorrect/Unknown personal key\n"
     end
     partyName = GameIO::personalKeyToPlayerNameOrNull(personalkey)
     if partyName.nil? then
         status 404
-        return
+        return "Incorrect/Unknown party name\n"
     end
     game = GameIO::getGameFromDiskOrNull(gameId)
     if game.nil? then
         status 404
-        return
+        return "Incorrect/Unknown game identifier\n"
     end
     if !game["game_metadata"]["players"].include?(partyName) then
         status 401
-        return
+        return "Trying to access a game that you are not a part of\n"
     end 
     content_type 'application/json'
     if game[partyName].size < 10 then
@@ -336,21 +336,21 @@ get '/game/:personalkey/game-status/:gameid' do
     gameId = params['gameid']
     if !GameIO::personalKeyIsCurrent(personalkey) then
         status 401
-        return
+        return "Incorrect/Unknown personal key\n"
     end
     partyName = GameIO::personalKeyToPlayerNameOrNull(personalkey)
     if partyName.nil? then
         status 404
-        return
+        return "Incorrect/Unknown party name\n"
     end
     game = GameIO::getGameFromDiskOrNull(gameId)
     if game.nil? then
         status 404
-        return
+        return "Incorrect/Unknown game identifier\n"
     end
     if !game["game_metadata"]["players"].include?(partyName) then
         status 401
-        return
+        return "Trying to access a game that you are not a part of\n"
     end 
     content_type 'application/json'
     JSON.generate(IPD::gamePostDiskExtractionProcessing(game, partyName))
@@ -360,12 +360,12 @@ get '/game/:personalkey/my-games' do
     personalkey  = params['personalkey']
     if !GameIO::personalKeyIsCurrent(personalkey) then
         status 401
-        return
+        return "Incorrect/Unknown personal key\n"
     end
     partyName = GameIO::personalKeyToPlayerNameOrNull(personalkey)
     if partyName.nil? then
         status 404
-        return
+        return "Incorrect/Unknown party name\n"
     end   
     content_type 'application/json'
     JSON.generate(GameIO::getProcessedUserGamesFromDisk(partyName))
