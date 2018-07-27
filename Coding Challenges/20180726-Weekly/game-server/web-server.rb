@@ -173,7 +173,10 @@ class GameIO
         games = []
         Find.find("/Galaxy/DataBank/IPD-Challenge-Data/games/") do |path|
             next if path[-5,5] != ".game"
-            games << JSON.parse(IO.read(path))
+            begin
+                games << JSON.parse(IO.read(path))
+            rescue
+            end
         end
         games  
     end
