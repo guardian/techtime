@@ -29,7 +29,21 @@ not_found do
 end
 
 get '/' do
+    content_type 'text/plain'
+    [
+        "/leaderboard : for the live leader board",
+        "/points      : for the points file" 
+    ].join("\n")+"\n"
+end
+
+get '/leaderboard' do
+    content_type 'text/plain'
     pointsToLeaderboard(getPoints())
         .map{|p| "#{p["name"].ljust(20)}: #{"%9.6f" % p["score"]}" }
         .join("\n") + "\n"
+end
+
+get '/points' do
+    content_type 'text/plain'
+    IO.read("#{File.dirname(__FILE__)}/../points2.txt")
 end

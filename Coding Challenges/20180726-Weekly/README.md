@@ -60,21 +60,32 @@ curl http://10.249.16.173:14001/game/<your-api-key>/players
 Once you have identified a player you want to play with, you can start a game with 
 
 ```
-curl -X POST http://10.249.16.173:14001/game/<your-api-key>/start/<player-name>
+curl http://10.249.16.173:14001/game/<your-api-key>/start/<player-name>
 ```
 
-The answer is either `[<game-id: String>]` or `[null]`. You should record the `game-id` as you will need it later on. The answer `[null]` happens if a new game with that player could not start (mostly because there is already an on-going game with that player).
+The answer is either 
+
+```
+{
+    "event" => "Starting a game between you (#{partyName}) and #{counterpartyName}",
+    "party" => partyName,
+    "cuonterparty" => counterpartyName,
+    "gameId" => gameId
+}
+``` 
+
+or `[null]`. You should record the `game-id` as you will need it later on. The answer `[null]` happens if a new game with that player could not start (mostly because there is already an on-going game with that player).
 
 Once you have a `game-id` you can make a move with either
 
 ```
-curl -X POST http://10.249.16.173:14001/game/<your-api-key>/play/<game-id>/cooperate
+curl http://10.249.16.173:14001/game/<your-api-key>/play/<game-id>/cooperate
 ```
 
 or 
 
 ```
-curl -X POST http://10.249.16.173:14001/game/<your-api-key>/play/<game-id>/betray
+curl http://10.249.16.173:14001/game/<your-api-key>/play/<game-id>/betray
 ```
 
 The game is set up so that you do not need the other player to have completed their side of a game step to make another step. In this sense, playing with somebody happens in a completely asynchronous fashion. If you make several steps (and possibly all 10 steps of a game sequence), your opponent with only see the moves you made for already completed steps. In other words, you can safely "pre-play" your moves if you want to.
