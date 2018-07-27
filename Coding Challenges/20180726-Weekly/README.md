@@ -4,7 +4,7 @@ In order to play, and because everybody interacts with the same server, you need
 
 ### Game server IP address and Port
 
-The IP address of the game server is currently **10.249.16.173**. This machine is Pascal's iMac in the office. The IP should be stable but if the computer needs a restart the address might change. If that happen the new address will be broadcasted on the channel. The port will always be **14001**
+The IP address of the game server is currently **lucille19.local**. This machine is Pascal's iMac in the office. The IP should be stable but if the computer needs a restart the address might change. If that happen the new address will be broadcasted on the channel. The port will always be **14001**
 
 ### Game
 
@@ -27,10 +27,10 @@ A **game sequence** is 10 game steps. Once a game is completed, both players get
 
 ### User Interface Principles
 
-Assuming IP address **10.249.16.173** you can test that the server is running with 
+Assuming IP address **lucille19.local** you can test that the server is running with 
 
 ```
-curl http://10.249.16.173:14001/server/ping
+curl http://lucille19.local:14001/server/ping
 ```
 
 with returns `["pong"]`. 
@@ -38,13 +38,13 @@ with returns `["pong"]`.
 The following request returns the game scores (one score per player)
 
 ```
-curl http://10.249.16.173:14001/game-board
+curl http://lucille19.local:14001/game-board
 ```
 
 The two above commands do not require an API key. The remaining commands have the form
 
 ```
-curl http://10.249.16.173:14001/game/<your-api-key>/<command-name>/argument1/argument2/<etc...>
+curl http://lucille19.local:14001/game/<your-api-key>/<command-name>/argument1/argument2/<etc...>
 ```
 
 Lookup requests are GET and action request are POST (see below for details). All game server answers are valid JSON objects.
@@ -54,13 +54,13 @@ Lookup requests are GET and action request are POST (see below for details). All
 The first action you might want to do is to look up the list of players
 
 ```
-curl http://10.249.16.173:14001/game/<your-api-key>/players
+curl http://lucille19.local:14001/game/<your-api-key>/players
 ```
 
 Once you have identified a player you want to play with, you can start a game with 
 
 ```
-curl http://10.249.16.173:14001/game/<your-api-key>/start/<player-name>
+curl http://lucille19.local:14001/game/<your-api-key>/start/<player-name>
 ```
 
 The answer is either 
@@ -79,13 +79,13 @@ or `[null]`. You should record the `game-id` as you will need it later on. The a
 Once you have a `game-id` you can make a move with either
 
 ```
-curl http://10.249.16.173:14001/game/<your-api-key>/play/<game-id>/cooperate
+curl http://lucille19.local:14001/game/<your-api-key>/play/<game-id>/cooperate
 ```
 
 or 
 
 ```
-curl http://10.249.16.173:14001/game/<your-api-key>/play/<game-id>/betray
+curl http://lucille19.local:14001/game/<your-api-key>/play/<game-id>/betray
 ```
 
 The game is set up so that you do not need the other player to have completed their side of a game step to make another step. In this sense, playing with somebody happens in a completely asynchronous fashion. If you make several steps (and possibly all 10 steps of a game sequence), your opponent with only see the moves you made for already completed steps. In other words, you can safely "pre-play" your moves if you want to.
@@ -95,7 +95,7 @@ The two above requests both return `[true]` if the move was valid and `[false]` 
 You can see the state of a game with 
 
 ```
-curl http://10.249.16.173:14001/game/<your-api-key>/game-status/<game-id>
+curl http://lucille19.local:14001/game/<your-api-key>/game-status/<game-id>
 ```
 
 This returns an object of the form
@@ -140,7 +140,7 @@ Your score for this week's challenge is the sum of all your scores across all yo
 You can get all your games with
 
 ```
-curl http://10.249.16.173:14001/game/<your-api-key>/my-games
+curl http://lucille19.local:14001/game/<your-api-key>/my-games
 ```
 
 In particular this will let me extract your game ids.
