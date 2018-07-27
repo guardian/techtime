@@ -1,4 +1,4 @@
-### Get an personal key
+### Get a personal key
 
 In order to play, and because everybody interacts with the same server, you need to ask Pascal for a personal key. This avoid cheating by impersonation.
 
