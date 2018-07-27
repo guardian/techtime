@@ -1,3 +1,8 @@
+v0.4.0:
+
+- Implement: playerNameToAverageGameScoreOrNull
+- Implement: /game-board
+
 v0.3.0:
 
 - Enforce one unique game for a pair at a time

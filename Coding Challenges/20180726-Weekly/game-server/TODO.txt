@@ -1,7 +1,5 @@
 
 Urgent:
-    - Implement: playerNameToAverageGameScoreOrNull
-    - Implement: /game-board
     - Control IO with a semaphore.
 
 Nice to have:

@@ -61,8 +61,10 @@ class IPD # Pure static functions only
 
     # IPD::playerNameToAverageGameScoreOrNull(playername)
     def self.playerNameToAverageGameScoreOrNull(playername)
-        # TODO: Implement this
-        0
+        games = GameIO::getProcessedUserGamesFromDisk(playername)
+            .select{|game| game["game_metadata"]["status"]=="completed" }
+        return nil if games.size==0
+        games.map{|game| game["scores"][playername] }.inject(0, :+).to_f/games.size
     end
 
     # IPD::getNameOfTheOtherPlayer(name, game)
@@ -218,11 +220,14 @@ end
 get '/game-board' do
     playernames = GameIO::getPlayerNames()
     board = {}
-    GameIO::getPlayerNames().each{|playername|
-        board[playername] = IPD::playerNameToAverageGameScoreOrNull(playername)
-    }
-    content_type 'application/json'
-    JSON.generate(board)
+    content_type 'text/plain'
+    GameIO::getPlayerNames()
+        .map{|playername| [playername, IPD::playerNameToAverageGameScoreOrNull(playername)] }
+        .select{|pair| !pair[1].nil? }
+        .sort{|p1,p2| p1[1]<=>p2[1] }
+        .reverse
+        .map{|pair| "#{pair[0].ljust(20)}: #{pair[1]}" }
+        .join("\n") + "\n"
 end
 
 get '/game/:personalkey/players' do
