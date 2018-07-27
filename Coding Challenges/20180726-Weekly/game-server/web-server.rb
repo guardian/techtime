@@ -57,7 +57,8 @@ class Utils
     end
 end
 
-class IPD # Pure static function only
+class IPD # Pure static functions only
+
     # IPD::playerNameToAverageGameScoreOrNull(playername)
     def self.playerNameToAverageGameScoreOrNull(playername)
         # TODO: Implement this
@@ -71,15 +72,65 @@ class IPD # Pure static function only
 
     # IPD::reduceGameMovesVisibility(game, playerName)
     def self.reduceGameMovesVisibility(game, playerName)
-        otherPlayerName = IPD::getNameOfTheOtherPlayer(playerName, game)
         playerMoves = game[playerName]
+        otherPlayerName = IPD::getNameOfTheOtherPlayer(playerName, game)
         otherPlayerMoves = game[otherPlayerName]
         game[otherPlayerName] = otherPlayerMoves.first(playerMoves.size)
         game
     end
+
+    # IPD::trueGameAsCompleted(game)
+    def self.trueGameAsCompleted(game)
+        game["game_metadata"]["players"]
+            .all?{|name| game[name].size==10 }
+    end
+
+    # IPD::markCompletionAndScoresIfNeeded(game)
+    def self.markCompletionAndScoresIfNeeded(game)
+        if IPD::trueGameAsCompleted(game) then
+            game["game_metadata"]["status"] = "completed"
+            names = game["game_metadata"]["players"]
+            name1 = names[0]
+            name2 = names[1]
+            scores = {}
+            scores[name1] = 0
+            scores[name2] = 0
+            (0..9).each{|i|
+                move1 = game[name1][i]
+                move2 = game[name2][i]
+                if move1==1 and move2==1 then
+                    scores[name1] = scores[name1] + 3
+                    scores[name2] = scores[name2] + 3
+                end
+                if move1==1 and move2==0 then
+                    scores[name1] = scores[name1] + 0
+                    scores[name2] = scores[name2] + 5
+                end
+                if move1==0 and move2==1 then
+                    scores[name1] = scores[name1] + 5
+                    scores[name2] = scores[name2] + 0
+                end
+                if move1==0 and move2==0 then
+                    scores[name1] = scores[name1] + 1
+                    scores[name2] = scores[name2] + 1
+                end
+            }
+            game["scores"] = scores
+        end
+        game
+    end
+
+    # IPD::gamePostDiskExtractionProcessing(game, playerName)
+    def self.gamePostDiskExtractionProcessing(game, playerName)
+        game = IPD::reduceGameMovesVisibility(game, playerName)
+        game = IPD::markCompletionAndScoresIfNeeded(game)
+        game
+    end
+
 end
 
 class GameIO
+
     # GameIO::getPlayerIds(): Array[PlayerId] , PlayerId: example: "9ee49d8e-39f2:Alice.Skywalker"
     def self.getPlayerIds() 
         Utils::getNonEmptyLinesStrippedFromFile("#{DATA_FOLDER_PATH}/players.txt")
@@ -127,13 +178,13 @@ class GameIO
         games  
     end
 
-    # GameIO::getUserGamesFromDisk(playerName)
-    def self.getUserGamesFromDisk(playerName)
+    # GameIO::getProcessedUserGamesFromDisk(playerName)
+    def self.getProcessedUserGamesFromDisk(playerName)
         GameIO::getGamesFromDisk()
             .select{|game|
                 game["game_metadata"]["players"].include?(playerName)
             }
-            .map{|game| IPD::reduceGameMovesVisibility(game, playerName) } 
+            .map{|game| IPD::gamePostDiskExtractionProcessing(game, playerName) } 
     end
 
 end
@@ -220,6 +271,10 @@ get '/game/:personalkey/play/:gameid/cooperate' do
         status 404
         return
     end  
+    if !game["game_metadata"]["players"].include?(partyName) then
+        status 401
+        return
+    end 
     content_type 'application/json'  
     if game[partyName].size < 10 then
         game[partyName] << 1
@@ -246,7 +301,11 @@ get '/game/:personalkey/play/:gameid/betray' do
     if game.nil? then
         status 404
         return
-    end    
+    end
+    if !game["game_metadata"]["players"].include?(partyName) then
+        status 401
+        return
+    end 
     content_type 'application/json'
     if game[partyName].size < 10 then
         game[partyName] << 0
@@ -273,9 +332,13 @@ get '/game/:personalkey/game-status/:gameid' do
     if game.nil? then
         status 404
         return
-    end    
+    end
+    if !game["game_metadata"]["players"].include?(partyName) then
+        status 401
+        return
+    end 
     content_type 'application/json'
-    JSON.encode(IPD::reduceGameMovesVisibility(game, partyName))
+    JSON.generate(IPD::gamePostDiskExtractionProcessing(game, partyName))
 end
 
 get '/game/:personalkey/my-games' do
@@ -290,5 +353,5 @@ get '/game/:personalkey/my-games' do
         return
     end   
     content_type 'application/json'
-    JSON.generate(GameIO::getUserGamesFromDisk(partyName))
+    JSON.generate(GameIO::getProcessedUserGamesFromDisk(partyName))
 end
