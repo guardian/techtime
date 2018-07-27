@@ -5,7 +5,7 @@ require 'date'
 
 # { "name": "Richard Beddington", "time": "2018-06-29 17:30:00", "value": 1 }
 
-POINTS_FILENAME = "#{File.dirname(__FILE__)}/points2.json"
+POINTS_FILENAME = "#{File.dirname(__FILE__)}/points2.txt"
 
 def timeSinceDateTimeInHalfYears(currentTime, datetime)
     (currentTime.to_f - DateTime.parse(datetime).to_time.to_i).to_f/( 86400 * 182.62 )
