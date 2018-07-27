@@ -1,0 +1,10 @@
+
+Urgent:
+    - Enforce one unique game for a pair at a time
+    - Better error messages
+    - Implement: playerNameToAverageGameScoreOrNull
+    - Implement: /game-board
+    - Control IO with a semaphore.
+
+Nice to have:
+    - Automatic restart of the server after code change

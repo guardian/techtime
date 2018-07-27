@@ -127,6 +127,15 @@ class IPD # Pure static functions only
         game
     end
 
+    # IPD::trueIfAlreadyOpenGameBetweenPlayers(games, name1, name2)
+    def self.trueIfAlreadyOpenGameBetweenPlayers(games, name1, name2)
+        # The argument `games` here should be processed, otherwise we do not know 
+        # Whether the game is done or not (unless introspection) 
+        GameIO::getProcessedUserGamesFromDisk(name1)
+            .select{|game| game["game_metadata"]["status"] == "on-going" }
+            .any?{|game| game["game_metadata"]["players"].include?(name2) }
+    end
+
 end
 
 class GameIO
@@ -184,9 +193,7 @@ class GameIO
     # GameIO::getProcessedUserGamesFromDisk(playerName)
     def self.getProcessedUserGamesFromDisk(playerName)
         GameIO::getGamesFromDisk()
-            .select{|game|
-                game["game_metadata"]["players"].include?(playerName)
-            }
+            .select{|game| game["game_metadata"]["players"].include?(playerName) }
             .map{|game| IPD::gamePostDiskExtractionProcessing(game, playerName) } 
     end
 
@@ -244,13 +251,18 @@ get '/game/:personalkey/start/:playername' do
         status 404
         return
     end
+    processedGames = GameIO::getProcessedUserGamesFromDisk(partyName)
+    if IPD::trueIfAlreadyOpenGameBetweenPlayers(processedGames, partyName, counterPartyName) then
+        status 401
+        return 
+    end
     gameId = SecureRandom.uuid
     game = Utils::spawnGame(gameId, partyName, counterPartyName)
     GameIO::putGameToDisk(game)
     answer = {
         "event" => "Starting a game between you (#{partyName}) and #{counterPartyName}",
         "party" => partyName,
-        "cuonterparty" => counterPartyName,
+        "counterparty" => counterPartyName,
         "gameId" => gameId
     }
     content_type 'application/json'
