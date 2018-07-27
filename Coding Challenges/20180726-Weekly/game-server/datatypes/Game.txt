@@ -1,0 +1,11 @@
+{
+    "Alice"  : Array[Digits],
+    "Bob"    : Array[Digits],
+    "scores" : null,
+    "game_metadata" : {
+        "game_id"       : String
+        "starting_date" : DateTime,
+        "players"       : [Name1, Name2]
+        "status"        : "on-going"
+    }
+}
