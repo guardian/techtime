@@ -2,10 +2,11 @@
 
 require 'json'
 require 'date'
+require 'find'
 
-# { "name": "Richard Beddington", "time": "2018-06-29 17:30:00", "value": 1 }
+POINTS_FOLDERPATH = "#{File.dirname(__FILE__)}/points-files"
+# Sam Desborough;     2018-07-27 16:30:00 +0100; 2
 
-POINTS_FILENAME = "#{File.dirname(__FILE__)}/points2.txt"
 
 def timeSinceDateTimeInHalfYears(currentTime, datetime)
     (currentTime.to_f - DateTime.parse(datetime).to_time.to_i).to_f/( 86400 * 182.62 )
@@ -15,17 +16,27 @@ def pointToScore(currentTime, point)
     point["value"] * Math.exp(-timeSinceDateTimeInHalfYears(currentTime, point["time"]))
 end
 
-def getPoints()
-    points = IO.read(POINTS_FILENAME)
-        .lines
-        .map{|line| line.strip }
-        .select{|line| line.size>0 }
-        .map{|line| Hash[["name", "time", "value"].zip(line.split(";").map{|i| i.strip})] }
-        .map{|item| 
-            item["value"] = item["value"].to_f 
-            item
-        }
-    points
+def pointsFilepaths()
+    files = []
+    Find.find(POINTS_FOLDERPATH) do |path|
+        next if path[-4,4] != ".txt"
+        files << path
+    end
+    files
+end
+
+def getPoints() # Array[{name: String, time: Datetime, score: Float}]
+    pointsFilepaths().map{|filepath|
+        IO.read(filepath)
+            .lines
+            .map{|line| line.strip }
+            .select{|line| line.size>0 }
+            .map{|line| Hash[["name", "time", "value"].zip(line.split(";").map{|i| i.strip})] }
+            .map{|item| 
+                item["value"] = item["value"].to_f 
+                item
+            }
+    }.flatten
 end
 
 def pointsToLeaderboard(points) # Array[{"name" => name, "score" => score}]
