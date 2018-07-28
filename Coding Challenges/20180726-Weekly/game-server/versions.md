@@ -1,3 +1,7 @@
+v0.4.1:
+
+- Game data is now split between Lucille18 and Lucille19.
+
 v0.4.0:
 
 - Implement: playerNameToAverageGameScoreOrNull

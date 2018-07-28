@@ -23,13 +23,17 @@ set :port, 14001
 
 # -- --------------------------------------------------
 
-DATA_FOLDER_PATH = "/Galaxy/DataBank/IPD-Challenge-Data"
+
 LUCILLE_INSTANCE = ENV["COMPUTERLUCILLENAME"]
+
+GAME_SERVER_VERSION = "0.4.1"
 
 if LUCILLE_INSTANCE.nil? then
     puts "Error: Environment variable 'COMPUTERLUCILLENAME' is not defined."
     exit
 end
+
+DATA_FOLDER_PATH = "/Galaxy/DataBank/IPD-Challenge-Data/#{LUCILLE_INSTANCE}"
 
 class Utils
 
@@ -168,13 +172,13 @@ class GameIO
     # GameIO::putGameToDisk(game)
     def self.putGameToDisk(game)
         gameId = game["game_metadata"]["game_id"]
-        filepath = "/Galaxy/DataBank/IPD-Challenge-Data/games/#{gameId}.game"
+        filepath = "#{DATA_FOLDER_PATH}/games/#{gameId}.game"
         File.open(filepath, "w"){|f| f.puts(JSON.pretty_generate(game)) }
     end
 
     # GameIO::getGameFromDiskOrNull(gameId)
     def self.getGameFromDiskOrNull(gameId)
-        filepath = "/Galaxy/DataBank/IPD-Challenge-Data/games/#{gameId}.game"
+        filepath = "#{DATA_FOLDER_PATH}/games/#{gameId}.game"
         return nil if !File.exists?(filepath)
         JSON.parse(IO.read(filepath))
     end
@@ -182,7 +186,7 @@ class GameIO
     # GameIO::getGamesFromDisk()
     def self.getGamesFromDisk()
         games = []
-        Find.find("/Galaxy/DataBank/IPD-Challenge-Data/games/") do |path|
+        Find.find("#{DATA_FOLDER_PATH}/games/") do |path|
             next if path[-5,5] != ".game"
             begin
                 games << JSON.parse(IO.read(path))
@@ -209,7 +213,12 @@ not_found do
 end
 
 get '/' do
-    "Iterated Prisoner's Dilemma (20180726-Weekly), see https://github.com/guardian/techtime/tree/master/Coding%20Challenges/20180726-Weekly for details.\n"
+    [
+        "Iterated Prisoner's Dilemma (20180726-Weekly)",
+        "server: #{LUCILLE_INSTANCE}",
+        "version: #{GAME_SERVER_VERSION}",
+        "See https://github.com/guardian/techtime/tree/master/Coding%20Challenges/20180726-Weekly for details."
+    ].join("\n")
 end
 
 get '/server/ping' do
