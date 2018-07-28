@@ -1,6 +1,8 @@
 
 Urgent:
-    - Control IO with a semaphore.
+    - Segregate between l18 and l19 for data storage
+    - Control IO with a semaphore / or keep the entire game state in memory
+    - Restaure POST requests.
 
 Nice to have:
     - Automatic restart of the server after code change
