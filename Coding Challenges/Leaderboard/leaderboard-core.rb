@@ -31,6 +31,7 @@ def getPoints() # Array[{name: String, time: Datetime, score: Float}]
             .lines
             .map{|line| line.strip }
             .select{|line| line.size>0 }
+            .select{|line| !line.start_with?("#") }
             .map{|line| Hash[["name", "time", "value"].zip(line.split(";").map{|i| i.strip})] }
             .map{|item| 
                 item["value"] = item["value"].to_f 
