@@ -55,6 +55,11 @@ class Utils
                 "game_id"       => gameId,
                 "starting_date" => Time.new.to_s,
                 "players"       => [partyName, counterPartyName],
+                "game_length"   => 10,
+                "game_length_knowledge" => {
+                    partyName => true,
+                    counterPartyName => true
+                },
                 "status"        => "on-going"
             }
         }        

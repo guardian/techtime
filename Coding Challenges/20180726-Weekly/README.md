@@ -102,38 +102,33 @@ This returns an object of the form
 
 ```
 {
-	"Alice"  : Array[Digits],
-	"Bob"    : Array[Digits],
-	"scores" : null,
-	"game_metadata" : {
-		"game_id"       : String
-		"starting_date" : DateTime,
-		"players"       : [Name1, Name2]
-		"status"        : "on-going"
-	}
+    "Alice"  : Array[Digits],
+    "Bob"    : Array[Digits],
+    "scores" : null or Scores
+    "game_metadata" : {
+        "game_id"       : String
+        "starting_date" : DateTime,
+        "players"       : [Name1, Name2]
+        "game_length"   : Integer
+        "game_length_knowledge" : GameLengthKnowledge
+        "status"        : "on-going"
+    }
+}
+
+Scores {
+    "Alice" : Integer,
+    "Bob"   : Integer
+}
+
+GameLengthKnowledge = {
+    "Alice" : Boolean,
+    "Bob"   : Boolean
 }
 ```
 
 Where Alice and Bob are playing and assuming Alice sent the request she will see all her moves so far but only the moves made by Bob on completed steps. In other words, her array in always longer (or equal size) than Bob's array. The digits are either 0 or 1, where 0 means "betrayal" and 1 means "cooperative".
- 
-When a game has been completed, the answer is
 
-```
-{
-	"Alice"  : Array[Digits],
-	"Bob"    : Array[Digits],
-	"scores" : {
-		"Alice" : Integer,
-		"Bob"   : Integer
-	}
-	"game_metadata" : {
-		"game_id"       : String
-		"starting_date" : DateTime
-		"players"       : [Name1, Name2]
-		"status"        : "completed"
-	}
-}
-```
+Note that the game attribute `scores` is only set at the end of the game.
 
 Your score for this week's challenge is the sum of all your scores across all your completed games devided by the number of completed games. In other words, your game sequence score average. If you have no completed games, your score is 0.
 
