@@ -210,6 +210,17 @@ class GameIO
 
 end
 
+class GameReports
+    # GameReports::gameLeaderboard()
+    def self.gameLeaderboard()
+        GameIO::getPlayerNames()
+        .map{|playername| [playername, IPD::playerNameToAverageGameScoreOrNull(playername)] }
+        .select{|pair| !pair[1].nil? }
+        .sort{|p1,p2| p1[1]<=>p2[1] }
+        .reverse
+    end
+end
+
 # -- --------------------------------------------------
 # Route
 
@@ -232,14 +243,8 @@ get '/server/ping' do
 end
 
 get '/game-board' do
-    playernames = GameIO::getPlayerNames()
-    board = {}
     content_type 'text/plain'
-    GameIO::getPlayerNames()
-        .map{|playername| [playername, IPD::playerNameToAverageGameScoreOrNull(playername)] }
-        .select{|pair| !pair[1].nil? }
-        .sort{|p1,p2| p1[1]<=>p2[1] }
-        .reverse
+    GameReports::gameLeaderboard()
         .map{|pair| "#{pair[0].ljust(20)}: #{pair[1]}" }
         .join("\n") + "\n"
 end
