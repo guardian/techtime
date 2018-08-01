@@ -55,10 +55,10 @@ class Utils
                 "game_id"       => gameId,
                 "starting_date" => Time.new.to_s,
                 "players"       => [partyName, counterPartyName],
-                "game_length"   => 10,
+                "game_length"   => (1..10).to_a.sample,
                 "game_length_knowledge" => {
-                    partyName => true,
-                    counterPartyName => true
+                    partyName => [true, false].sample,
+                    counterPartyName => [true, false].sample
                 },
                 "status"        => "on-going"
             }
@@ -81,12 +81,21 @@ class IPD # Pure static functions only
         (game["game_metadata"]["players"] - [name]).first
     end
 
-    # IPD::reduceGameMovesVisibility(game, playerName)
-    def self.reduceGameMovesVisibility(game, playerName)
+    # IPD::reduceGameMovesVisibilityIfNeeded(game, playerName)
+    def self.reduceGameMovesVisibilityIfNeeded(game, playerName)
         playerMoves = game[playerName]
         otherPlayerName = IPD::getNameOfTheOtherPlayer(playerName, game)
         otherPlayerMoves = game[otherPlayerName]
         game[otherPlayerName] = otherPlayerMoves.first(playerMoves.size)
+        game
+    end
+
+    # IPD::reduceGameLengthVisibilityIfNeeded(game, playerName)
+    # This should be called after IPD::markCompletionIfNeeded(game)
+    def self.reduceGameLengthVisibilityIfNeeded(game, playerName)
+        if game["game_metadata"]["status"]=="on-going" and !game["game_metadata"]["game_length_knowledge"][playerName] then
+            game["game_metadata"]["game_length"] = nil
+        end
         game
     end
 
@@ -96,10 +105,17 @@ class IPD # Pure static functions only
             .all?{|name| game[name].size==10 }
     end
 
-    # IPD::markCompletionAndScoresIfNeeded(game)
-    def self.markCompletionAndScoresIfNeeded(game)
+    # IPD::markCompletionIfNeeded(game)
+    def self.markCompletionIfNeeded(game)
         if IPD::trueGameAsCompleted(game) then
             game["game_metadata"]["status"] = "completed"
+        end
+        game
+    end
+
+    # IPD::markScoresIfNeeded(game)
+    def self.markScoresIfNeeded(game)
+        if IPD::trueGameAsCompleted(game) then
             names = game["game_metadata"]["players"]
             name1 = names[0]
             name2 = names[1]
@@ -133,8 +149,10 @@ class IPD # Pure static functions only
 
     # IPD::gamePostDiskExtractionProcessing(game, playerName)
     def self.gamePostDiskExtractionProcessing(game, playerName)
-        game = IPD::reduceGameMovesVisibility(game, playerName)
-        game = IPD::markCompletionAndScoresIfNeeded(game)
+        game = IPD::markCompletionIfNeeded(game)
+        game = IPD::markScoresIfNeeded(game)
+        game = IPD::reduceGameMovesVisibilityIfNeeded(game, playerName)
+        game = IPD::reduceGameLengthVisibilityIfNeeded(game, playerName)
         game
     end
 
