@@ -1,8 +1,10 @@
 
 Urgent:
-    - Segregate between l18 and l19 for data storage
     - Control IO with a semaphore / or keep the entire game state in memory
+
+Important:
     - Restaure POST requests.
+    - When passing games around the code, pass the original game together with the alterated game 
 
 Nice to have:
     - Automatic restart of the server after code change

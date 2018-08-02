@@ -102,7 +102,7 @@ class IPD # Pure static functions only
     # IPD::trueGameAsCompleted(game)
     def self.trueGameAsCompleted(game)
         game["game_metadata"]["players"]
-            .all?{|name| game[name].size==10 }
+            .all?{|name| game[name].size == game["game_metadata"]["game_length"] }
     end
 
     # IPD::markCompletionIfNeeded(game)
@@ -116,13 +116,14 @@ class IPD # Pure static functions only
     # IPD::markScoresIfNeeded(game)
     def self.markScoresIfNeeded(game)
         if IPD::trueGameAsCompleted(game) then
+            game_length = game["game_metadata"]["game_length"]
             names = game["game_metadata"]["players"]
             name1 = names[0]
             name2 = names[1]
             scores = {}
             scores[name1] = 0
             scores[name2] = 0
-            (0..9).each{|i|
+            (0..game_length).each{|i|
                 move1 = game[name1][i]
                 move2 = game[name2][i]
                 if move1==1 and move2==1 then
@@ -142,6 +143,8 @@ class IPD # Pure static functions only
                     scores[name2] = scores[name2] + 1
                 end
             }
+            scores[name1] = 10*(scores[name1].to_f/game_length)
+            scores[name2] = 10*(scores[name2].to_f/game_length)
             game["scores"] = scores
         end
         game
@@ -333,7 +336,7 @@ get '/game/:personalkey/play/:gameid/cooperate' do
         return "Trying to access a game that you are not a part of\n"
     end 
     content_type 'application/json'  
-    if game[partyName].size < 10 then
+    if game[partyName].size < game["game_metadata"]["game_length"] then
         game[partyName] << 1
         GameIO::putGameToDisk(game)
         "[true]"
@@ -364,7 +367,7 @@ get '/game/:personalkey/play/:gameid/betray' do
         return "Trying to access a game that you are not a part of\n"
     end 
     content_type 'application/json'
-    if game[partyName].size < 10 then
+    if game[partyName].size < game["game_metadata"]["game_length"] then
         game[partyName] << 0
         GameIO::putGameToDisk(game)
         "[true]"
