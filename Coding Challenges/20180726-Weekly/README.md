@@ -23,7 +23,9 @@ betray    & cooperate   : 5 & 0
 betray    & betray      : 1 & 1
 ```
 
-A **game sequence** is 10 game steps. Once a game is completed, both players get points according to the above matrix. 
+A **game sequence** is of variable length, between 1 and 10 steps. The length is an attribute of the game and is chosen randomly at game creation. Once a game is completed, both players get points for each step according to the above matrix. 
+
+Note that as to not penalise players playing short length games, the game user scores are normalised.
 
 ### User Interface Principles
 

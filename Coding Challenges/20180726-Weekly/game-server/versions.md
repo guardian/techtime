@@ -1,3 +1,11 @@
+v0.4.3:
+
+- Change of game mechanics: variable length games.
+
+v0.4.2:
+
+- Preliminary version to change of mechanics.
+
 v0.4.1:
 
 - Game data is now split between Lucille18 and Lucille19.
