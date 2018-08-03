@@ -57,7 +57,7 @@ end
 
 FIELD_SIZE = 571 # This should be a prime number
 GENERATOR = 10
-cursor = 1
+cursor = (1..FIELD_SIZE).to_a.sample
 
 Thread.new {
     loop {
