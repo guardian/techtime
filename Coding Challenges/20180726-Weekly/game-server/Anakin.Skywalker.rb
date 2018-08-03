@@ -55,14 +55,22 @@ end
 
 # -------------------------------------------------------------------------
 
-generator = 10
+FIELD_SIZE = 571 # This should be a prime number
+GENERATOR = 10
 cursor = 1
+
+Thread.new {
+    loop {
+        sleep 86400 # We reset the sequence every 24 hours
+        cursor = (1..FIELD_SIZE).to_a.sample
+    }
+}
 
 loop {
     begin 
         Timeout::timeout(20) {
             puts "# -------------------------"
-            cursor = cursor*generator % 571
+            cursor = cursor*GENERATOR % FIELD_SIZE
             nextMove = cursor%2 == 1 ? "cooperate" : "betray"
             puts "nextMove: #{nextMove}" 
             gameServerQueryMyGames()
