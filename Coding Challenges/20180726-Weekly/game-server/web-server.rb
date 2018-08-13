@@ -23,13 +23,17 @@ set :port, 14001
 
 # -- --------------------------------------------------
 
-DATA_FOLDER_PATH = "/Galaxy/DataBank/IPD-Challenge-Data"
+
 LUCILLE_INSTANCE = ENV["COMPUTERLUCILLENAME"]
+
+GAME_SERVER_VERSION = "0.4.1"
 
 if LUCILLE_INSTANCE.nil? then
     puts "Error: Environment variable 'COMPUTERLUCILLENAME' is not defined."
     exit
 end
+
+DATA_FOLDER_PATH = "/Galaxy/DataBank/IPD-Challenge-Data/#{LUCILLE_INSTANCE}"
 
 class Utils
 
@@ -51,6 +55,11 @@ class Utils
                 "game_id"       => gameId,
                 "starting_date" => Time.new.to_s,
                 "players"       => [partyName, counterPartyName],
+                "game_length"   => (1..10).to_a.sample,
+                "game_length_knowledge" => {
+                    partyName => [true, false].sample,
+                    counterPartyName => [true, false].sample
+                },
                 "status"        => "on-going"
             }
         }        
@@ -61,8 +70,10 @@ class IPD # Pure static functions only
 
     # IPD::playerNameToAverageGameScoreOrNull(playername)
     def self.playerNameToAverageGameScoreOrNull(playername)
-        # TODO: Implement this
-        0
+        games = GameIO::getProcessedUserGamesFromDisk(playername)
+            .select{|game| game["game_metadata"]["status"]=="completed" }
+        return nil if games.size==0
+        games.map{|game| game["scores"][playername] }.inject(0, :+).to_f/games.size
     end
 
     # IPD::getNameOfTheOtherPlayer(name, game)
@@ -70,8 +81,8 @@ class IPD # Pure static functions only
         (game["game_metadata"]["players"] - [name]).first
     end
 
-    # IPD::reduceGameMovesVisibility(game, playerName)
-    def self.reduceGameMovesVisibility(game, playerName)
+    # IPD::reduceGameMovesVisibilityIfNeeded(game, playerName)
+    def self.reduceGameMovesVisibilityIfNeeded(game, playerName)
         playerMoves = game[playerName]
         otherPlayerName = IPD::getNameOfTheOtherPlayer(playerName, game)
         otherPlayerMoves = game[otherPlayerName]
@@ -79,23 +90,40 @@ class IPD # Pure static functions only
         game
     end
 
+    # IPD::reduceGameLengthVisibilityIfNeeded(game, playerName)
+    # This should be called after IPD::markCompletionIfNeeded(game)
+    def self.reduceGameLengthVisibilityIfNeeded(game, playerName)
+        if game["game_metadata"]["status"]=="on-going" and !game["game_metadata"]["game_length_knowledge"][playerName] then
+            game["game_metadata"]["game_length"] = nil
+        end
+        game
+    end
+
     # IPD::trueGameAsCompleted(game)
     def self.trueGameAsCompleted(game)
         game["game_metadata"]["players"]
-            .all?{|name| game[name].size==10 }
+            .all?{|name| game[name].size == game["game_metadata"]["game_length"] }
     end
 
-    # IPD::markCompletionAndScoresIfNeeded(game)
-    def self.markCompletionAndScoresIfNeeded(game)
+    # IPD::markCompletionIfNeeded(game)
+    def self.markCompletionIfNeeded(game)
         if IPD::trueGameAsCompleted(game) then
             game["game_metadata"]["status"] = "completed"
+        end
+        game
+    end
+
+    # IPD::markScoresIfNeeded(game)
+    def self.markScoresIfNeeded(game)
+        if IPD::trueGameAsCompleted(game) then
+            game_length = game["game_metadata"]["game_length"]
             names = game["game_metadata"]["players"]
             name1 = names[0]
             name2 = names[1]
             scores = {}
             scores[name1] = 0
             scores[name2] = 0
-            (0..9).each{|i|
+            (0..game_length).each{|i|
                 move1 = game[name1][i]
                 move2 = game[name2][i]
                 if move1==1 and move2==1 then
@@ -115,6 +143,8 @@ class IPD # Pure static functions only
                     scores[name2] = scores[name2] + 1
                 end
             }
+            scores[name1] = 10*(scores[name1].to_f/game_length)
+            scores[name2] = 10*(scores[name2].to_f/game_length)
             game["scores"] = scores
         end
         game
@@ -122,9 +152,20 @@ class IPD # Pure static functions only
 
     # IPD::gamePostDiskExtractionProcessing(game, playerName)
     def self.gamePostDiskExtractionProcessing(game, playerName)
-        game = IPD::reduceGameMovesVisibility(game, playerName)
-        game = IPD::markCompletionAndScoresIfNeeded(game)
+        game = IPD::markCompletionIfNeeded(game)
+        game = IPD::markScoresIfNeeded(game)
+        game = IPD::reduceGameMovesVisibilityIfNeeded(game, playerName)
+        game = IPD::reduceGameLengthVisibilityIfNeeded(game, playerName)
         game
+    end
+
+    # IPD::trueIfAlreadyOpenGameBetweenPlayers(games, name1, name2)
+    def self.trueIfAlreadyOpenGameBetweenPlayers(games, name1, name2)
+        # The argument `games` here should be processed, otherwise we do not know 
+        # Whether the game is done or not (unless introspection) 
+        GameIO::getProcessedUserGamesFromDisk(name1)
+            .select{|game| game["game_metadata"]["status"] == "on-going" }
+            .any?{|game| game["game_metadata"]["players"].include?(name2) }
     end
 
 end
@@ -157,13 +198,13 @@ class GameIO
     # GameIO::putGameToDisk(game)
     def self.putGameToDisk(game)
         gameId = game["game_metadata"]["game_id"]
-        filepath = "/Galaxy/DataBank/IPD-Challenge-Data/games/#{gameId}.game"
+        filepath = "#{DATA_FOLDER_PATH}/games/#{gameId}.game"
         File.open(filepath, "w"){|f| f.puts(JSON.pretty_generate(game)) }
     end
 
     # GameIO::getGameFromDiskOrNull(gameId)
     def self.getGameFromDiskOrNull(gameId)
-        filepath = "/Galaxy/DataBank/IPD-Challenge-Data/games/#{gameId}.game"
+        filepath = "#{DATA_FOLDER_PATH}/games/#{gameId}.game"
         return nil if !File.exists?(filepath)
         JSON.parse(IO.read(filepath))
     end
@@ -171,7 +212,7 @@ class GameIO
     # GameIO::getGamesFromDisk()
     def self.getGamesFromDisk()
         games = []
-        Find.find("/Galaxy/DataBank/IPD-Challenge-Data/games/") do |path|
+        Find.find("#{DATA_FOLDER_PATH}/games/") do |path|
             next if path[-5,5] != ".game"
             begin
                 games << JSON.parse(IO.read(path))
@@ -184,12 +225,21 @@ class GameIO
     # GameIO::getProcessedUserGamesFromDisk(playerName)
     def self.getProcessedUserGamesFromDisk(playerName)
         GameIO::getGamesFromDisk()
-            .select{|game|
-                game["game_metadata"]["players"].include?(playerName)
-            }
+            .select{|game| game["game_metadata"]["players"].include?(playerName) }
             .map{|game| IPD::gamePostDiskExtractionProcessing(game, playerName) } 
     end
 
+end
+
+class GameReports
+    # GameReports::gameLeaderboard()
+    def self.gameLeaderboard()
+        GameIO::getPlayerNames()
+        .map{|playername| [playername, IPD::playerNameToAverageGameScoreOrNull(playername)] }
+        .select{|pair| !pair[1].nil? }
+        .sort{|p1,p2| p1[1]<=>p2[1] }
+        .reverse
+    end
 end
 
 # -- --------------------------------------------------
@@ -200,7 +250,12 @@ not_found do
 end
 
 get '/' do
-    "Iterated Prisoner's Dilemma (20180726-Weekly), see https://github.com/guardian/techtime/tree/master/Coding%20Challenges/20180726-Weekly for details.\n"
+    [
+        "Iterated Prisoner's Dilemma (20180726-Weekly)",
+        "server: #{LUCILLE_INSTANCE}",
+        "version: #{GAME_SERVER_VERSION}",
+        "See https://github.com/guardian/techtime/tree/master/Coding%20Challenges/20180726-Weekly for details."
+    ].join("\n")
 end
 
 get '/server/ping' do
@@ -209,20 +264,17 @@ get '/server/ping' do
 end
 
 get '/game-board' do
-    playernames = GameIO::getPlayerNames()
-    board = {}
-    GameIO::getPlayerNames().each{|playername|
-        board[playername] = IPD::playerNameToAverageGameScoreOrNull(playername)
-    }
-    content_type 'application/json'
-    JSON.generate(board)
+    content_type 'text/plain'
+    GameReports::gameLeaderboard()
+        .map{|pair| "#{pair[0].ljust(20)}: #{pair[1]}" }
+        .join("\n") + "\n"
 end
 
 get '/game/:personalkey/players' do
     personalkey = params['personalkey']
     if !GameIO::personalKeyIsCurrent(personalkey) then
         status 401
-        return
+        return "Incorrect/Unknown personal key\n"
     end
     content_type 'application/json'
     JSON.generate(GameIO::getPlayerNames())
@@ -233,16 +285,21 @@ get '/game/:personalkey/start/:playername' do
     counterPartyName = params['playername']
     if !GameIO::personalKeyIsCurrent(personalkey) then
         status 401
-        return
+        return "Incorrect/Unknown personal key\n"
     end
     partyName = GameIO::personalKeyToPlayerNameOrNull(personalkey)
     if partyName.nil? then
         status 404
-        return
+        return "Incorrect/Unknown party name\n"
     end
     if !GameIO::getPlayerNames().include?(counterPartyName) then
         status 404
-        return
+        return "Incorrect/Unknown counterparty name\n"
+    end
+    processedGames = GameIO::getProcessedUserGamesFromDisk(partyName)
+    if IPD::trueIfAlreadyOpenGameBetweenPlayers(processedGames, partyName, counterPartyName) then
+        status 401
+        return "There already is a game on-going between #{partyName} and #{counterPartyName}\n" 
     end
     gameId = SecureRandom.uuid
     game = Utils::spawnGame(gameId, partyName, counterPartyName)
@@ -250,7 +307,7 @@ get '/game/:personalkey/start/:playername' do
     answer = {
         "event" => "Starting a game between you (#{partyName}) and #{counterPartyName}",
         "party" => partyName,
-        "cuonterparty" => counterPartyName,
+        "counterparty" => counterPartyName,
         "gameId" => gameId
     }
     content_type 'application/json'
@@ -262,24 +319,24 @@ get '/game/:personalkey/play/:gameid/cooperate' do
     gameId = params['gameid']
     if !GameIO::personalKeyIsCurrent(personalkey) then
         status 401
-        return
+        return "Incorrect/Unknown personal key\n"
     end
     partyName = GameIO::personalKeyToPlayerNameOrNull(personalkey)
     if partyName.nil? then
         status 404
-        return
+        return "Incorrect/Unknown party name\n"
     end
     game = GameIO::getGameFromDiskOrNull(gameId)
     if game.nil? then
         status 404
-        return
+        return "Incorrect/Unknown game identifier\n"
     end  
     if !game["game_metadata"]["players"].include?(partyName) then
         status 401
-        return
+        return "Trying to access a game that you are not a part of\n"
     end 
     content_type 'application/json'  
-    if game[partyName].size < 10 then
+    if game[partyName].size < game["game_metadata"]["game_length"] then
         game[partyName] << 1
         GameIO::putGameToDisk(game)
         "[true]"
@@ -293,24 +350,24 @@ get '/game/:personalkey/play/:gameid/betray' do
     gameId = params['gameid']
     if !GameIO::personalKeyIsCurrent(personalkey) then
         status 401
-        return
+        return "Incorrect/Unknown personal key\n"
     end
     partyName = GameIO::personalKeyToPlayerNameOrNull(personalkey)
     if partyName.nil? then
         status 404
-        return
+        return "Incorrect/Unknown party name\n"
     end
     game = GameIO::getGameFromDiskOrNull(gameId)
     if game.nil? then
         status 404
-        return
+        return "Incorrect/Unknown game identifier\n"
     end
     if !game["game_metadata"]["players"].include?(partyName) then
         status 401
-        return
+        return "Trying to access a game that you are not a part of\n"
     end 
     content_type 'application/json'
-    if game[partyName].size < 10 then
+    if game[partyName].size < game["game_metadata"]["game_length"] then
         game[partyName] << 0
         GameIO::putGameToDisk(game)
         "[true]"
@@ -324,21 +381,21 @@ get '/game/:personalkey/game-status/:gameid' do
     gameId = params['gameid']
     if !GameIO::personalKeyIsCurrent(personalkey) then
         status 401
-        return
+        return "Incorrect/Unknown personal key\n"
     end
     partyName = GameIO::personalKeyToPlayerNameOrNull(personalkey)
     if partyName.nil? then
         status 404
-        return
+        return "Incorrect/Unknown party name\n"
     end
     game = GameIO::getGameFromDiskOrNull(gameId)
     if game.nil? then
         status 404
-        return
+        return "Incorrect/Unknown game identifier\n"
     end
     if !game["game_metadata"]["players"].include?(partyName) then
         status 401
-        return
+        return "Trying to access a game that you are not a part of\n"
     end 
     content_type 'application/json'
     JSON.generate(IPD::gamePostDiskExtractionProcessing(game, partyName))
@@ -348,12 +405,12 @@ get '/game/:personalkey/my-games' do
     personalkey  = params['personalkey']
     if !GameIO::personalKeyIsCurrent(personalkey) then
         status 401
-        return
+        return "Incorrect/Unknown personal key\n"
     end
     partyName = GameIO::personalKeyToPlayerNameOrNull(personalkey)
     if partyName.nil? then
         status 404
-        return
+        return "Incorrect/Unknown party name\n"
     end   
     content_type 'application/json'
     JSON.generate(GameIO::getProcessedUserGamesFromDisk(partyName))

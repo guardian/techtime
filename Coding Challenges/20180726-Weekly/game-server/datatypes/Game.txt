@@ -1,26 +1,23 @@
 {
     "Alice"  : Array[Digits],
     "Bob"    : Array[Digits],
-    "scores" : null,
+    "scores" : null or Scores
     "game_metadata" : {
         "game_id"       : String
         "starting_date" : DateTime,
         "players"       : [Name1, Name2]
+        "game_length"   : Integer
+        "game_length_knowledge" : GameLengthKnowledge
         "status"        : "on-going"
     }
 }
 
-{
-    "Alice"  : Array[Digits],
-    "Bob"    : Array[Digits],
-    "scores" : {
-        "Alice" : Integer,
-        "Bob"   : Integer
-    }
-    "game_metadata" : {
-        "game_id"       : String
-        "starting_date" : DateTime
-        "players"       : [Name1, Name2]
-        "status"        : "completed"
-    }
+Scores {
+    "Alice" : Integer,
+    "Bob"   : Integer
+}
+
+GameLengthKnowledge = {
+    "Alice" : Boolean,
+    "Bob"   : Boolean
 }

@@ -17,5 +17,9 @@ Francis Carr;       2018-07-23 18:00:00 +0100; 2
 Sam Desborough;     2018-07-23 18:00:00 +0100; 1.4
 Sam Desborough;     2018-07-27 16:30:00 +0100; 2
 
-
+# Interactive Prisoner Dilemma, Phase 1
+Sam Desborough;     2018-07-30 20:30:00 +0100; 10
+Alex Ware;          2018-07-30 20:30:00 +0100; 7
+Francis Carr;       2018-07-30 20:30:00 +0100; 4.90
+Richard Beddington; 2018-07-30 20:30:00 +0100; 3.43
 
