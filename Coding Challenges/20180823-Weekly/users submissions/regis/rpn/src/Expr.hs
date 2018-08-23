@@ -20,13 +20,13 @@ data Expr = I Integer      -- { ... -2, -1, 0, 1, 2, ... }
 
 -- RPN output
 instance Show Expr where
-  show (I i) = show i
-  show (Sum e1 e2) = show e1 ++ " " ++ show e2 ++ " +"
-  show (Sub e1 e2) = show e1 ++ " " ++ show e2 ++ " -"
-  show (Mul e1 e2) = show e1 ++ " " ++ show e2 ++ " *"
-  show (Div e1 e2) = show e1 ++ " " ++ show e2 ++ " /"
-  show (Exp e1 e2) = show e1 ++ " " ++ show e2 ++ " ^"
-  show (Paren e)   = show e
+  showsPrec d (I i) = shows i
+  showsPrec d (Sum e1 e2) = showsPrec d e1 . showString " " . showsPrec d e2 . showString " +"
+  showsPrec d (Sub e1 e2) = showsPrec d e1 . showString " " . showsPrec d e2 . showString " -"
+  showsPrec d (Mul e1 e2) = showsPrec d e1 . showString " " . showsPrec d e2 . showString " *"
+  showsPrec d (Div e1 e2) = showsPrec d e1 . showString " " . showsPrec d e2 . showString " /"
+  showsPrec d (Exp e1 e2) = showsPrec d e1 . showString " " . showsPrec d e2 . showString " ^"
+  showsPrec d (Paren e)   = showsPrec d e
 
 -- | Expression parser. 
 -- expr   ::= expr '+' term | expr '-' term | term
