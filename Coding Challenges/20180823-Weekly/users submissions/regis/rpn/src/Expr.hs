@@ -43,13 +43,13 @@ expr = term >>= \t ->
 
 term :: (Monad m, TokenParsing m) => m Expr
 term = factor >>= \f ->
-      Mul f <$> (symbolic '*' *> factor)
-  <|> Div f <$> (symbolic '/' *> factor)
+      Mul f <$> (symbolic '*' *> term)
+  <|> Div f <$> (symbolic '/' *> term)
   <|> pure f
 
 factor :: (Monad m, TokenParsing m) => m Expr
 factor = terminal >>= \t ->
-      Exp t <$> (symbolic '^' *> terminal)
+      Exp t <$> (symbolic '^' *> factor)
   <|> pure t
 
 terminal :: (Monad m, TokenParsing m) => m Expr
