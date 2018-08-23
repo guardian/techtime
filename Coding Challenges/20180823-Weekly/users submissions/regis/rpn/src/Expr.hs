@@ -1,4 +1,8 @@
-module Expr where
+module Expr
+( run
+, expr
+, Expr
+) where
 
 import Control.Applicative ((<|>))
 import Text.Parser.Combinators (try)
