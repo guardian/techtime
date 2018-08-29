@@ -10,7 +10,7 @@ Then in the `rpn` folder:
 
 ```
 stack build
-stack run rpn-exe
+stack exec rpn-exe
 ```
 
 Type expressions to your heart's content ✌️
