@@ -25,6 +25,7 @@ Richard Beddington; 2018-07-30 20:30:00 +0100; 3.43
 
 # Week 4
 Sophie Lambrakis;   2018-08-17 07:49:00 +0100; 5
+Sophie Lambrakis;   2018-08-29 14:40:00 +0100; 1
 
 # Week 5
 Regis Kuckaertz;    2018-08-29 13:00:00 +0100; 8
