@@ -7,7 +7,7 @@ This week's challenge is computational heavy. The task is to find a sequence `s`
 s = [str_1, str_2, ..., str_n]
 ```
 
-sucj that, for **any** permutation `p` of the sequence `s`, 
+such that, for **any** permutation `p` of the sequence `s`, 
 
 `sha1(concat(p(s)))` ends with a `0`.
 
