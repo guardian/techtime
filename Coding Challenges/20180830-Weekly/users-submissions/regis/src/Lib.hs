@@ -1,6 +1,7 @@
 module Lib where
 
 import Control.Monad (replicateM)
+import Control.Parallel.Strategies (rseq, parMap)
 import Crypto.Hash (Digest, hash)
 import Crypto.Hash.Algorithms (SHA1)
 import Data.ByteString.Char8 (pack)
@@ -38,10 +39,10 @@ permsQ (a, b, c, d) = [ (a, b, c, d) , (a, c, b, d) , (b, a, c, d) , (b, c, a, d
 
 -- | Checks if the SHA1 of a string ends with 0
 validS :: String -> Bool
-valid = (== '0') . last . hashseq
+validS = (== '0') . last . hashseq
 
 validT :: Triple String -> Bool
-valid (a, b, c) = validS (a ++ b ++ c)
+validT (a, b, c) = validS (a ++ b ++ c)
 
 validQ :: Quadruple String -> Bool
 validQ (a, b, c, d) = validS (a ++ b ++ c ++ d)
@@ -56,8 +57,8 @@ hashseq = show . sha1
 
 -- | Explore the space of lists of length 3
 explore :: String -> [Triple String]
-explore = map head . filter (all valid . tail) . map perms . triples
+explore = map head . filter (all validT . tail) . parMap rseq map perms . triples
 
 -- | Explore the space of lists of length 4
 exploreQ :: String -> [Quadruple String]
-exploreQ = map head . filter (all validQ . tail) . map permsQ . quadruples
+exploreQ = map head . filter (all validQ . tail) . parMap rseq permsQ . quadruples
