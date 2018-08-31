@@ -34,3 +34,5 @@ Richard Beddington; 2018-07-30 20:30:00 +0100; 8
 
 # Week 6 (sequence permutations)
 Richard Beddington; 2018-07-31 00:00:00 +0100; 8
+Regis Kuckaertz;    2018-07-31 00:00:00 +0100; 8
+
