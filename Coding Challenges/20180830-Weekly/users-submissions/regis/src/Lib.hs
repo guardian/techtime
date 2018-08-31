@@ -34,7 +34,7 @@ permsQ :: Quadruple a -> [Quadruple a]
 permsQ (a, b, c, d) = [ (a, b, c, d) , (a, c, b, d) , (b, a, c, d) , (b, c, a, d) , (c, a, b, d) , (c, b, a, d)
                       , (a, b, d, c) , (a, c, d, b) , (b, a, d, c) , (b, c, d, a) , (c, a, d, b) , (c, b, d, a)
                       , (a, d, b, c) , (a, d, c, b) , (b, d, a, c) , (b, d, c, a) , (c, d, a, b) , (c, d, b, a)
-                      , (a, d, b, c) , (d, a, c, b) , (d, b, a, c) , (d, b, c, a) , (d, c, a, b) , (d, c, b, a)
+                      , (d, a, b, c) , (d, a, c, b) , (d, b, a, c) , (d, b, c, a) , (d, c, a, b) , (d, c, b, a)
                       ]
 
 -- | Checks if the SHA1 of a string ends with 0
