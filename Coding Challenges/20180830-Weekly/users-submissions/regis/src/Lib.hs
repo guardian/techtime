@@ -57,7 +57,7 @@ hashseq = show . sha1
 
 -- | Explore the space of lists of length 3
 explore :: String -> [Triple String]
-explore = map head . filter (all validT . tail) . parMap rseq map perms . triples
+explore = map head . filter (all validT . tail) . parMap rseq perms . triples
 
 -- | Explore the space of lists of length 4
 exploreQ :: String -> [Quadruple String]
