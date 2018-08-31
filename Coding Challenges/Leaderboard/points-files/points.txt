@@ -30,3 +30,7 @@ Sophie Lambrakis;   2018-08-29 14:40:00 +0100; 1
 # Week 5
 Regis Kuckaertz;    2018-08-29 13:00:00 +0100; 8
 Adam Fisher;        2018-08-29 15:00:00 +0100; 5
+Richard Beddington; 2018-07-30 20:30:00 +0100; 8
+
+# Week 6 (sequence permutations)
+Richard Beddington; 2018-07-31 00:00:00 +0100; 8
