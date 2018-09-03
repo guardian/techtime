@@ -10,8 +10,8 @@ import Lib
 main :: IO ()
 main = loop
   where loop = do seq <- replicateM 100 (randomRIO ('a', 'z'))
-                  let (x : y : xs) = seq
-                  if valid ([x], [y], xs)
+                  let (x : y : z : xs) = seq
+                  if validQ ([x], [y], [z], xs)
                     then case exploreQ seq of
                       [] -> loop
                       xs -> putStrLn ("Found " ++ show xs)

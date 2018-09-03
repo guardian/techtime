@@ -25,6 +25,7 @@ dependencies:
 - memory
 - cryptonite
 - random
+- parallel
 
 library:
   source-dirs: src

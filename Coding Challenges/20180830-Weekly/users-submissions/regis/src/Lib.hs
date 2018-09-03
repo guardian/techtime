@@ -1,6 +1,7 @@
 module Lib where
 
 import Control.Monad (replicateM)
+import Control.Parallel.Strategies (rseq, parMap)
 import Crypto.Hash (Digest, hash)
 import Crypto.Hash.Algorithms (SHA1)
 import Data.ByteString.Char8 (pack)
@@ -33,15 +34,15 @@ permsQ :: Quadruple a -> [Quadruple a]
 permsQ (a, b, c, d) = [ (a, b, c, d) , (a, c, b, d) , (b, a, c, d) , (b, c, a, d) , (c, a, b, d) , (c, b, a, d)
                       , (a, b, d, c) , (a, c, d, b) , (b, a, d, c) , (b, c, d, a) , (c, a, d, b) , (c, b, d, a)
                       , (a, d, b, c) , (a, d, c, b) , (b, d, a, c) , (b, d, c, a) , (c, d, a, b) , (c, d, b, a)
-                      , (a, d, b, c) , (d, a, c, b) , (d, b, a, c) , (d, b, c, a) , (d, c, a, b) , (d, c, b, a)
+                      , (d, a, b, c) , (d, a, c, b) , (d, b, a, c) , (d, b, c, a) , (d, c, a, b) , (d, c, b, a)
                       ]
 
 -- | Checks if the SHA1 of a string ends with 0
 validS :: String -> Bool
-valid = (== '0') . last . hashseq
+validS = (== '0') . last . hashseq
 
 validT :: Triple String -> Bool
-valid (a, b, c) = validS (a ++ b ++ c)
+validT (a, b, c) = validS (a ++ b ++ c)
 
 validQ :: Quadruple String -> Bool
 validQ (a, b, c, d) = validS (a ++ b ++ c ++ d)
@@ -56,8 +57,8 @@ hashseq = show . sha1
 
 -- | Explore the space of lists of length 3
 explore :: String -> [Triple String]
-explore = map head . filter (all valid . tail) . map perms . triples
+explore = map head . filter (all validT . tail) . parMap rseq perms . triples
 
 -- | Explore the space of lists of length 4
 exploreQ :: String -> [Quadruple String]
-exploreQ = map head . filter (all validQ . tail) . map permsQ . quadruples
+exploreQ = map head . filter (all validQ . tail) . parMap rseq permsQ . quadruples
