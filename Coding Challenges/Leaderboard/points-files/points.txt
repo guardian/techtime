@@ -33,14 +33,14 @@ Adam Fisher;        2018-08-29 15:00:00 +0100; 5
 Richard Beddington; 2018-07-30 20:30:00 +0100; 8
 
 # Week 6 (sequence permutations)
-Richard Beddington; 2018-07-31 00:00:00 +0100; 8
-Richard Beddington; 2018-07-31 00:00:00 +0100; 2
-Regis Kuckaertz;    2018-07-31 00:00:00 +0100; 8
-Regis Kuckaertz;    2018-07-31 00:00:00 +0100; 2
-Sophie Lambrakis;   2018-07-31 00:00:00 +0100; 8
-Sophie Lambrakis;   2018-07-31 00:00:00 +0100; 2
-Jonathon Herbert;   2018-07-31 00:00:00 +0100; 8
-
+Richard Beddington; 2018-08-03 18:00:00 +0100; 8
+Richard Beddington; 2018-08-03 18:00:00 +0100; 2
+Regis Kuckaertz;    2018-08-03 18:00:00 +0100; 8
+Regis Kuckaertz;    2018-08-03 18:00:00 +0100; 2
+Sophie Lambrakis;   2018-08-03 18:00:00 +0100; 8
+Sophie Lambrakis;   2018-08-03 18:00:00 +0100; 2
+Jonathon Herbert;   2018-08-03 18:00:00 +0100; 8
+Jonathon Herbert;   2018-08-03 18:00:00 +0100; 2
 
 
 
