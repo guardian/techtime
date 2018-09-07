@@ -87,3 +87,4 @@ There is an automatic feed from the game engine to the leaderboard, therefore th
 ### Notes
 
 - The lack of API key means that nothing prevents you from submitting a solution pretending being somebody else, meaning using somebody else's name. But since the server only keeps the best solution against each name, in the worse case you will do nothing, and in the best case you will have improved somebody else's solution. 
+- As with the games I design, you can play manually using `curl`, but you probably want to write something to extract the current map, compute your best path and submit it. Don't forget to do it before the end of the hour!
