@@ -19,6 +19,12 @@ Your mission, should you choose to accept it, is to solve the [travelling salesm
 
 ## Game mechanics
 
+Say hello to the server
+
+```
+curl http://10.249.16.173:14361
+```
+
 ### Game API and datatypes
 
 To get the current map:
@@ -34,7 +40,7 @@ This will return a JSON object looking like this
     "mapId"  : "796b1df1-b0e9-4138-ae2d-9aa681dd2ed6",
     "points" : [
         {
-            "label" : "e1",
+            "label" : "e167",
             "coordinates": [2, -2.17]
         }
         ...
@@ -46,10 +52,10 @@ Each point has a label and coordinates. The label is unique to that point and wi
 
 You will then want to submit a solution. A solution is an ordered sequence of points that the salesman should go through. From the first point to the last. 
 
-Assuming that you think the salesman should visit the points in this order: `e1` -> `f4` -> ... -> `21`, you would then call
+Assuming that you think the salesman should visit the points in this order: `e167` -> `f432` -> ... -> `21dd`, you would then call
 
 ```
-curl http://10.249.16.173:14361/game/v1/submit/<yourname>/<mapId>/e1,f4,...,21
+curl http://10.249.16.173:14361/game/v1/submit/<yourname>/<mapId>/e167,f432,...,21dd
 ```
 
 After `submit`, you indicate your name, like, say, "pascal.honore". Try and use the same name during the entire duration of the game. Then you specify the `mapId`, this to ensure that you do not submit a solution for the wrong map. Then you list the points by giving their labels separated by comas.
