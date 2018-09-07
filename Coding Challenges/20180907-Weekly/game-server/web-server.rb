@@ -35,6 +35,7 @@ DATA_FOLDER_PATH = "/Galaxy/DataBank/WeeklyCodingChallenges/20180907-Weekly/#{LU
 
 class GameLibrary
 
+    # GameLibrary::hourCode()
     def self.hourCode()
         Time.new.strftime("%Y-%m-%d-%H")
     end
@@ -55,6 +56,7 @@ class GameLibrary
         if !File.exists?(mapfilepath) then
             map = {}
             map["mapId"] = SecureRandom.uuid
+            map["timestamp"] = GameLibrary::hourCode()
             map["points"] = (1..12).map{|indx|
                 {
                     "label" => SecureRandom.hex(2),

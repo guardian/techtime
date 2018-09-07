@@ -41,6 +41,7 @@ This will return a JSON object looking like this
     "points" : [
         {
             "label" : "e167",
+            "timestamp": "2018-09-07-11",
             "coordinates": [2, -2.17]
         }
         ...
@@ -48,9 +49,11 @@ This will return a JSON object looking like this
 }
 ```
 
+The `timestamp` is the the date and the hour. The value `2018-09-07-11` says that the map lives until 11:59 on 2018-09-07.
+
 Each point has a label and coordinates. The label is unique to that point and will be used by you to refer to the point later on. 
 
-You will then want to submit a solution. A solution is an ordered sequence of points that the salesman should go through. From the first point to the last. 
+You will then want to submit a solution. A solution is an ordered sequence of points that the salesman should go through. From the first point to the last. All points must be visited.
 
 Assuming that you think the salesman should visit the points in this order: `e167` -> `f432` -> ... -> `21dd`, you would then call
 
@@ -60,7 +63,7 @@ curl http://10.249.16.173:14361/game/v1/submit/<yourname>/<mapId>/e167,f432,...,
 
 After `submit`, you indicate your name, like, say, "pascal.honore". Try and use the same name during the entire duration of the game. Then you specify the `mapId`, this to ensure that you do not submit a solution for the wrong map. Then you list the points by giving their labels separated by comas.
 
-When you submit a solution the server will compute the length of the path specified by your sequence. You should try and minimise that path.
+When you submit a solution the server will compute the length of the path specified by your sequence. You should try and minimise that path, and again all the points should be in your path.
 
 ### Scoring
 
