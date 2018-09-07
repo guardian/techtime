@@ -267,9 +267,15 @@ get '/game/v1/scores' do
                 ].join("\n")
             }.join("\n") + "\n",
         "Summary: ",    
-        users.map{|username, score|
-            "   - #{username.ljust(20)} : #{score}"
-        }.join("\n")
+        users
+            .keys
+            .map{|username| [username, users[username]] }
+            .sort{|p1,p2| p1[1] <=> p2[1] }
+            .reverse
+            .map{|p|
+                username, score = p
+                "   - #{username.ljust(20)} : #{score}"
+            }.join("\n")
     ].join("\n") + "\n"
 
 
