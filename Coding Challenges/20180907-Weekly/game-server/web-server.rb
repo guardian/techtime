@@ -72,10 +72,17 @@ class GameLibrary
         JSON.parse(IO.read(mapfilepath))
     end
 
-    # GameLibrary::getCurrentGame()
-    def self.getCurrentGame()
+    # GameLibrary::getCurrentMap()
+    def self.getCurrentMap()
         folderpath = GameLibrary::getFolderpathForThisHourCreateIfNotExists()
         GameLibrary::getMapAtHourFolderCreateIfNotExists(folderpath)
+    end
+
+    # GameLibrary::userSubmittedPathIsValidForMap(pathAsString, map)
+    def self.userSubmittedPathIsValidForMap(pathAsString, map)
+        mapLabels = map["points"].map{|point| point["label"] }
+        userLabels = pathAsString.split(",").map{|l| l.strip }
+        ( mapLabels - userLabels ).size==0 and ( userLabels - mapLabels ).size==0
     end
 
 end
@@ -97,19 +104,27 @@ end
 
 get '/game/v1/map' do
     content_type 'application/json'
-    JSON.pretty_generate(GameLibrary::getCurrentGame())
+    JSON.pretty_generate(GameLibrary::getCurrentMap())
 end
 
 get '/game/v1/submit/:username/:mapid/:path' do
+    
     content_type 'application/json'
+    
     username = params['username']
     mapid    = params['mapid']
     path     = params['path']
 
+    currentMap = GameLibrary::getCurrentMap()
 
-    if GameLibrary::getCurrentGame()["mapId"] != mapid then
+    if currentMap["mapId"] != mapid then
         status 401
-        return "Invalid map identifier\n"
+        return "Invalid map identifier (are you using an outdated one ?)\n"
+    end
+
+    if !GameLibrary::userSubmittedPathIsValidForMap(path, currentMap) then
+        status 401
+        return "Invalid path (are you using the correct labels)\n"
     end
 
     usernamex = Digest::SHA1.hexdigest(username)[0,8]
