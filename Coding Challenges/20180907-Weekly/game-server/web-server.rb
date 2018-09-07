@@ -12,6 +12,10 @@ require 'securerandom'
 # SecureRandom.hex(2) #=> "eb69"
 # SecureRandom.uuid   #=> "2d931510-d99f-494a-8c67-87feb05e1594"
 
+require 'digest/sha1'
+# Digest::SHA1.hexdigest 'foo'
+# Digest::SHA1.file(myFile).hexdigest
+
 require 'json'
 
 require 'find'
@@ -95,4 +99,28 @@ get '/game/v1/map' do
     content_type 'application/json'
     JSON.pretty_generate(GameLibrary::getCurrentGame())
 end
+
+get '/game/v1/submit/:username/:mapid/:path' do
+    content_type 'application/json'
+    username = params['username']
+    mapid    = params['mapid']
+    path     = params['path']
+
+
+    if GameLibrary::getCurrentGame()["mapId"] != mapid then
+        status 401
+        return "Invalid map identifier\n"
+    end
+
+    usernamex = Digest::SHA1.hexdigest(username)[0,8]
+    usernameSubmissionFilepath = "#{GameLibrary::getFolderpathForThisHourCreateIfNotExists()}/#{usernamex}.json"
+    data = {
+        "username" => username,
+        "mapid" => mapid,
+        "path" => path
+    }
+    File.open(usernameSubmissionFilepath, "w"){|f| f.puts(JSON.pretty_generate(data)) }
+    JSON.pretty_generate(data)
+end
+
 
