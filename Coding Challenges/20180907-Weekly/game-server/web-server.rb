@@ -229,30 +229,48 @@ get '/game/v1/scores' do
 
     content_type 'text/plain'
 
-    GameLibrary::getHoursFolderPaths()
-        .map{|hoursFolderpath|
-            map = JSON.parse(IO.read("#{hoursFolderpath}/map.json"))
-            userSubmissionOrdered = GameLibrary::getUserSubmissionFilepathsFor(hoursFolderpath)
-                .map{|filepath|
-                    JSON.parse(IO.read(filepath))
-                }
-                .sort{|u1,u2|
-                    GameLibrary::pathLengthAgainstMap(u1["path"], map) <=> GameLibrary::pathLengthAgainstMap(u2["path"], map)
-                }
-            score = 0.1/0.7
-            lastlength = nil
-            [
-                "",
-                File.basename(hoursFolderpath),
-                userSubmissionOrdered.map{|u|
-                    currentUserLength = GameLibrary::pathLengthAgainstMap(u["path"], map).round(3)
-                    if currentUserLength != lastlength then
-                        score = score*0.7 
-                    end
-                    lastlength = currentUserLength
-                    "#{u["username"].ljust(20)} , length: #{GameLibrary::pathLengthAgainstMap(u["path"], map).round(3)} , score: #{score.round(3)}"
-                }.join("\n")
-            ].join("\n")
-        }.join("\n") + "\n"
+    users = {}
+
+    addScoreToUserLambda = lambda {|users, user, score|
+        if users[user].nil? then
+            users[user] = 0
+        end
+        users[user] = (users[user] + score).round(3)
+        users
+    }
+
+    [
+        GameLibrary::getHoursFolderPaths()
+            .map{|hoursFolderpath|
+                map = JSON.parse(IO.read("#{hoursFolderpath}/map.json"))
+                userSubmissionOrdered = GameLibrary::getUserSubmissionFilepathsFor(hoursFolderpath)
+                    .map{|filepath|
+                        JSON.parse(IO.read(filepath))
+                    }
+                    .sort{|u1,u2|
+                        GameLibrary::pathLengthAgainstMap(u1["path"], map) <=> GameLibrary::pathLengthAgainstMap(u2["path"], map)
+                    }
+                score = 0.1/0.7
+                lastlength = nil
+                [
+                    "",
+                    File.basename(hoursFolderpath),
+                    userSubmissionOrdered.map{|u|
+                        currentUserLength = GameLibrary::pathLengthAgainstMap(u["path"], map).round(3)
+                        if currentUserLength != lastlength then
+                            score = score*0.7 
+                        end
+                        lastlength = currentUserLength
+                        users = addScoreToUserLambda.call(users, u["username"], score)
+                        "#{u["username"].ljust(20)} , length: #{GameLibrary::pathLengthAgainstMap(u["path"], map).round(3)} , score: #{score.round(3)}"
+                    }.join("\n")
+                ].join("\n")
+            }.join("\n") + "\n",
+        "Summary: ",    
+        users.map{|username, score|
+            "   - #{username.ljust(20)} : #{score}"
+        }.join("\n")
+    ].join("\n") + "\n"
+
 
 end
