@@ -10,7 +10,7 @@ In other words, everything you've ever dreamt of.
 
 ## Introduction
 
-We play in the cartesian space, meaning the 3D space where each point has three coordinates. Such a triplet of coordinates is written `(2, -2.17, 5.8)`, for the point whose first coordinate is `2`, the second coordinate is `-2.17` and the third is `5.8`.
+We play in the cartesian plan, meaning the 2D space where each point has two coordinates. Such a pair of coordinates is written `(2, -2.17)`, for the point whose first coordinate is `2` and the second coordinate is `-2.17`.
 
 The game server will generate 12 points. We will be referring to such a choice as a **map**.
 
@@ -34,7 +34,7 @@ This will return a JSON object looking like this
     "points" : [
         {
             "label" : "e1",
-            "coordinates": [2, -2.17, 5.8]
+            "coordinates": [2, -2.17]
         }
         ...
     ]
