@@ -23,21 +23,21 @@ Your mission, should you choose to accept it, is to solve the [travelling salesm
 To get the current map:
 
 ```
-curl http://lucille19.local:14361/game/v1/map
+curl http://10.249.16.173:14361/game/v1/map
 ```
 
 This will return a JSON object looking like this
 
 ```
 {
-	"mapId"  : "796b1df1-b0e9-4138-ae2d-9aa681dd2ed6",
-	"points" : [
-		{
-			"label" : "e1",
-			"coordinates": [2, -2.17, 5.8]
-		}
-		...
-	]
+    "mapId"  : "796b1df1-b0e9-4138-ae2d-9aa681dd2ed6",
+    "points" : [
+        {
+            "label" : "e1",
+            "coordinates": [2, -2.17, 5.8]
+        }
+        ...
+    ]
 }
 ```
 
@@ -48,7 +48,7 @@ You will then want to submit a solution. A solution is an ordered sequence of po
 Assuming that you think the salesman should visit the points in this order: `e1` -> `f4` -> ... -> `21`, you would then call
 
 ```
-curl http://lucille19.local:14361/game/v1/submit/<yourname>/<mapId>/e1,f4,...,21
+curl http://10.249.16.173:14361/game/v1/submit/<yourname>/<mapId>/e1,f4,...,21
 ```
 
 After `submit`, you indicate your name, like, say, "pascal.honore". Try and use the same name during the entire duration of the game. Then you specify the `mapId`, this to ensure that you do not submit a solution for the wrong map. Then you list the points by giving their labels separated by comas.
@@ -78,7 +78,7 @@ The API urls have a fragment `v1`. This is because we want this game to run more
 The game has got its own scoring which can bee seen at
 
 ```
-curl http://lucille19.local:14361/game/v1/scores
+curl http://10.249.16.173:14361/game/v1/scores
 ```
 
 There is an automatic feed from the game engine to the leaderboard, therefore the leaderboard is also real-time up to date. If you submit something to the game or submit an improvement to an existing solution, both the game score and the leaderboard will reflect it. Note though that the leaderboard will report the name you have chosen for the game, so you may appear in two places in the leaderboard. This discrepancy will be fixed at the end of the week when Pascal moves us from one variant to another one (essentially when game scores are manually permanently committed to the leaderboard).
