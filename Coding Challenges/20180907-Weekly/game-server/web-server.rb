@@ -262,7 +262,7 @@ get '/game/v1/scores' do
                         end
                         lastlength = currentUserLength
                         users = addScoreToUserLambda.call(users, u["username"], score)
-                        "#{u["username"].ljust(20)} , length: #{GameLibrary::pathLengthAgainstMap(u["path"], map).round(3)} , score: #{score.round(3)}"
+                        "#{u["username"].ljust(20)} , length: #{currentUserLength} , score: #{score.round(3)}"
                     }.join("\n")
                 ].join("\n")
             }.join("\n") + "\n",
