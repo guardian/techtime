@@ -91,8 +91,6 @@ The game has got its own scoring which can bee seen at
 curl http://10.249.16.173:14361/game/v1/scores
 ```
 
-There is an automatic feed from the game engine to the leaderboard, therefore the leaderboard is also real-time up to date. If you submit something to the game or submit an improvement to an existing solution, both the game score and the leaderboard will reflect it. Note though that the leaderboard will report the name you have chosen for the game, so you may appear in two places in the leaderboard. This discrepancy will be fixed at the end of the week when Pascal moves us from one variant to another one (essentially when game scores are manually permanently committed to the leaderboard).
-
 ### Notes
 
 - The lack of API key means that nothing prevents you from submitting a solution pretending being somebody else, meaning using somebody else's name. But since the server only keeps the best solution against each name, in the worse case you will do nothing, and in the best case you will have improved somebody else's solution. 
