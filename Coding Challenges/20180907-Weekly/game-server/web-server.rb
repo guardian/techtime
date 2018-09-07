@@ -150,6 +150,21 @@ class GameLibrary
         data
     end
 
+    # GameLibrary::getHoursFolderPaths()
+    def self.getHoursFolderPaths()
+        Dir.entries(DATA_FOLDER_PATH)
+            .select{|filename| filename[0,1]!="." }
+            .map{|filename| "#{DATA_FOLDER_PATH}/#{filename}" }
+    end
+
+    # GameLibrary::getUserSubmissionFilepathsFor(hoursFolderpath)
+    def self.getUserSubmissionFilepathsFor(hoursFolderpath)
+        Dir.entries(hoursFolderpath)
+            .select{|filename| filename[0,1]!="." }
+            .select{|filename| filename != "map.json" }
+            .map{|filename| "#{hoursFolderpath}/#{filename}" }
+    end
+
 end
 
 # -- --------------------------------------------------
@@ -210,4 +225,29 @@ get '/game/v1/submit/:username/:mapid/:path' do
     end
 end
 
+get '/game/v1/scores' do
 
+    content_type 'text/plain'
+
+    GameLibrary::getHoursFolderPaths()
+        .map{|hoursFolderpath|
+            map = JSON.parse(IO.read("#{hoursFolderpath}/map.json"))
+            userSubmissionOrdered = GameLibrary::getUserSubmissionFilepathsFor(hoursFolderpath)
+                .map{|filepath|
+                    JSON.parse(IO.read(filepath))
+                }
+                .sort{|u1,u2|
+                    GameLibrary::pathLengthAgainstMap(u1["path"], map) <=> GameLibrary::pathLengthAgainstMap(u2["path"], map)
+                }
+            score = 0.1/0.7
+            [
+                "",
+                File.basename(hoursFolderpath),
+                userSubmissionOrdered.map{|u|
+                    score = score*0.7
+                    "#{u["username"].ljust(20)} , length: #{GameLibrary::pathLengthAgainstMap(u["path"], map).round(3)} , score: #{score.round(3)}"
+                }.join("\n")
+            ].join("\n")
+        }.join("\n") + "\n"
+
+end
