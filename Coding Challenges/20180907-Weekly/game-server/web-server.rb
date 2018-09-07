@@ -240,11 +240,16 @@ get '/game/v1/scores' do
                     GameLibrary::pathLengthAgainstMap(u1["path"], map) <=> GameLibrary::pathLengthAgainstMap(u2["path"], map)
                 }
             score = 0.1/0.7
+            lastlength = nil
             [
                 "",
                 File.basename(hoursFolderpath),
                 userSubmissionOrdered.map{|u|
-                    score = score*0.7
+                    currentUserLength = GameLibrary::pathLengthAgainstMap(u["path"], map).round(3)
+                    if currentUserLength != lastlength then
+                        score = score*0.7 
+                    end
+                    lastlength = currentUserLength
                     "#{u["username"].ljust(20)} , length: #{GameLibrary::pathLengthAgainstMap(u["path"], map).round(3)} , score: #{score.round(3)}"
                 }.join("\n")
             ].join("\n")
