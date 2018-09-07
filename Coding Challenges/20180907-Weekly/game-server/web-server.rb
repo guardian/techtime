@@ -85,6 +85,71 @@ class GameLibrary
         ( mapLabels - userLabels ).size==0 and ( userLabels - mapLabels ).size==0
     end
 
+    # GameLibrary::getPointForlabelAtMapOrNull(label, map)
+    def self.getPointForlabelAtMapOrNull(label, map)
+        map["points"].each{|point|
+            return point if point["label"]==label
+        }
+        nil
+    end
+
+    # GameLibrary::distanceBetweenTwoPoints(point1, point2)
+    def self.distanceBetweenTwoPoints(point1, point2)
+        dx = point1["coordinates"][0] - point2["coordinates"][0]
+        dy = point1["coordinates"][1] - point2["coordinates"][1]
+        Math.sqrt( (dx**2) + (dy**2) )
+    end
+
+    # GameLibrary::computePointsSequenceLengthCore(lenghtAccumulation, pointsDone, pointsLeft)
+    def self.computePointsSequenceLengthCore(lenghtAccumulation, pointsDone, pointsLeft)
+        if pointsLeft.size==0 then
+            return lenghtAccumulation
+        end
+        if pointsDone.size==0 then
+            nextPoint = pointsLeft.shift
+            return GameLibrary::computePointsSequenceLengthCore(lenghtAccumulation, [ nextPoint ], pointsLeft)
+        end
+        point1 = pointsDone.last
+        point2 = pointsLeft.shift
+        lenghtAccumulation = lenghtAccumulation + GameLibrary::distanceBetweenTwoPoints(point1, point2)
+        GameLibrary::computePointsSequenceLengthCore(lenghtAccumulation, pointsDone + [point2], pointsLeft)
+    end
+
+    # GameLibrary::computePointsSequenceLengthInterface(points)
+    def self.computePointsSequenceLengthInterface(points)
+        GameLibrary::computePointsSequenceLengthCore(0, [], points)
+    end
+
+    # GameLibrary::pathLengthAgainstMap(pathAsString, map)
+    def self.pathLengthAgainstMap(pathAsString, map)
+        points = pathAsString.split(",").map{|l| l.strip }.map{|label| GameLibrary::getPointForlabelAtMapOrNull(label, map) }
+        GameLibrary::computePointsSequenceLengthInterface(points)
+    end
+
+    # GameLibrary::existingUserSubmissionForThisHourOrNull(username)
+    def self.existingUserSubmissionForThisHourOrNull(username)
+        usernamex = Digest::SHA1.hexdigest(username)[0,8]
+        usernameSubmissionFilepath = "#{GameLibrary::getFolderpathForThisHourCreateIfNotExists()}/#{usernamex}.json"
+        if File.exists?(usernameSubmissionFilepath) then
+            JSON.parse(IO.read(usernameSubmissionFilepath))
+        else
+            nil
+        end
+    end
+
+    # GameLibrary::commitUserDataToDiskForThisHour(username, mapId, path)
+    def self.commitUserDataToDiskForThisHour(username, mapId, path)
+        usernamex = Digest::SHA1.hexdigest(username)[0,8]
+        usernameSubmissionFilepath = "#{GameLibrary::getFolderpathForThisHourCreateIfNotExists()}/#{usernamex}.json"
+        data = {
+            "username" => username,
+            "mapid" => mapId,
+            "path" => path
+        }
+        File.open(usernameSubmissionFilepath, "w"){|f| f.puts(JSON.pretty_generate(data)) }
+        data
+    end
+
 end
 
 # -- --------------------------------------------------
@@ -110,14 +175,14 @@ end
 get '/game/v1/submit/:username/:mapid/:path' do
     
     content_type 'application/json'
-    
+
     username = params['username']
-    mapid    = params['mapid']
+    mapId    = params['mapid']
     path     = params['path']
 
     currentMap = GameLibrary::getCurrentMap()
 
-    if currentMap["mapId"] != mapid then
+    if currentMap["mapId"] != mapId then
         status 401
         return "Invalid map identifier (are you using an outdated one ?)\n"
     end
@@ -127,15 +192,22 @@ get '/game/v1/submit/:username/:mapid/:path' do
         return "Invalid path (are you using the correct labels)\n"
     end
 
-    usernamex = Digest::SHA1.hexdigest(username)[0,8]
-    usernameSubmissionFilepath = "#{GameLibrary::getFolderpathForThisHourCreateIfNotExists()}/#{usernamex}.json"
-    data = {
-        "username" => username,
-        "mapid" => mapid,
-        "path" => path
-    }
-    File.open(usernameSubmissionFilepath, "w"){|f| f.puts(JSON.pretty_generate(data)) }
-    JSON.pretty_generate(data)
+    existingUserSubmissionOrNull = GameLibrary::existingUserSubmissionForThisHourOrNull(username)
+    if existingUserSubmissionOrNull.nil? then
+        data = GameLibrary::commitUserDataToDiskForThisHour(username, mapId, path)
+        JSON.pretty_generate(data)
+    else
+        existingUserSubmission = existingUserSubmissionOrNull
+        existingPathAsString = existingUserSubmission["path"]
+        proposedPathAsString = path
+        if GameLibrary::pathLengthAgainstMap(proposedPathAsString, currentMap) <= GameLibrary::pathLengthAgainstMap(existingPathAsString, currentMap) then
+            data = GameLibrary::commitUserDataToDiskForThisHour(username, mapId, proposedPathAsString)
+            JSON.pretty_generate(data)
+        else
+            status 401
+            "You already have a better path in store: #{existingUserSubmission}\n"
+        end
+    end
 end
 
 
