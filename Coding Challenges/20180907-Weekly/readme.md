@@ -67,7 +67,7 @@ A new map is going to be generated each hour. Moreover you need to submit your b
 
 The points attribution mechanism is independent between maps. In other words, the points you got in the previous maps (aka in the previous hour) are permanently awarded and will go to the leaderboard. 
 
-Since we generate a new map every hour, each map carries a maximum of 0.1 points. If you are the best player of each hour for an entire week in a row, then you will make 0.1 * 24 * 7 = 16.8 points. Which makes this the best rewarded challenge so far. 
+Since we generate a new map every hour, each map carries a maximum of 0.1 points. If you are the best player of each hour for an entire week in a row, then you will make `0.1 * 24 * 7 = 16.8` points. Which makes this the best rewarded challenge so far. 
 
 ### Versions
 
