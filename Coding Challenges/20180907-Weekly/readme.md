@@ -38,10 +38,10 @@ This will return a JSON object looking like this
 ```
 {
     "mapId"  : "796b1df1-b0e9-4138-ae2d-9aa681dd2ed6",
+    "timestamp": "2018-09-07-11",
     "points" : [
         {
             "label" : "e167",
-            "timestamp": "2018-09-07-11",
             "coordinates": [2, -2.17]
         }
         ...
