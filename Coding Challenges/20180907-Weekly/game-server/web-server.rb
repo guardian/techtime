@@ -219,7 +219,7 @@ get '/game/v1/submit/:username/:mapid/:path' do
             data = GameLibrary::commitUserDataToDiskForThisHour(username, mapId, proposedPathAsString)
             JSON.pretty_generate(data)
         else
-            status 401
+            status 409 # Conflict
             "You already have a better path in store: #{existingUserSubmission}\n"
         end
     end
