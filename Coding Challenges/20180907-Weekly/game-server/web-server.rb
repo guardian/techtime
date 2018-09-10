@@ -37,6 +37,8 @@ end
 
 DATA_FOLDER_PATH = "/Galaxy/DataBank/WeeklyCodingChallenges/20180907-Weekly/#{LUCILLE_INSTANCE}"
 
+PATH_LENGTH = 13
+
 class GameLibrary
 
     # GameLibrary::hourCode()
@@ -61,7 +63,7 @@ class GameLibrary
             map = {}
             map["mapId"] = SecureRandom.uuid
             map["timestamp"] = GameLibrary::hourCode()
-            map["points"] = (1..12).map{|indx|
+            map["points"] = (1..PATH_LENGTH).map{|indx|
                 {
                     "label" => SecureRandom.hex(2),
                     "coordinates" => [ rand * 100 - 50, rand * 100 - 50 ].map{|c| c.round(2) }
