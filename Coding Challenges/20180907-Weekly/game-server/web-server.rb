@@ -210,13 +210,17 @@ get '/game/v1/submit/:username/:mapid/:path' do
     existingUserSubmissionOrNull = GameLibrary::existingUserSubmissionForThisHourOrNull(username)
     if existingUserSubmissionOrNull.nil? then
         data = GameLibrary::commitUserDataToDiskForThisHour(username, mapId, path)
+        data["pathLength"] = GameLibrary::pathLengthAgainstMap(path, currentMap)
         JSON.pretty_generate(data)
     else
         existingUserSubmission = existingUserSubmissionOrNull
         existingPathAsString = existingUserSubmission["path"]
         proposedPathAsString = path
-        if GameLibrary::pathLengthAgainstMap(proposedPathAsString, currentMap) < GameLibrary::pathLengthAgainstMap(existingPathAsString, currentMap) then
+        existingPathLength = GameLibrary::pathLengthAgainstMap(existingPathAsString, currentMap)
+        proposedPathLength = GameLibrary::pathLengthAgainstMap(proposedPathAsString, currentMap)
+        if proposedPathLength < existingPathLength then
             data = GameLibrary::commitUserDataToDiskForThisHour(username, mapId, proposedPathAsString)
+            data["pathLength"] = proposedPathLength
             JSON.pretty_generate(data)
         else
             status 409 # Conflict
