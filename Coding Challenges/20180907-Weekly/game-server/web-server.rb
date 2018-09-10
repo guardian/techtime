@@ -215,12 +215,12 @@ get '/game/v1/submit/:username/:mapid/:path' do
         existingUserSubmission = existingUserSubmissionOrNull
         existingPathAsString = existingUserSubmission["path"]
         proposedPathAsString = path
-        if GameLibrary::pathLengthAgainstMap(proposedPathAsString, currentMap) <= GameLibrary::pathLengthAgainstMap(existingPathAsString, currentMap) then
+        if GameLibrary::pathLengthAgainstMap(proposedPathAsString, currentMap) < GameLibrary::pathLengthAgainstMap(existingPathAsString, currentMap) then
             data = GameLibrary::commitUserDataToDiskForThisHour(username, mapId, proposedPathAsString)
             JSON.pretty_generate(data)
         else
             status 409 # Conflict
-            "You already have a better path in store: #{existingUserSubmission}\n"
+            "You already have a better (or equivalent) path in store: #{existingUserSubmission}\n"
         end
     end
 end
