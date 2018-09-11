@@ -216,16 +216,17 @@ get '/game/v1/map/:timestamp/visualise' do
             mapfilepath = "#{folderpath}/map.json"
             map = JSON.parse(IO.read(mapfilepath))
             pointReprs = map['points'].map { |point|
-              "<div style='width: 4px; height: 4px; position: absolute; bottom: #{(point['coordinates'][1] * 8) + 398}px; left: #{(point['coordinates'][0] * 8) + 398}px; background-color: black'></div>"
+              "<circle cx='#{(point['coordinates'][0] * 8) + 400}' cy='#{400 - (point['coordinates'][1] * 8)}' r='3' fill='black' />"
             }
             <<-eos
               <html>
               <head><title>#{map['mapId']}</title></head>
               <body>
                 <p>#{map['timestamp']}</p>
-                <div style="position: relative; border: solid 1px #ccc; width: 800px; height: 800px; margin: 10px; background-color: #f7f7f7;">
+                <svg style="margin: 10px; background-colour: #f7f7f7; border: solid 1px #ccc;" height="800" width="800">
+                  <rect width="100%" height="100%" fill="#f7f7f7"/>
                   #{pointReprs.join}
-                </div>
+                </svg>
               </body>
               </html>
             eos
