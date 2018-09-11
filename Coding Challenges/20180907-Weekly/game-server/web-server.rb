@@ -55,7 +55,6 @@ class GameLibrary
         folderpath
     end
 
-
     # GameLibrary::getMapAtHourFolderCreateIfNotExists(folderpath)
     def self.getMapAtHourFolderCreateIfNotExists(folderpath)
         mapfilepath = "#{folderpath}/map.json"
@@ -182,6 +181,27 @@ get '/' do
         "Game server for 20180907-Weekly, running at #{LUCILLE_INSTANCE}",
         "See https://github.com/guardian/techtime/tree/master/Coding%20Challenges/20180907-Weekly for details."
     ].join("\n")
+end
+
+get '/game/v1/map/:timestamp' do
+    content_type 'application/json'
+    hourcode = params['timestamp']
+    if /^\d\d\d\d-\d\d-\d\d-\d\d$/.match(hourcode) then
+        folderpath = "#{DATA_FOLDER_PATH}/#{hourcode}"
+        if !File.exists?(folderpath) then
+            status 404
+            ""
+        else
+            mapfilepath = "#{folderpath}/map.json"
+            map = JSON.parse(IO.read(mapfilepath))
+            answer = {}
+            answer["map"] = map
+            JSON.generate(map)
+        end
+    else
+        status 403
+        ""
+    end
 end
 
 get '/game/v1/map' do
