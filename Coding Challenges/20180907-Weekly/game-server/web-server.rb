@@ -204,6 +204,38 @@ get '/game/v1/map/:timestamp' do
     end
 end
 
+get '/game/v1/map/:timestamp/visualise' do
+    content_type 'text/html'
+    hourcode = params['timestamp']
+    if /^\d\d\d\d-\d\d-\d\d-\d\d$/.match(hourcode) then
+        folderpath = "#{DATA_FOLDER_PATH}/#{hourcode}"
+        if !File.exists?(folderpath) then
+            status 404
+            ""
+        else
+            mapfilepath = "#{folderpath}/map.json"
+            map = JSON.parse(IO.read(mapfilepath))
+            pointReprs = map['points'].map { |point|
+              "<div style='width: 4px; height: 4px; position: absolute; bottom: #{(point['coordinates'][1] * 8) + 398}px; left: #{(point['coordinates'][0] * 8) + 398}px; background-color: black'></div>"
+            }
+            <<-eos
+              <html>
+              <head><title>#{map['mapId']}</title></head>
+              <body>
+                <p>#{map['timestamp']}</p>
+                <div style="position: relative; border: solid 1px #ccc; width: 800px; height: 800px; margin: 10px; background-color: #f7f7f7;">
+                  #{pointReprs.join}
+                </div>
+              </body>
+              </html>
+            eos
+        end
+    else
+        status 403
+        ""
+    end
+end
+
 get '/game/v1/map' do
     content_type 'application/json'
     JSON.pretty_generate(GameLibrary::getCurrentMap())
