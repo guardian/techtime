@@ -1,0 +1,90 @@
+{
+  "mapId": "0b16fb49-522d-4d00-96ca-245c5199fd8a",
+  "timestamp": "2018-09-10-14",
+  "points": [
+    {
+      "label": "9e74",
+      "coordinates": [
+        -3.73,
+        1.49
+      ]
+    },
+    {
+      "label": "b1d1",
+      "coordinates": [
+        -14.38,
+        -7.86
+      ]
+    },
+    {
+      "label": "f401",
+      "coordinates": [
+        5.68,
+        30.26
+      ]
+    },
+    {
+      "label": "b647",
+      "coordinates": [
+        -17.64,
+        -11.9
+      ]
+    },
+    {
+      "label": "110c",
+      "coordinates": [
+        47.96,
+        40.57
+      ]
+    },
+    {
+      "label": "b380",
+      "coordinates": [
+        -23.03,
+        -25.81
+      ]
+    },
+    {
+      "label": "d0d9",
+      "coordinates": [
+        -7.6,
+        -3.62
+      ]
+    },
+    {
+      "label": "5309",
+      "coordinates": [
+        16.69,
+        -38.46
+      ]
+    },
+    {
+      "label": "733f",
+      "coordinates": [
+        -43.53,
+        -43.75
+      ]
+    },
+    {
+      "label": "b406",
+      "coordinates": [
+        -12.67,
+        -25.55
+      ]
+    },
+    {
+      "label": "881f",
+      "coordinates": [
+        24.34,
+        -31.54
+      ]
+    },
+    {
+      "label": "a351",
+      "coordinates": [
+        33.31,
+        -38.91
+      ]
+    }
+  ]
+}
