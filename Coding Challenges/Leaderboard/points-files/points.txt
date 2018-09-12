@@ -47,3 +47,8 @@ Alex Dufournet;     2018-09-03 18:30:00 +0100; 2
 # Week 7 (Travelling Salesman Problem)
 Adam Fisher;        2018-09-11 13:00:00 +0100; 5 ; Exceptional points for contributing to the game server.
 Justin Rowles;      2018-09-11 20:00:00 +0100; 2 ; For answering the chocolate bar splitting question.
+Sophie Lambrakis;   2018-09-12 18:00:00 +0100; 10.423
+Adam Fisher;        2018-09-12 18:00:00 +0100; 6.67
+Jonathon Herbert;   2018-09-12 18:00:00 +0100; 0.86
+Justin Rowles;      2018-09-12 18:00:00 +0100; 0.527
+Regis Kuckaertz;    2018-09-12 18:00:00 +0100; 0.3
