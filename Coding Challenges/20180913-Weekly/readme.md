@@ -74,8 +74,8 @@ The paths that you submit **do not need** to contain all the points. You can eve
 
 When you submit a solution the server will compute the length of the path specified by your sequence, and then add to that number the value of your energy thank at the final point. This total will be the value of your submission and your ranking for this map will be computed accordingly. And again, bigger values are ranked first.
 
-The initial value of your energy tank is the energy value of the first point you decide to visit. Then to be accepted your path **needs** to have the following property. To move to point **n** to point **n+1**, the value of your energy tank must be at least equal to the distance between the two points (meaning you need enough energy to cover the distance). Then when you arrive at point **n+1**, then the distance is substracted from your energy tank and then the energy value of the point **n+1** is added to it.  
- 
+The initial value of your energy tank is the energy value of the first point you decide to visit. Then to be accepted your path **needs** to have the following property. To move to point **n** to point **n+1**, the value of your energy tank must be at least equal to the square of the distance between the two points. Then when you arrive at point **n+1**, then the square of the distance is substracted from your energy tank and then the energy value of the point **n+1** is added to it.  
+
 The above implies that if you start at a point with negative energy, then you will definitively not be able to go anywhere else, move over your value of that submission will be negative :)  
  
 ### Scoring and Scheduling
