@@ -65,7 +65,7 @@ class GameLibrary
                 {
                     "label" => SecureRandom.hex(2),
                     "coordinates" => [ rand * 30, rand * 30 ].map{|c| c.round(2) },
-                    "energy" => (rand*6-1).round(2)
+                    "energy" => (rand*5-1).round(2)
                 }
             }
             File.open(mapfilepath, "w"){ |f| f.puts(JSON.pretty_generate(map)) }
