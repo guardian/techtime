@@ -53,6 +53,18 @@ class GameLibrary
         folderpath
     end
 
+    # GameLibrary::getMapAlphaDistance(map)
+    def self.getMapAlphaDistance(map)
+        distances = []
+        points = map["points"].clone
+        while points.size>1 do
+            distances << GameLibrary::distanceBetweenTwoPoints(points[0], points[1])
+            points.shift
+        end
+        # By now we have the distances from one point to another of the map in the order they are given in the map
+        distances.inject(0, :+).to_f/distances.size
+    end
+
     # GameLibrary::getMapAtHourFolderCreateIfNotExists(folderpath)
     def self.getMapAtHourFolderCreateIfNotExists(folderpath)
         mapfilepath = "#{folderpath}/map.json"
@@ -64,9 +76,15 @@ class GameLibrary
             map["points"] = (1..mapCardinality).map{|indx|
                 {
                     "label" => SecureRandom.hex(2),
-                    "coordinates" => [ rand * 30, rand * 30 ].map{|c| c.round(2) },
-                    "energy" => (rand*5-1).round(2)
+                    "coordinates" => [ rand * 30, rand * 30 ].map{|c| c.round(2) }
                 }
+            }
+            # By now we have a map without the energies set up
+            alphaDistance = GameLibrary::getMapAlphaDistance(map)
+            map["alpha-distance"] = alphaDistance
+            map["points"] = map["points"].map{|point|
+                point["energy"] = ( rand <= 0.8 ) ? ((alphaDistance**2)*( rand*0.6 + 0.6 )) : -(alphaDistance**2).to_f/2
+                point
             }
             File.open(mapfilepath, "w"){ |f| f.puts(JSON.pretty_generate(map)) }
         end
@@ -107,9 +125,9 @@ class GameLibrary
             point1 = points.shift
             point2 = points[0]
             distanceToNext = GameLibrary::distanceBetweenTwoPoints(point1, point2)
-            if distanceToNext < energyLevel then
+            if distanceToNext**2 < energyLevel then
                 lenghtAccumulation = lenghtAccumulation + distanceToNext
-                energyLevel = energyLevel - distanceToNext
+                energyLevel = energyLevel - distanceToNext**2
                 energyLevel = energyLevel + point2["energy"]
             else
                 return lenghtAccumulation + energyLevel
