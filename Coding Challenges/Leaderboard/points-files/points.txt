@@ -52,3 +52,6 @@ Adam Fisher;        2018-09-12 18:00:00 +0100; 6.67
 Jonathon Herbert;   2018-09-12 18:00:00 +0100; 0.86
 Justin Rowles;      2018-09-12 18:00:00 +0100; 0.527
 Regis Kuckaertz;    2018-09-12 18:00:00 +0100; 0.3
+
+# Week 8 (Travelling Optimization with Energy Management)
+Adam Fisher;        2018-09-13 13:00:00 +0100; 2 ; Highlighted a bug on the server with consequences for the scores end point
