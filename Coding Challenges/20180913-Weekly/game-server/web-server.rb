@@ -64,8 +64,8 @@ class GameLibrary
             map["points"] = (1..mapCardinality).map{|indx|
                 {
                     "label" => SecureRandom.hex(2),
-                    "coordinates" => [ rand * 50, rand * 50 ].map{|c| c.round(2) },
-                    "energy" => (3+rand*4).round(2)
+                    "coordinates" => [ rand * 30, rand * 30 ].map{|c| c.round(2) },
+                    "energy" => (rand*6-1).round(2)
                 }
             }
             File.open(mapfilepath, "w"){ |f| f.puts(JSON.pretty_generate(map)) }
