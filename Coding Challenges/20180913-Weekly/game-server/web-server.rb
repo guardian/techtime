@@ -220,6 +220,10 @@ get '/game/v1/submit/:username/:mapid/:path' do
         return "Invalid map identifier (are you using an outdated one ?)\n"
     end
 
+    currentMapPointLabels = currentMap["points"].map{|point| point["label"] }
+
+    path = path.split(",").select{|label| currentMapPointLabels.include?(label) }.join(",") # remove inexistent labels from the user submission
+
     existingUserSubmissionOrNull = GameLibrary::existingUserSubmissionForThisHourOrNull(username)
     if existingUserSubmissionOrNull.nil? then
         data = GameLibrary::commitUserDataToDiskForThisHour(username, mapId, path)
