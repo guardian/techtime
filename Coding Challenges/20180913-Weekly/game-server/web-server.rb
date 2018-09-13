@@ -94,8 +94,8 @@ class GameLibrary
         Math.sqrt( (dx**2) + (dy**2) )
     end
 
-    # GameLibrary::computePointsSequenceLengthInterface(points)
-    def self.computePointsSequenceLengthInterface(points)
+    # GameLibrary::computePointsSequenceValue(points)
+    def self.computePointsSequenceValue(points)
         return 0 if points.size==0
         lenghtAccumulation = 0
         energyLevel = points[0]["energy"]
@@ -120,7 +120,7 @@ class GameLibrary
     # GameLibrary::pathValueAgainstMap(pathAsString, map)
     def self.pathValueAgainstMap(pathAsString, map)
         points = pathAsString.split(",").map{|l| l.strip }.map{|label| GameLibrary::getPointForlabelAtMapOrNull(label, map).compact }
-        GameLibrary::computePointsSequenceLengthInterface(points)
+        GameLibrary::computePointsSequenceValue(points)
     end
 
     # GameLibrary::existingUserSubmissionForThisHourOrNull(username)
@@ -274,13 +274,13 @@ get '/game/v1/scores' do
                     "",
                     File.basename(hoursFolderpath),
                     userSubmissionOrdered.map{|u|
-                        currentUserLength = GameLibrary::pathValueAgainstMap(u["path"], map).round(3)
-                        if currentUserLength != lastlength then
+                        currentUserValue = GameLibrary::pathValueAgainstMap(u["path"], map).round(3)
+                        if currentUserValue != lastlength then
                             score = score*0.7 
                         end
-                        lastlength = currentUserLength
+                        lastlength = currentUserValue
                         users = addScoreToUserLambda.call(users, u["username"], score)
-                        "#{u["username"].ljust(20)} , length: #{currentUserLength} , score: #{score.round(3)}"
+                        "#{u["username"].ljust(20)} , value ( length + energy ): #{"%7.3f" % currentUserValue} , score: #{score.round(3)}"
                     }.join("\n")
                 ].join("\n")
             }.join("\n") + "\n",
