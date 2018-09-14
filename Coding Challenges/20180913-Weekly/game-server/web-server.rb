@@ -222,7 +222,16 @@ get '/game/v1/submit/:username/:mapid/:path' do
 
     currentMapPointLabels = currentMap["points"].map{|point| point["label"] }
 
-    path = path.split(",").select{|label| currentMapPointLabels.include?(label) }.join(",") # remove inexistent labels from the user submission
+    path_corrected = path.split(",").select{|label| currentMapPointLabels.include?(label) }.uniq.join(",") 
+        # Remove inexistent labels from the user submission, and
+        # enforce that labels should be present once.
+
+    if path != path_corrected then
+        path = path_corrected
+        # This means that we rewrite user's submissions to be valid instead of rejecting them outright. Design choice. 
+    end
+
+    puts "#{username}: #{path}"
 
     existingUserSubmissionOrNull = GameLibrary::existingUserSubmissionForThisHourOrNull(username)
     if existingUserSubmissionOrNull.nil? then
