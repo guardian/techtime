@@ -137,7 +137,7 @@ class GameLibrary
 
     # GameLibrary::pathValueAgainstMap(pathAsString, map)
     def self.pathValueAgainstMap(pathAsString, map)
-        points = pathAsString.split(",").map{|l| l.strip }.map{|label| GameLibrary::getPointForlabelAtMapOrNull(label, map).compact }
+        points = pathAsString.split(",").map{|l| l.strip }.map{|label| GameLibrary::getPointForlabelAtMapOrNull(label, map) }.compact
         GameLibrary::computePointsSequenceValue(points)
     end
 
