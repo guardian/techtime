@@ -268,7 +268,11 @@ get '/game/v1/submit/:username/:mapid/:path' do
             JSON.pretty_generate(data)
         else
             status 409 # Conflict
-            "You already have a better (or equivalent) path in store: #{existingUserSubmission}\n"
+            [
+                "Your submission has computed length: #{proposedPathValue}",
+                "You already have a better (or equivalent) path in store with value #{existingPathValue}",
+                "Stored submission: #{existingUserSubmission}"
+            ].join("\n")
         end
     end
 end
