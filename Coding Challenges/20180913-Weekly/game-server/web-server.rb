@@ -120,7 +120,7 @@ class GameLibrary
         loop {
             #puts JSON.generate([points, lenghtAccumulation, energyLevel])
             if points.size==1 then
-                return lenghtAccumulation + energyLevel
+                return lenghtAccumulation
             end
             point1 = points.shift
             point2 = points[0]
@@ -130,7 +130,7 @@ class GameLibrary
                 energyLevel = energyLevel - distanceToNext**2
                 energyLevel = energyLevel + point2["energy"]
             else
-                return lenghtAccumulation + energyLevel
+                return lenghtAccumulation
             end
         }
     end
@@ -302,7 +302,7 @@ get '/game/v1/scores' do
                         end
                         lastlength = currentUserValue
                         users = addScoreToUserLambda.call(users, u["username"], score)
-                        "#{u["username"].ljust(20)} , value ( length + energy ): #{"%7.3f" % currentUserValue} , score: #{score.round(3)}"
+                        "#{u["username"].ljust(20)} , value ( length ): #{"%7.3f" % currentUserValue} , score: #{score.round(3)}"
                     }.join("\n")
                 ].join("\n")
             }.join("\n") + "\n",
