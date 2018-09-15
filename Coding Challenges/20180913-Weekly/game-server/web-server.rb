@@ -112,8 +112,31 @@ class GameLibrary
         Math.sqrt( (dx**2) + (dy**2) )
     end
 
-    # GameLibrary::computePointsSequenceValue(points)
-    def self.computePointsSequenceValue(points)
+    # GameLibrary::computePointsSequenceValue_v1(points)
+    def self.computePointsSequenceValue_v1(points)
+        return 0 if points.size==0
+        lenghtAccumulation = 0
+        energyLevel = points[0]["energy"]
+        loop {
+            #puts JSON.generate([points, lenghtAccumulation, energyLevel])
+            if points.size==1 then
+                return lenghtAccumulation + energyLevel
+            end
+            point1 = points.shift
+            point2 = points[0]
+            distanceToNext = GameLibrary::distanceBetweenTwoPoints(point1, point2)
+            if distanceToNext < energyLevel then
+                lenghtAccumulation = lenghtAccumulation + distanceToNext
+                energyLevel = energyLevel - distanceToNext
+                energyLevel = energyLevel + point2["energy"]
+            else
+                return lenghtAccumulation + energyLevel
+            end
+        }
+    end
+
+    # GameLibrary::computePointsSequenceValue_v2(points)
+    def self.computePointsSequenceValue_v2(points)
         return 0 if points.size==0
         lenghtAccumulation = 0
         energyLevel = points[0]["energy"]
@@ -135,10 +158,14 @@ class GameLibrary
         }
     end
 
-    # GameLibrary::pathValueAgainstMap(pathAsString, map)
-    def self.pathValueAgainstMap(pathAsString, map)
+    # GameLibrary::pathValueAgainstMap(currentHour, pathAsString, map)
+    def self.pathValueAgainstMap(currentHour, pathAsString, map)
         points = pathAsString.split(",").map{|l| l.strip }.map{|label| GameLibrary::getPointForlabelAtMapOrNull(label, map).compact }
-        GameLibrary::computePointsSequenceValue(points)
+        if currentHour < "2018-09-14-12" then
+            GameLibrary::computePointsSequenceValue_v1(points)
+        else
+            GameLibrary::computePointsSequenceValue_v2(points)
+        end
     end
 
     # GameLibrary::existingUserSubmissionForThisHourOrNull(username)
@@ -242,17 +269,19 @@ get '/game/v1/submit/:username/:mapid/:path' do
 
     path = path.split(",").select{|label| currentMapPointLabels.include?(label) }.join(",") # remove inexistent labels from the user submission
 
+    currentHour = GameLibrary::hourCode()
+
     existingUserSubmissionOrNull = GameLibrary::existingUserSubmissionForThisHourOrNull(username)
     if existingUserSubmissionOrNull.nil? then
         data = GameLibrary::commitUserDataToDiskForThisHour(username, mapId, path)
-        data["pathValue"] = GameLibrary::pathValueAgainstMap(path, currentMap)
+        data["pathValue"] = GameLibrary::pathValueAgainstMap(currentHour, path, currentMap)
         JSON.pretty_generate(data)
     else
         existingUserSubmission = existingUserSubmissionOrNull
         existingPathAsString = existingUserSubmission["path"]
         proposedPathAsString = path
-        existingPathValue = GameLibrary::pathValueAgainstMap(existingPathAsString, currentMap)
-        proposedPathValue = GameLibrary::pathValueAgainstMap(proposedPathAsString, currentMap)
+        existingPathValue = GameLibrary::pathValueAgainstMap(currentHour, existingPathAsString, currentMap)
+        proposedPathValue = GameLibrary::pathValueAgainstMap(currentHour, proposedPathAsString, currentMap)
         if proposedPathValue >= existingPathValue then
             data = GameLibrary::commitUserDataToDiskForThisHour(username, mapId, proposedPathAsString)
             data["pathValue"] = proposedPathValue
@@ -280,14 +309,16 @@ get '/game/v1/scores' do
 
     [
         GameLibrary::getHoursFolderPaths()
+            .sort
             .map{|hoursFolderpath|
+                currentHour = File.basename(hoursFolderpath)
                 map = JSON.parse(IO.read("#{hoursFolderpath}/map.json"))
                 userSubmissionOrdered = GameLibrary::getUserSubmissionFilepathsFor(hoursFolderpath)
                     .map{|filepath|
                         JSON.parse(IO.read(filepath))
                     }
                     .sort{|u1,u2|
-                        GameLibrary::pathValueAgainstMap(u1["path"], map) <=> GameLibrary::pathValueAgainstMap(u2["path"], map)
+                        GameLibrary::pathValueAgainstMap(currentHour, u1["path"], map) <=> GameLibrary::pathValueAgainstMap(currentHour, u2["path"], map)
                     }
                     .reverse
                 score = 0.1/0.7
@@ -296,13 +327,17 @@ get '/game/v1/scores' do
                     "",
                     File.basename(hoursFolderpath),
                     userSubmissionOrdered.map{|u|
-                        currentUserValue = GameLibrary::pathValueAgainstMap(u["path"], map).round(3)
+                        currentUserValue = GameLibrary::pathValueAgainstMap(currentHour, u["path"], map).round(3)
                         if currentUserValue != lastlength then
                             score = score*0.7 
                         end
                         lastlength = currentUserValue
                         users = addScoreToUserLambda.call(users, u["username"], score)
-                        "#{u["username"].ljust(20)} , value ( length ): #{"%7.3f" % currentUserValue} , score: #{score.round(3)}"
+                        if currentHour < "2018-09-14-12" then
+                            "#{u["username"].ljust(20)} , value ( length + final energy ): #{"%7.3f" % currentUserValue} , score: #{score.round(3)}"
+                        else
+                            "#{u["username"].ljust(20)} , value ( length ): #{"%7.3f" % currentUserValue} , score: #{score.round(3)}"
+                        end
                     }.join("\n")
                 ].join("\n")
             }.join("\n") + "\n",
