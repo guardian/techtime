@@ -35,7 +35,7 @@ if LUCILLE_INSTANCE.nil? then
     exit
 end
 
-DATA_FOLDER_PATH = "/Galaxy/DataBank/WeeklyCodingChallenges/20180920-Weekly/#{LUCILLE_INSTANCE}"
+GAME_DATA_FOLDERPATH = "/Galaxy/DataBank/WeeklyCodingChallenges/20180920-Weekly/#{LUCILLE_INSTANCE}"
 
 class GameLibrary
 
@@ -46,14 +46,14 @@ class GameLibrary
 
     # GameLibrary::getHoursFolderPaths()
     def self.getHoursFolderPaths()
-        Dir.entries(DATA_FOLDER_PATH)
+        Dir.entries(GAME_DATA_FOLDERPATH)
             .select{|filename| filename[0,1]!="." }
-            .map{|filename| "#{DATA_FOLDER_PATH}/#{filename}" }
+            .map{|filename| "#{GAME_DATA_FOLDERPATH}/Timeline/#{filename}" }
     end
 
     # GameLibrary::getFolderpathForThisHourCreateIfNotExists(): folderpath
     def self.getFolderpathForThisHourCreateIfNotExists()
-        folderpath = "#{DATA_FOLDER_PATH}/#{GameLibrary::hourCode()}"
+        folderpath = "#{GAME_DATA_FOLDERPATH}/Timeline/#{GameLibrary::hourCode()}"
         if !File.exists?(folderpath) then
             FileUtils.mkpath folderpath
         end
@@ -107,6 +107,13 @@ end
 # -- --------------------------------------------------
 # Route
 
+=begin
+
+    HTTP error codes:
+        403 Forbidden
+
+=end
+
 not_found do
   '404'
 end
@@ -119,7 +126,34 @@ get '/' do
     ].join("\n") + "\n"
 end
 
-get '/game/map' do
+get '/game/v1/map' do
     content_type 'application/json'
     JSON.pretty_generate(GameLibrary::getCurrentMap())
+end
+
+get '/game/v1/get-userkey/:username' do
+    content_type 'text/plain'
+    username = params["username"]
+
+    if username.include?(":") then
+        status 403
+        return "Usernames cannot contain a colon (character ':')\n"
+    end
+
+    userkeysFilepath = "#{GAME_DATA_FOLDERPATH}/users-keys.txt"
+    userKeysData = IO.read(userkeysFilepath)
+                        .lines.map{|line| line.strip }
+                        .select{|line| line.size>0 }
+                        .map{|line| line.split(":") }
+    if userKeysData.any?{|record| record[0]==username } then
+        status 403
+        "There has already been a userkey issued for this username. If you think this is a mistake or you have forgotten your userkey, please contact Pascal.\n"
+    else
+        userkey = SecureRandom.hex(4)
+        File.open(userkeysFilepath, "a"){|f| f.puts("#{username}:#{userkey}") }
+        [
+            "username: #{username}",
+            "userkey : #{userkey}"
+        ].join("\n") + "\n"
+    end
 end
