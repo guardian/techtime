@@ -27,7 +27,6 @@ set :port, 14561
 
 # -- --------------------------------------------------
 
-
 LUCILLE_INSTANCE = ENV["COMPUTERLUCILLENAME"]
 
 if LUCILLE_INSTANCE.nil? then
@@ -36,6 +35,8 @@ if LUCILLE_INSTANCE.nil? then
 end
 
 GAME_DATA_FOLDERPATH = "/Galaxy/DataBank/WeeklyCodingChallenges/20180920-Weekly/#{LUCILLE_INSTANCE}"
+GAME_PARAMETERS_FILEPATH = File.dirname(__FILE__) + "/game-parameters.json"
+$GAME_PARAMETERS = JSON.parse(IO.read(GAME_PARAMETERS_FILEPATH))
 
 class GameLibrary
 
@@ -64,16 +65,13 @@ class GameLibrary
     def self.getMapAtHourFolderCreateIfNotExists(folderpath)
         mapfilepath = "#{folderpath}/map.json"
         if !File.exists?(mapfilepath) then
-            mapCardinality = 500 
-                # Math.sqrt(500) = 44.72 # number of jump points on a line. 
-                # 1000.to_f/44.72 = 22.36 # kilometers between jump points if in a square lattice. 
             map = {}
             map["mapId"] = SecureRandom.uuid
             map["timestamp"] = GameLibrary::hourCode()
-            map["points"] = (1..mapCardinality).map{|indx|
+            map["points"] = (1..$GAME_PARAMETERS["map:jump-points:cardinality"]).map{|indx|
                 {
                     "label" => SecureRandom.hex(3),
-                    "coordinates" => [ rand * 1000, rand * 1000 ].map{|c| c.round(2) }
+                    "coordinates" => [ rand * $GAME_PARAMETERS["map:size"], rand * $GAME_PARAMETERS["map:size"] ].map{|c| c.round(2) }
                 }
             }
             File.open(mapfilepath, "w"){ |f| f.puts(JSON.pretty_generate(map)) }
@@ -128,7 +126,12 @@ end
 
 get '/game/v1/map' do
     content_type 'application/json'
-    JSON.pretty_generate(GameLibrary::getCurrentMap())
+    JSON.generate(GameLibrary::getCurrentMap())
+end
+
+get '/game/v1/parameters' do
+    content_type 'application/json'
+    JSON.pretty_generate($GAME_PARAMETERS)
 end
 
 get '/game/v1/get-userkey/:username' do
