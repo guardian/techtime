@@ -18,6 +18,11 @@ class UserKeys
         userkeysFilepath = "#{GAME_DATA_FOLDERPATH}/users-keys.txt"
         File.open(userkeysFilepath, "a"){|f| f.puts("#{username}:#{userkey}") }
     end
-    
+
+    # UserKeys::validateUserCredentials(username, userkey) 
+    def self.validateUserCredentials(username, userkey)
+        UserKeys::getUserKeysData().any?{|record| record[0]==username and record[1]==userkey }
+    end
+
 end
 

@@ -92,6 +92,7 @@ end
 =begin
 
     HTTP error codes:
+        401 Unauthorized
         403 Forbidden
 
 =end
@@ -139,4 +140,18 @@ get '/game/v1/get-userkey/:username' do
             "userkey : #{userkey}"
         ].join("\n") + "\n"
     end
+end
+
+get '/game/v1/:username/:userkey/capital-ship/top-up/:code' do
+    content_type 'application/json'
+    username = params["username"]
+    userkey = params["userkey"]
+    code = params["code"]
+
+    if !UserKeys::validateUserCredentials(username, userkey) then
+        status 401
+        return "401: Invalid credentials\n"
+    end
+
+    "[]"
 end
