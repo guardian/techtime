@@ -22,10 +22,13 @@ require 'find'
 
 # --  --------------------------------------------------
 
+require_relative "library/MapUtils.rb"
+require_relative "library/UserKeys.rb"
+
+# --  --------------------------------------------------
+
 set :port, 14561
 #set :public_folder, "path/to/www"
-
-# -- --------------------------------------------------
 
 LUCILLE_INSTANCE = ENV["COMPUTERLUCILLENAME"]
 
@@ -37,6 +40,8 @@ end
 GAME_DATA_FOLDERPATH = "/Galaxy/DataBank/WeeklyCodingChallenges/20180920-Weekly/#{LUCILLE_INSTANCE}"
 GAME_PARAMETERS_FILEPATH = File.dirname(__FILE__) + "/game-parameters.json"
 $GAME_PARAMETERS = JSON.parse(IO.read(GAME_PARAMETERS_FILEPATH))
+
+# -- --------------------------------------------------
 
 class GameLibrary
 
@@ -79,27 +84,6 @@ class GameLibrary
         JSON.parse(IO.read(mapfilepath))
     end
 
-    # GameLibrary::getCurrentMap()
-    def self.getCurrentMap()
-        folderpath = GameLibrary::getFolderpathForThisHourCreateIfNotExists()
-        GameLibrary::getMapAtHourFolderCreateIfNotExists(folderpath)
-    end
-
-    # GameLibrary::getPointForlabelAtMapOrNull(label, map)
-    def self.getPointForlabelAtMapOrNull(label, map)
-        map["points"].each{|point|
-            return point if point["label"]==label
-        }
-        nil
-    end
-
-    # GameLibrary::distanceBetweenTwoPoints(point1, point2)
-    def self.distanceBetweenTwoPoints(point1, point2)
-        dx = point1["coordinates"][0] - point2["coordinates"][0]
-        dy = point1["coordinates"][1] - point2["coordinates"][1]
-        Math.sqrt( (dx**2) + (dy**2) )
-    end
-
 end
 
 # -- --------------------------------------------------
@@ -126,7 +110,7 @@ end
 
 get '/game/v1/map' do
     content_type 'application/json'
-    JSON.generate(GameLibrary::getCurrentMap())
+    JSON.generate(MapUtils::getCurrentMap())
 end
 
 get '/game/v1/parameters' do
@@ -143,17 +127,13 @@ get '/game/v1/get-userkey/:username' do
         return "Usernames cannot contain a colon (character ':')\n"
     end
 
-    userkeysFilepath = "#{GAME_DATA_FOLDERPATH}/users-keys.txt"
-    userKeysData = IO.read(userkeysFilepath)
-                        .lines.map{|line| line.strip }
-                        .select{|line| line.size>0 }
-                        .map{|line| line.split(":") }
+    userKeysData = UserKeys::getUserKeysData()
     if userKeysData.any?{|record| record[0]==username } then
         status 403
         "There has already been a userkey issued for this username. If you think this is a mistake or you have forgotten your userkey, please contact Pascal.\n"
     else
         userkey = SecureRandom.hex(4)
-        File.open(userkeysFilepath, "a"){|f| f.puts("#{username}:#{userkey}") }
+        UserKeys::commitUserKey(username, userkey)
         [
             "username: #{username}",
             "userkey : #{userkey}"
