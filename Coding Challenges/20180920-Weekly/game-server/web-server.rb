@@ -116,10 +116,10 @@ get '/' do
     [
         "Space Battle. Game Server. Running at #{LUCILLE_INSTANCE}",
         "See https://github.com/guardian/techtime/tree/master/Coding%20Challenges/20180920-Weekly for details."
-    ].join("\n")
+    ].join("\n") + "\n"
 end
 
-get '/game/v1/map' do
+get '/game/map' do
     content_type 'application/json'
     JSON.pretty_generate(GameLibrary::getCurrentMap())
 end
