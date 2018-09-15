@@ -94,6 +94,7 @@ end
     HTTP error codes:
         401 Unauthorized
         403 Forbidden
+        404 Not Found
 
 =end
 
@@ -142,15 +143,21 @@ get '/game/v1/get-userkey/:username' do
     end
 end
 
-get '/game/v1/:username/:userkey/capital-ship/top-up/:code' do
+get '/game/v1/:username/:userkey/:mapid/capital-ship/top-up/:code' do
     content_type 'application/json'
     username = params["username"]
     userkey = params["userkey"]
+    mapId = params["mapid"]
     code = params["code"]
 
     if !UserKeys::validateUserCredentials(username, userkey) then
         status 401
         return "401: Invalid credentials\n"
+    end
+
+    if MapUtils::getCurrentMap()["mapId"]!=mapId then
+        status 404
+        return "404: Map not found (mapId is incorrect or outdated)\n"
     end
 
     "[]"

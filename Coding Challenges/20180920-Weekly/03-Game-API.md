@@ -52,3 +52,13 @@ curl http://10.249.16.173:14561/game/v1/game-parameters
 ```
 
 This JSON object contains almost all of the contants/parameters of the game: from the size of the canvas and number of jump points to how much energy various operations cost etc.
+
+### Capital Ship Initialization
+
+
+
+### Capital Ship top up
+
+```
+/game/v1/:username/:userkey/:mapid/capital-ship/top-up/:code
+```

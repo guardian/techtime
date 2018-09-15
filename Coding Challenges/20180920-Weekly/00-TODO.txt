@@ -1,3 +1,9 @@
 
-- /game/v1/:username/:userkey/capital-ship/top-up/:code 
+- Define the UserFleet datatype.
+
+- Write the UserFleet class
+
+- Write the API section on Capital Ship Initialization
+
+- /game/v1/:username/:userkey/:mapid/capital-ship/top-up/:code 
     is not implemented (it came to test user credentials validation)
