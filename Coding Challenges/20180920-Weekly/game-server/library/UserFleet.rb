@@ -99,5 +99,18 @@ class UserFleet
         File.open(userFleetFilepath, "w"){|f| f.puts(JSON.pretty_generate(fleet)) }
     end
 
+    # UserFleet::spawnBattleCruiser(mapPoint, initialEnergyLevel)
+    def self.spawnBattleCruiser(mapPoint, initialEnergyLevel)
+        {
+            "nomenclature" => "battle-cruiser",
+            "ship-uuid"    => SecureRandom.hex(4),
+            "location"     => mapPoint,
+            "energy-level" => initialEnergyLevel,
+            "shield-level" => 1,
+            "alive"        => true,
+            "space-probe-results" => []
+        }
+    end
+
 end
 

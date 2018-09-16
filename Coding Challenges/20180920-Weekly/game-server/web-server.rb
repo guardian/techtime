@@ -52,6 +52,18 @@ $GAME_PARAMETERS = JSON.parse(IO.read(GAME_PARAMETERS_FILEPATH))
 # -- --------------------------------------------------
 # nslog
 
+=begin
+
+mapPoint = {
+    "label" => "12345678",
+    "coordinates" => [ 123 , 34.98]
+}
+puts UserFleet::spawnBattleCruiser(mapPoint, 12)
+
+exit 
+
+=end
+
 # -- --------------------------------------------------
 
 class GameLibrary
@@ -195,8 +207,7 @@ get '/game/v1/:username/:userkey/:mapid/capital-ship/init' do
 
     content_type 'application/json'
 
-    map = MapUtils::getCurrentMap()
-    mapPoint = map["points"].sample
+    mapPoint = MapUtils::getCurrentMap()["points"].sample
     capitalShipInitialEnergy = $GAME_PARAMETERS["fleet:capital-ship:initial-energy-level"]
     topUpChallengeDifficulty = $GAME_PARAMETERS["fleet:capital-ship:top-up-challenge-difficulty"]
     userFleet = UserFleet::spawnUserFleet(username, mapPoint, capitalShipInitialEnergy, topUpChallengeDifficulty)
@@ -262,6 +273,8 @@ get '/game/v1/:username/:userkey/:mapid/capital-ship/create-battle-cruiser' do
     userkey = params["userkey"]
     mapId = params["mapid"]
 
+    currentHour = GameLibrary::hourCode()
+
     # ------------------------------------------------------
     # User Credentials and Map Validity Checks
 
@@ -276,13 +289,41 @@ get '/game/v1/:username/:userkey/:mapid/capital-ship/create-battle-cruiser' do
     end
 
     # ------------------------------------------------------
-    # Game Mechanics Validation
+    # User Fleet validation
 
-    # ------------------------------------------------------
+    userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
+
+    if userFleet.nil then
+        status 404
+        return "404: You do not yet have a fleet for this hour. (You should initiate one.)\n"
+    end
+
+    if !userFleet["ship-inventory"]["capital"]["alive"] then
+        status 403
+        return "403: Your capital ship for this hour is dead.\n"
+    end
+
+    # ------------------------------------------------------ 
 
     content_type 'application/json'
 
-    "{}"
+    battleCruiserBuildEnergyCost = $GAME_PARAMETERS["fleet:battle-cruiser:build-energy-cost"]
+    battleCruiserInitialEnergyLevel = $GAME_PARAMETERS["fleet:battle-cruiser:initial-energy-level"]
+
+    userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
+    capitalShipCanPerformBattleShipCreation = userFleet["ship-inventory"]["capital"]["energy-level"] >= ( battleCruiserBuildEnergyCost + battleCruiserInitialEnergyLevel )
+    if capitalShipCanPerformBattleShipCreation then
+        userFleet["ship-inventory"]["capital"]["energy-level"] = userFleet["ship-inventory"]["capital"]["energy-level"] - ( battleCruiserBuildEnergyCost + battleCruiserInitialEnergyLevel )
+        mapPoint = MapUtils::getCurrentMap()["points"].sample
+        battleCruiser = UserFleet::spawnBattleCruiser(mapPoint, battleCruiserInitialEnergyLevel)
+        userFleet["ship-inventory"]["battle-cruisers"] << battleCruiser
+        UserFleet::commitFleetToDisk(currentHour, username, userFleet)
+        JSON.generate(battleCruiser)
+    else
+        status 403
+        "403: Your capital ship doesn't have enough energy to complete the construction of a battle cruiser. You have #{userFleet["ship-inventory"]["capital"]["energy-level"]} but yuo need #{(battleCruiserBuildEnergyCost+battleCruiserInitialEnergyLevel)}\n"
+    end
+
 end
 
 get '/game/v1/:username/:userkey/:mapid/capital-ship/create-energy-carrier/:energyamount' do
