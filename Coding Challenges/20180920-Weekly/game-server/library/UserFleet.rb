@@ -8,6 +8,10 @@ require 'securerandom'
 
 require 'json'
 
+require 'digest/sha1'
+# Digest::SHA1.hexdigest 'foo'
+# Digest::SHA1.file(myFile).hexdigest
+
 class UserFleet
 
     # UserFleet::filepathToUserFleetData(currentHour, username)
@@ -64,6 +68,35 @@ class UserFleet
             },
             "log-warnings" => []
         }
+    end
+
+    # UserFleet::validateTopUpCode(currentHour, username, code)
+    def self.validateTopUpCode(currentHour, username, code)
+        userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
+        capital = userFleet["ship-inventory"]["capital"]
+        challenge = capital["energy-top-up-challenge"]
+        # {
+        #    "input"      => String
+        #    "difficulty" => Integer
+        # }
+        Digest::SHA1.hexdigest("#{challenge["input"]}#{code}")[-challenge["difficulty"], challenge["difficulty"]] == ("0"*challenge["difficulty"])
+    end
+
+    # UserFleet::topUpEnergyValue(currentHour, username, topUpValue)
+    def self.topUpEnergyValue(currentHour, username, topUpValue)
+        userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
+        currentLevel = userFleet["ship-inventory"]["capital"]["energy-level"]
+        userFleet["ship-inventory"]["capital"]["energy-level"] = currentLevel + topUpValue
+        UserFleet::commitFleetToDisk(currentHour, username, userFleet)
+    end
+
+    # UserFleet::commitFleetToDisk(currentHour, username, fleet)
+    def self.commitFleetToDisk(currentHour, username, fleet)
+        userFleetFilepath = UserFleet::filepathToUserFleetData(currentHour, username)
+        if !File.exists?(File.dirname(userFleetFilepath)) then
+            FileUtils.mkpath File.dirname(userFleetFilepath) # we do this because the fleet, subfolder of a timeline hours folder is not automatically created
+        end 
+        File.open(userFleetFilepath, "w"){|f| f.puts(JSON.pretty_generate(fleet)) }
     end
 
 end

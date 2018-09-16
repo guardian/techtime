@@ -24,3 +24,7 @@ This document is a complement to the introduction and contains more details abou
 - Capital Ships and Battle Cruisers come with a **shield**. The shield protects from attack from other ships (meaning bomb impacts). It is represented as a number between 0 and 1. A value of 0 means that the shield is totally down and the next impact will totally destroy it. Any ship can top up its shield by converting energy from its own energy reserve. Note that energy carriers do not have shields. They are destroyed (the the energy they carry lost) as soon as a bomb explodes at the location they are.
 
 - When a new map is created, a special fleet, belonging to user called "TheBBC" is created and put into the game. There is the Capital Ship and a dozen battle cruisers. They are immobile and do not shoot at anything. Use them as target practice, for free points :)
+
+- When your Capital ship is dead, you can still control your Battle Cruisers, but you cannot control the energy carriers (in particular they cannot jump). If you have active energy carriers and active cruisers at the time your Capital dies. You can still move your battle cruisers where the energy carriers are and instruct your battle cruiser to "manualy salvage their energy". (You lose control of the carriers because they are remotely controlled from the Capital, whereas teh Cruisers have their own control structure).
+
+ 

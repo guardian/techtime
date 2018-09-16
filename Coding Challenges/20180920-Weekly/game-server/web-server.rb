@@ -201,11 +201,7 @@ get '/game/v1/:username/:userkey/:mapid/capital-ship/init' do
     topUpChallengeDifficulty = $GAME_PARAMETERS["fleet:capital-ship:top-up-challenge-difficulty"]
     userFleet = UserFleet::spawnUserFleet(username, mapPoint, capitalShipInitialEnergy, topUpChallengeDifficulty)
 
-    userFleetFilepath = UserFleet::filepathToUserFleetData(currentHour, username)
-    if !File.exists?(File.dirname(userFleetFilepath)) then
-        FileUtils.mkpath File.dirname(userFleetFilepath) # we do this because the fleet, subfolder of a timeline hours folder is not automatically created
-    end 
-    File.open(userFleetFilepath, "w"){|f| f.puts(JSON.pretty_generate(userFleet)) }
+    UserFleet::commitFleetToDisk(currentHour, username, userFleet)
 
     JSON.generate(userFleet)
 end
@@ -215,6 +211,8 @@ get '/game/v1/:username/:userkey/:mapid/capital-ship/top-up/:code' do
     userkey = params["userkey"]
     mapId = params["mapid"]
     code = params["code"]
+
+    currentHour = GameLibrary::hourCode()
 
     # ------------------------------------------------------
     # User Credentials and Map Validity Checks
@@ -230,13 +228,33 @@ get '/game/v1/:username/:userkey/:mapid/capital-ship/top-up/:code' do
     end
 
     # ------------------------------------------------------
-    # Game Mechanics Validation
+    # User Fleet validation
+
+    userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
+
+    if userFleet.nil then
+        status 404
+        return "404: You do not yet have a fleet for this hour. (You should initiate one.)\n"
+    end
+
+    if !userFleet["ship-inventory"]["capital"]["alive"] then
+        status 403
+        return "403: Your capital ship for this hour is dead.\n"
+    end
 
     # ------------------------------------------------------    
 
     content_type 'application/json'
 
-    "{}"
+    if UserFleet::validateTopUpCode(currentHour, username, code) then
+        # We need: (1) top up the value, (2) issue a new challenge 
+        topUpEnergyValue = $GAME_PARAMETERS["fleet:capital-ship:top-up-energy-value"]
+        UserFleet::topUpEnergyValue(currentHour, username, topUpEnergyValue)
+        JSON.generate([true])
+    else
+        status 403
+        return "403: Your code is not a solution to the challenge.\n"
+    end
 end
 
 get '/game/v1/:username/:userkey/:mapid/capital-ship/create-battle-cruiser' do

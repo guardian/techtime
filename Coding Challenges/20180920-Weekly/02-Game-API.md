@@ -288,3 +288,5 @@ cf97896ca2dfb9185cf62f4574cbc067b7b95b20
 Therefore you could use "nnaywpahgahl" as your top up code. How much energy is added to your Capital Ship energy level is defined by the game parameters.
 
 When you complete a top-up challenge and commit your top-up code, a new challenge is written into your Capital "energy-top-up-challenge" key, allowing you to start working on a new top up.
+
+The top up call return `[true]` when successful, otherwise you get a 403.
