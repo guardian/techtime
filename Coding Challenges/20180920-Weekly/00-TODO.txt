@@ -6,7 +6,7 @@
 
 [done] Define the end point for all ships actions.
 
-[] Change the documentation to indicate that the game is not ended when a user has destroyed a capital ship (it's only the case when there are two players).
+[done] Change the documentation to indicate that the game is not ended when a user has destroyed a capital ship (it's only the case when there are two players).
 
 [] The game-parameters.json are looked for in two places.
     - The timeline and the source code. 
@@ -14,11 +14,11 @@
     - If not use the source code one game-parameters.json
     - The creation of a map copies the file to the timeline.
 
-[] Implement class UserFleet
+[done] Implement class UserFleet
 
-[] Write the API section on Capital Ship Initialization.
+[done] Write the API section on Capital Ship Initialization.
 
-[] Implement: /game/v1/:username/:userkey/:mapid/capital-ship/init
+[done] Implement: /game/v1/:username/:userkey/:mapid/capital-ship/init
 
 [] Implement: /game/v1/:username/:userkey/:mapid/capital-ship/top-up/:code 
 

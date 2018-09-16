@@ -6,21 +6,28 @@ require 'securerandom'
 # SecureRandom.hex(2) #=> "eb69"
 # SecureRandom.uuid   #=> "2d931510-d99f-494a-8c67-87feb05e1594"
 
+require 'json'
+
 class UserFleet
 
-    # UserFleet::filepathToUserFleetData(currentHour)
-    def self.filepathToUserFleetData(currentHour)
-        # To be implemented
+    # UserFleet::filepathToUserFleetData(currentHour, username)
+    def self.filepathToUserFleetData(currentHour, username)
+        filecode = Digest::SHA1.hexdigest(username)[0,8]
+        "#{GAME_DATA_FOLDERPATH}/Timeline/#{currentHour}/fleets/#{filecode}.json"
     end
 
-    # UserFleet::getUserFleetDataOrNull(currentHour)
-    def self.getUserFleetDataOrNull(currentHour)
-        nil
+    # UserFleet::getUserFleetDataOrNull(currentHour, username)
+    def self.getUserFleetDataOrNull(currentHour, username)
+        fleetFilepath = UserFleet::filepathToUserFleetData(currentHour, username)
+        return nil if !File.exists?(fleetFilepath)
+        JSON.parse(IO.read(fleetFilepath))
     end
 
-    # UserFleet::getUserFleetDataOrNull(currentHour) : Boolean # return false if UserFleet::getUserFleetDataOrNull(currentHour) return Null
-    def self.trueIfUserFleetIsAlive(currentHour)
-        false
+    # UserFleet::getUserFleetDataOrNull(currentHour, username) : Boolean # return false if UserFleet::getUserFleetDataOrNull(currentHour) return Null
+    def self.trueIfUserFleetIsAlive(currentHour, username)
+        fleetdata = UserFleet::getUserFleetDataOrNull(currentHour, username)
+        return false if fleetdata.nil?
+        fleetdata["ship-inventory"]["capital"]["alive"]
     end
 
     # UserFleet::spawnCapitalShipTopUpChallenge(difficulty)
@@ -43,8 +50,8 @@ class UserFleet
         }
     end
 
-    # UserFleet::spawnInitialFleetReportForUser(username, mapPoint, capitalShipInitialEnergy, topUpChallengeDifficulty)
-    def self.spawnInitialFleetReportForUser(username, mapPoint, capitalShipInitialEnergy, topUpChallengeDifficulty)
+    # UserFleet::spawnUserFleet(username, mapPoint, capitalShipInitialEnergy, topUpChallengeDifficulty)
+    def self.spawnUserFleet(username, mapPoint, capitalShipInitialEnergy, topUpChallengeDifficulty)
         capitalShip = UserFleet::spawnCapitalShip(mapPoint, capitalShipInitialEnergy, topUpChallengeDifficulty)
         {
             "username" => username,

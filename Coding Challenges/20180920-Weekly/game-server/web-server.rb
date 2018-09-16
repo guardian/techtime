@@ -20,6 +20,13 @@ require 'json'
 
 require 'find'
 
+require 'fileutils'
+# FileUtils.mkpath '/a/b/c'
+# FileUtils.cp(src, dst)
+# FileUtils.mv 'oldname', 'newname'
+# FileUtils.rm(path_to_image)
+# FileUtils.rm_rf('dir/to/remove')
+
 # --  --------------------------------------------------
 
 require_relative "library/MapUtils.rb"
@@ -161,6 +168,8 @@ get '/game/v1/:username/:userkey/:mapid/capital-ship/init' do
     userkey = params["userkey"]
     mapId = params["mapid"]
 
+    currentHour = GameLibrary::hourCode()
+
     # ------------------------------------------------------
     # User Credentials and Map Validity Checks
 
@@ -177,11 +186,28 @@ get '/game/v1/:username/:userkey/:mapid/capital-ship/init' do
     # ------------------------------------------------------
     # User Fleet validation
 
+    if UserFleet::getUserFleetDataOrNull(currentHour, username) then
+        status 403
+        return "403: You cannot init a Capital Ship, you already have one for this hour\n"
+    end
+
     # ------------------------------------------------------
 
     content_type 'application/json'
 
-    "{}"
+    map = MapUtils::getCurrentMap()
+    mapPoint = map["points"].sample
+    capitalShipInitialEnergy = $GAME_PARAMETERS["fleet:capital-ship:initial-energy-level"]
+    topUpChallengeDifficulty = $GAME_PARAMETERS["fleet:capital-ship:top-up-challenge-difficulty"]
+    userFleet = UserFleet::spawnUserFleet(username, mapPoint, capitalShipInitialEnergy, topUpChallengeDifficulty)
+
+    userFleetFilepath = UserFleet::filepathToUserFleetData(currentHour, username)
+    if !File.exists?(File.dirname(userFleetFilepath)) then
+        FileUtils.mkpath File.dirname(userFleetFilepath) # we do this because the fleet, subfolder of a timeline hours folder is not automatically created
+    end 
+    File.open(userFleetFilepath, "w"){|f| f.puts(JSON.pretty_generate(userFleet)) }
+
+    JSON.generate(userFleet)
 end
 
 get '/game/v1/:username/:userkey/:mapid/capital-ship/top-up/:code' do

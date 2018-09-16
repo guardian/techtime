@@ -1,4 +1,6 @@
 {
     "map:size" : 1000,
-    "map:jump-points:cardinality" : 500
+    "map:jump-points:cardinality" : 500,
+    "fleet:capital-ship:initial-energy-level" : 10,
+    "fleet:capital-ship:top-up-challenge-difficulty" : 6
 }
