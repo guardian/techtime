@@ -321,7 +321,7 @@ get '/game/v1/:username/:userkey/:mapid/capital-ship/create-battle-cruiser' do
         JSON.generate(battleCruiser)
     else
         status 403
-        "403: Your capital ship doesn't have enough energy to complete the construction of a battle cruiser. You have #{userFleet["ship-inventory"]["capital"]["energy-level"]} but yuo need #{(battleCruiserBuildEnergyCost+battleCruiserInitialEnergyLevel)}\n"
+        "403: Your capital ship doesn't have enough energy to complete the construction of a battle cruiser. You have #{userFleet["ship-inventory"]["capital"]["energy-level"]} but you need #{(battleCruiserBuildEnergyCost+battleCruiserInitialEnergyLevel)}\n"
     end
 
 end
@@ -330,6 +330,10 @@ get '/game/v1/:username/:userkey/:mapid/capital-ship/create-energy-carrier/:ener
     username = params["username"]
     userkey = params["userkey"]
     mapId = params["mapid"]
+
+    energyamount = params["energyamount"]
+
+    currentHour = GameLibrary::hourCode()
 
     # ------------------------------------------------------
     # User Credentials and Map Validity Checks
@@ -345,11 +349,40 @@ get '/game/v1/:username/:userkey/:mapid/capital-ship/create-energy-carrier/:ener
     end
 
     # ------------------------------------------------------
-    # Game Mechanics Validation
+    # User Fleet validation
 
-    # ------------------------------------------------------
+    userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
+
+    if userFleet.nil then
+        status 404
+        return "404: You do not yet have a fleet for this hour. (You should initiate one.)\n"
+    end
+
+    if !userFleet["ship-inventory"]["capital"]["alive"] then
+        status 403
+        return "403: Your capital ship for this hour is dead.\n"
+    end
+
+    # ------------------------------------------------------ 
 
     content_type 'application/json'
+
+    carrierBuildEnergyCost = $GAME_PARAMETERS["fleet:energy-carrier:build-energy-cost"]
+    carrierInitialEnergyLevel = energyamount 
+
+    userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
+    capitalShipCanPerformCarrierCreation = userFleet["ship-inventory"]["capital"]["energy-level"] >= ( carrierBuildEnergyCost + carrierInitialEnergyLevel )
+    if capitalShipCanPerformCarrierCreation then
+        userFleet["ship-inventory"]["capital"]["energy-level"] = userFleet["ship-inventory"]["capital"]["energy-level"] - ( carrierBuildEnergyCost + carrierInitialEnergyLevel )
+        mapPoint = MapUtils::getCurrentMap()["points"].sample
+        energyCarrier = UserFleet::spawnEnergyCarrier(mapPoint, carrierInitialEnergyLevel)
+        userFleet["ship-inventory"]["energy-carriers"] << energyCarrier
+        UserFleet::commitFleetToDisk(currentHour, username, userFleet)
+        JSON.generate(energyCarrier)
+    else
+        status 403
+        "403: Your capital ship doesn't have enough energy to complete the construction of an energy carrier carrying #{carrierInitialEnergyLevel}. You have #{userFleet["ship-inventory"]["capital"]["energy-level"]} but you need #{(carrierBuildEnergyCost+carrierInitialEnergyLevel)}\n"
+    end
 
     "{}"
 end

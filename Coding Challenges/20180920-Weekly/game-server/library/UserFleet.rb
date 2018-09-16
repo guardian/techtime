@@ -103,7 +103,7 @@ class UserFleet
     def self.spawnBattleCruiser(mapPoint, initialEnergyLevel)
         {
             "nomenclature" => "battle-cruiser",
-            "ship-uuid"    => SecureRandom.hex(4),
+            "ship-uuid"    => SecureRandom.uuid,
             "location"     => mapPoint,
             "energy-level" => initialEnergyLevel,
             "shield-level" => 1,
@@ -111,6 +111,19 @@ class UserFleet
             "space-probe-results" => []
         }
     end
+
+    # UserFleet::spawnEnergyCarrier(mapPoint, initialEnergyLevel)
+    def self.spawnEnergyCarrier(mapPoint, initialEnergyLevel)
+        {
+            "nomenclature" => "energy-carrier",
+            "ship-uuid"    => SecureRandom.uuid,
+            "location"     => mapPoint,
+            "energy-level" => initialEnergyLevel,
+            "shield-level" => 1,
+            "alive"        => true
+        }
+    end
+
 
 end
 
