@@ -1,9 +1,23 @@
 
-- Define the UserFleet datatype.
+[done] Define the UserFleet datatype.
+    [done] Capital Ship
+    [done] Battle Cruiser
+    [done] Energy Carrier
 
-- Write the UserFleet class
+[] Define the end point for all ships actions.
 
-- Write the API section on Capital Ship Initialization
+[] Change the documentation to indicate that the game is not ended when a user has destroyed a capital ship (it's only the case when there are two players).
 
-- /game/v1/:username/:userkey/:mapid/capital-ship/top-up/:code 
-    is not implemented (it came to test user credentials validation)
+[] Implement class UserFleet
+
+[] Write the API section on Capital Ship Initialization.
+
+[] Implement: /game/v1/:username/:userkey/:mapid/capital-ship/init
+
+[] Implement: /game/v1/:username/:userkey/:mapid/capital-ship/top-up/:code 
+
+[] Semaphore for all IO actions.
+
+[] The game parameters must be copied to the Timeline, to allow proper reply later on
+
+[] Implement game action log (to be able to reply battles)

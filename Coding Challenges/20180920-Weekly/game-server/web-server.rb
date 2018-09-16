@@ -110,15 +110,8 @@ get '/' do
     ].join("\n") + "\n"
 end
 
-get '/game/v1/map' do
-    content_type 'application/json'
-    JSON.generate(MapUtils::getCurrentMap())
-end
-
-get '/game/v1/parameters' do
-    content_type 'application/json'
-    JSON.pretty_generate($GAME_PARAMETERS)
-end
+# ------------------------------------------
+# Some admin
 
 get '/game/v1/get-userkey/:username' do
     content_type 'text/plain'
@@ -143,22 +136,161 @@ get '/game/v1/get-userkey/:username' do
     end
 end
 
-get '/game/v1/:username/:userkey/:mapid/capital-ship/top-up/:code' do
+# ------------------------------------------
+# Map and Game Parameters
+
+get '/game/v1/map' do
     content_type 'application/json'
+    JSON.generate(MapUtils::getCurrentMap())
+end
+
+get '/game/v1/parameters' do
+    content_type 'application/json'
+    JSON.pretty_generate($GAME_PARAMETERS)
+end
+
+# ------------------------------------------
+# User Fleet Actions 
+
+get '/game/v1/:username/:userkey/:mapid/capital-ship/init' do
     username = params["username"]
     userkey = params["userkey"]
     mapId = params["mapid"]
-    code = params["code"]
+
+    # ------------------------------------------------------
+    # User Credentials and Map Validity Checks
 
     if !UserKeys::validateUserCredentials(username, userkey) then
         status 401
         return "401: Invalid credentials\n"
     end
 
-    if MapUtils::getCurrentMap()["mapId"]!=mapId then
+    if MapUtils::getCurrentMap()["mapId"] != mapId then
         status 404
         return "404: Map not found (mapId is incorrect or outdated)\n"
     end
 
-    "[]"
+    # ------------------------------------------------------
+    # User Fleet validation
+
+    # ------------------------------------------------------
+
+    content_type 'application/json'
+
+    "{}"
 end
+
+get '/game/v1/:username/:userkey/:mapid/capital-ship/top-up/:code' do
+    username = params["username"]
+    userkey = params["userkey"]
+    mapId = params["mapid"]
+    code = params["code"]
+
+    # ------------------------------------------------------
+    # User Credentials and Map Validity Checks
+
+    if !UserKeys::validateUserCredentials(username, userkey) then
+        status 401
+        return "401: Invalid credentials\n"
+    end
+
+    if MapUtils::getCurrentMap()["mapId"] != mapId then
+        status 404
+        return "404: Map not found (mapId is incorrect or outdated)\n"
+    end
+
+    # ------------------------------------------------------
+    # Game Mechanics Validation
+
+    # ------------------------------------------------------    
+
+    content_type 'application/json'
+
+    "{}"
+end
+
+get '/game/v1/:username/:userkey/:mapid/capital-ship/create-battle-cruiser' do
+    username = params["username"]
+    userkey = params["userkey"]
+    mapId = params["mapid"]
+
+    # ------------------------------------------------------
+    # User Credentials and Map Validity Checks
+
+    if !UserKeys::validateUserCredentials(username, userkey) then
+        status 401
+        return "401: Invalid credentials\n"
+    end
+
+    if MapUtils::getCurrentMap()["mapId"] != mapId then
+        status 404
+        return "404: Map not found (mapId is incorrect or outdated)\n"
+    end
+
+    # ------------------------------------------------------
+    # Game Mechanics Validation
+
+    # ------------------------------------------------------
+
+    content_type 'application/json'
+
+    "{}"
+end
+
+get '/game/v1/:username/:userkey/:mapid/capital-ship/create-energy-carrier/:energyamount' do
+    username = params["username"]
+    userkey = params["userkey"]
+    mapId = params["mapid"]
+
+    # ------------------------------------------------------
+    # User Credentials and Map Validity Checks
+
+    if !UserKeys::validateUserCredentials(username, userkey) then
+        status 401
+        return "401: Invalid credentials\n"
+    end
+
+    if MapUtils::getCurrentMap()["mapId"] != mapId then
+        status 404
+        return "404: Map not found (mapId is incorrect or outdated)\n"
+    end
+
+    # ------------------------------------------------------
+    # Game Mechanics Validation
+
+    # ------------------------------------------------------
+
+    content_type 'application/json'
+
+    "{}"
+end
+
+get '/game/v1/:username/:userkey/:mapid/jump/:shipuuid/:targetpointlabel' do
+    username = params["username"]
+    userkey = params["userkey"]
+    mapId = params["mapid"]
+
+    # ------------------------------------------------------
+    # User Credentials and Map Validity Checks
+
+    if !UserKeys::validateUserCredentials(username, userkey) then
+        status 401
+        return "401: Invalid credentials\n"
+    end
+
+    if MapUtils::getCurrentMap()["mapId"] != mapId then
+        status 404
+        return "404: Map not found (mapId is incorrect or outdated)\n"
+    end
+
+    # ------------------------------------------------------
+    # Game Mechanics Validation
+
+    # ------------------------------------------------------
+
+    content_type 'application/json'
+
+    "{}"
+end
+
+
