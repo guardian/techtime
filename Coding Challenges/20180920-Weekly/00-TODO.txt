@@ -26,4 +26,6 @@
 
 [] The game parameters must be copied to the Timeline, to allow proper reply later on
 
-[] Implement game action log (to be able to reply battles)
+[] Befine a convention to encode game actions
+    [] Implement game action log (to be able to reply battles)
+    [] Implement the BBC player (it should log itself up, for replay)
