@@ -24,6 +24,7 @@ require 'find'
 
 require_relative "library/MapUtils.rb"
 require_relative "library/UserKeys.rb"
+require_relative "library/UserFleet.rb"
 
 # --  --------------------------------------------------
 
@@ -40,6 +41,9 @@ end
 GAME_DATA_FOLDERPATH = "/Galaxy/DataBank/WeeklyCodingChallenges/20180920-Weekly/#{LUCILLE_INSTANCE}"
 GAME_PARAMETERS_FILEPATH = File.dirname(__FILE__) + "/game-parameters.json"
 $GAME_PARAMETERS = JSON.parse(IO.read(GAME_PARAMETERS_FILEPATH))
+
+# -- --------------------------------------------------
+# nslog
 
 # -- --------------------------------------------------
 
@@ -75,7 +79,7 @@ class GameLibrary
             map["timestamp"] = GameLibrary::hourCode()
             map["points"] = (1..$GAME_PARAMETERS["map:jump-points:cardinality"]).map{|indx|
                 {
-                    "label" => SecureRandom.hex(3),
+                    "label" => SecureRandom.hex(4),
                     "coordinates" => [ rand * $GAME_PARAMETERS["map:size"], rand * $GAME_PARAMETERS["map:size"] ].map{|c| c.round(2) }
                 }
             }

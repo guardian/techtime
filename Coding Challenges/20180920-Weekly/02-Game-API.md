@@ -39,7 +39,7 @@ Map: {
 }
 
 MapPoint: {
-  "label": "4420b0",
+  "label": "4420b065",
   "coordinates": [
     58.21,
     599.61
