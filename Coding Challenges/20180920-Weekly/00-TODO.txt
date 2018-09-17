@@ -5,13 +5,11 @@
 [] When a map is created create the BBC fleet.
 [] Make sure that all the end points are in the game API
 [] Implement /bomb/:battlecruisershipuuid/:targetpointlabel
+[] Test every end point (^_^)
 
 -> Can be done after launch
 
 [] Semaphore for all IO actions.
-
-[] Navigation::jumpEnergyCostShipType(sourceMapPoint, targetMapPoint, shipType)
-    Is currently not taking account of the ship type.
 
 [] Define a convention to encode game actions
     [] Implement game action log (to be able to reply battles)
