@@ -10,10 +10,11 @@ class Navigation
         Math.sqrt( (dx**2) + (dy**2) )
     end
 
-    # Navigation::jumpEnergyCost(sourceMapPoint, targetMapPoint, shipType)
-    def self.jumpEnergyCost(sourceMapPoint, targetMapPoint, shipType)
-        # For the moment we are ignoring the ship type
-        1
+    # Navigation::jumpEnergyCost(sourceMapPoint, targetMapPoint, shipNomenclature)
+    def self.jumpEnergyCost(sourceMapPoint, targetMapPoint, shipNomenclature)
+        distanceBetweenPoints = Navigation::distanceBetweenTwoMapPoints(sourceMapPoint, targetMapPoint)
+        coefficient = $GAME_PARAMETERS["fleet:shipNomenclature2jumpCostCoefficient"][shipNomenclature]
+        (distanceBetweenPoints**1.1)*coefficient
     end
 
 end

@@ -1,8 +1,6 @@
 
 -> Needed before launch
 
-[] Implement Navigation::jumpEnergyCostShipType(sourceMapPoint, targetMapPoint, shipType)
-
 [] The game-parameters.json are looked for in two places.
     - The timeline and the source code. 
     - If found in the timeline, use that
