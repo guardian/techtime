@@ -1,6 +1,7 @@
 
 -> Needed before launch
 
+[] Need to run UserFleet::spawnCapitalShipTopUpChallenge after a top up :)
 [] When the map is created, move the game parameters to the timeline and read it from there
 [] When a map is created create the BBC fleet.
 [] Make sure that all the end points are in the game API
