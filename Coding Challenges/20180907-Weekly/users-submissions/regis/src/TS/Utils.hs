@@ -26,8 +26,8 @@ waitMinutes :: MonadIO m => Int -> m ()
 waitMinutes ms = liftIO $ threadDelay (ms * 60 * 1000000)
 
 -- | Generates all lists of length `n`, conserving order
-listsOfN :: Eq a => Int -> [a] -> [([a], [a])]
-listsOfN 0 xs    = [([], xs)]
-listsOfN _ [] = []
-listsOfN n (x : xs') =
-  (first (x :) <$> listsOfN (n - 1) xs') ++ (second (x :) <$> listsOfN n xs')
+combinations :: Eq a => Int -> [a] -> [([a], [a])]
+combinations 0 xs    = [([], xs)]
+combinations _ [] = []
+combinations n (x : xs') =
+  (first (x :) <$> combinations (n - 1) xs') ++ (second (x :) <$> combinations n xs')

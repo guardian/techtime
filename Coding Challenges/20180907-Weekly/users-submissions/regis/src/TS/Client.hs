@@ -3,7 +3,10 @@
 module TS.Client where
 
 import           Prelude                 hiding ( (/), concat )
-import           Control.Monad.Catch            ( MonadThrow )
+import           Control.Monad                  ( (<=<) )
+import           Control.Monad.Catch            ( MonadThrow
+                                                , throwM 
+                                                )
 import           Control.Monad.Reader           ( MonadReader
                                                 , reader
                                                 )
@@ -13,6 +16,7 @@ import           Control.Monad.IO.Class         ( MonadIO
 import           Data.Aeson                     ( decode )
 import           Data.ByteString.Lazy           ( ByteString )
 import           Data.List                      ( intersperse )
+import           Data.Maybe                     ( maybe )
 import           Data.Text                      ( Text
                                                 , unpack
                                                 , concat
@@ -36,8 +40,8 @@ whoami = "regis"
 a / b = a ++ "/" ++ b
 
 -- | Fetch the next map
-fetch :: (MonadReader Env m, MonadThrow m, MonadIO m) => m (Maybe Map)
-fetch = decode <$> get nextmap
+fetch :: (MonadReader Env m, MonadThrow m, MonadIO m) => m Map
+fetch = (maybe (throwM InvalidJsonException) pure . decode) =<< get nextmap
 
 -- | Submit a path
 submit :: (MonadReader Env m, MonadThrow m, MonadIO m) => Map -> m ()

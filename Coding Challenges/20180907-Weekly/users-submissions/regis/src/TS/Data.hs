@@ -2,6 +2,7 @@
 
 module TS.Data where
 
+import           Control.Exception.Base         ( Exception )
 import           Data.Aeson
 import           Data.Text                      ( Text )
 import qualified Data.Vector                   as V
@@ -46,3 +47,10 @@ cost xs = foldl1 (+) (uncurry distance <$> zip xs (tail xs))
 distance :: Point -> Point -> Double
 distance (Point _ (x, y)) (Point _ (x', y')) =
   sqrt $ (x - x') ^ 2 + (y - y') ^ 2
+
+data InvalidJsonException = InvalidJsonException
+
+instance Exception InvalidJsonException
+
+instance Show InvalidJsonException where
+  showsPrec _ InvalidJsonException = showString "invalid JSON fetched from server"
