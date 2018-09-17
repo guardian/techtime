@@ -1,0 +1,485 @@
+
+2018-09-07-11
+adam                 , length: 617.918 , score: 0.1
+sophie.lambrakis     , length: 617.918 , score: 0.1
+adam.fisher          , length: 617.918 , score: 0.1
+
+2018-09-07-12
+justin               , length: 274.046 , score: 0.1
+adam.fisher          , length: 491.796 , score: 0.07
+
+2018-09-07-13
+adam.fisher          , length: 281.793 , score: 0.1
+justin               , length: 308.98 , score: 0.07
+
+2018-09-07-14
+adam.fisher          , length: 293.056 , score: 0.1
+
+2018-09-07-15
+sophie.lambrakis     , length: 187.195 , score: 0.1
+adam.fisher          , length: 187.195 , score: 0.1
+
+2018-09-07-16
+adam.fisher          , length: 229.888 , score: 0.1
+sophie.lambrakis     , length: 232.473 , score: 0.07
+sophietest           , length: 305.791 , score: 0.049
+
+2018-09-07-17
+sophie.lambrakis     , length: 270.274 , score: 0.1
+adam.fisher          , length: 270.274 , score: 0.1
+sophietest           , length: 303.51 , score: 0.07
+sophietest2          , length: 410.051 , score: 0.049
+
+2018-09-07-18
+adam.fisher-TEST     , length: 254.719 , score: 0.1
+adam.fisher          , length: 254.719 , score: 0.1
+sophie.lambrakis     , length: 262.767 , score: 0.07
+
+2018-09-07-19
+adam.fisher          , length: 252.814 , score: 0.1
+sophie.lambrakis     , length: 309.09 , score: 0.07
+
+2018-09-07-20
+adam.fisher          , length: 271.997 , score: 0.1
+sophie.lambrakis     , length: 290.669 , score: 0.07
+
+2018-09-07-21
+adam.fisher          , length: 215.965 , score: 0.1
+sophie.lambrakis     , length: 260.513 , score: 0.07
+
+2018-09-07-22
+adam.fisher          , length: 214.549 , score: 0.1
+sophie.lambrakis     , length: 265.088 , score: 0.07
+
+2018-09-07-23
+sophie.lambrakis     , length: 293.388 , score: 0.1
+
+2018-09-08-00
+sophie.lambrakis     , length: 289.357 , score: 0.1
+
+2018-09-08-01
+sophie.lambrakis     , length: 349.197 , score: 0.1
+
+2018-09-08-02
+sophie.lambrakis     , length: 232.65 , score: 0.1
+
+2018-09-08-03
+sophie.lambrakis     , length: 258.027 , score: 0.1
+
+2018-09-08-04
+sophie.lambrakis     , length: 245.05 , score: 0.1
+
+2018-09-08-05
+sophie.lambrakis     , length: 305.601 , score: 0.1
+
+2018-09-08-06
+sophie.lambrakis     , length: 245.928 , score: 0.1
+
+2018-09-08-07
+sophie.lambrakis     , length: 265.34 , score: 0.1
+
+2018-09-08-08
+sophie.lambrakis     , length: 245.503 , score: 0.1
+
+2018-09-08-09
+sophie.lambrakis     , length: 287.392 , score: 0.1
+
+2018-09-08-10
+sophie.lambrakis     , length: 270.382 , score: 0.1
+
+2018-09-08-11
+sophie.lambrakis     , length: 338.262 , score: 0.1
+
+2018-09-08-12
+sophie.lambrakis     , length: 313.509 , score: 0.1
+
+2018-09-08-13
+sophie.lambrakis     , length: 257.989 , score: 0.1
+
+2018-09-08-14
+sophie.lambrakis     , length: 254.053 , score: 0.1
+
+2018-09-08-15
+sophie.lambrakis     , length: 256.963 , score: 0.1
+
+2018-09-08-16
+sophie.lambrakis     , length: 271.339 , score: 0.1
+
+2018-09-08-17
+sophie.lambrakis     , length: 245.464 , score: 0.1
+
+2018-09-08-18
+sophie.lambrakis     , length: 242.082 , score: 0.1
+
+2018-09-08-19
+sophie.lambrakis     , length: 274.122 , score: 0.1
+
+2018-09-08-20
+sophie.lambrakis     , length: 263.51 , score: 0.1
+
+2018-09-08-21
+sophie.lambrakis     , length: 312.081 , score: 0.1
+
+2018-09-08-22
+sophie.lambrakis     , length: 269.778 , score: 0.1
+
+2018-09-08-23
+sophie.lambrakis     , length: 324.884 , score: 0.1
+
+2018-09-09-00
+sophie.lambrakis     , length: 268.089 , score: 0.1
+
+2018-09-09-01
+sophie.lambrakis     , length: 233.765 , score: 0.1
+
+2018-09-09-02
+sophie.lambrakis     , length: 286.296 , score: 0.1
+
+2018-09-09-03
+sophie.lambrakis     , length: 265.834 , score: 0.1
+
+2018-09-09-04
+sophie.lambrakis     , length: 269.068 , score: 0.1
+
+2018-09-09-05
+sophie.lambrakis     , length: 279.68 , score: 0.1
+
+2018-09-09-06
+sophie.lambrakis     , length: 171.764 , score: 0.1
+
+2018-09-09-07
+sophie.lambrakis     , length: 291.836 , score: 0.1
+
+2018-09-09-08
+sophie.lambrakis     , length: 253.658 , score: 0.1
+
+2018-09-09-09
+sophie.lambrakis     , length: 236.84 , score: 0.1
+
+2018-09-09-10
+sophie.lambrakis     , length: 254.66 , score: 0.1
+
+2018-09-09-11
+sophie.lambrakis     , length: 244.762 , score: 0.1
+
+2018-09-09-12
+sophie.lambrakis     , length: 256.432 , score: 0.1
+
+2018-09-09-13
+sophie.lambrakis     , length: 287.675 , score: 0.1
+
+2018-09-09-14
+sophie.lambrakis     , length: 268.707 , score: 0.1
+
+2018-09-09-15
+sophie.lambrakis     , length: 229.802 , score: 0.1
+
+2018-09-09-16
+regis                , length: 220.435 , score: 0.1
+sophie.lambrakis     , length: 230.612 , score: 0.07
+
+2018-09-09-17
+regis                , length: 252.093 , score: 0.1
+sophie.lambrakis     , length: 283.643 , score: 0.07
+
+2018-09-09-18
+regis                , length: 239.317 , score: 0.1
+sophie.lambrakis     , length: 283.789 , score: 0.07
+
+2018-09-09-19
+sophie.lambrakis     , length: 279.548 , score: 0.1
+
+2018-09-09-20
+sophie.lambrakis     , length: 317.435 , score: 0.1
+
+2018-09-09-21
+sophie.lambrakis     , length: 310.938 , score: 0.1
+
+2018-09-09-22
+sophie.lambrakis     , length: 244.984 , score: 0.1
+
+2018-09-09-23
+sophie.lambrakis     , length: 283.484 , score: 0.1
+
+2018-09-10-00
+sophie.lambrakis     , length: 279.969 , score: 0.1
+
+2018-09-10-01
+sophie.lambrakis     , length: 248.397 , score: 0.1
+
+2018-09-10-02
+sophie.lambrakis     , length: 243.819 , score: 0.1
+
+2018-09-10-03
+sophie.lambrakis     , length: 256.356 , score: 0.1
+
+2018-09-10-04
+sophie.lambrakis     , length: 259.207 , score: 0.1
+
+2018-09-10-05
+sophie.lambrakis     , length: 260.621 , score: 0.1
+
+2018-09-10-06
+sophie.lambrakis     , length: 257.221 , score: 0.1
+
+2018-09-10-07
+sophie.lambrakis     , length: 271.088 , score: 0.1
+
+2018-09-10-08
+sophie.lambrakis     , length: 294.257 , score: 0.1
+justin               , length: 304.47 , score: 0.07
+
+2018-09-10-09
+sophie.lambrakis     , length: 295.887 , score: 0.1
+justin               , length: 339.076 , score: 0.07
+
+2018-09-10-10
+adam.fisher          , length: 230.564 , score: 0.1
+sophie.lambrakis     , length: 230.564 , score: 0.1
+justin               , length: 382.014 , score: 0.07
+
+2018-09-10-11
+adam.fisher          , length: 253.29 , score: 0.1
+sophie.lambrakis     , length: 260.073 , score: 0.07
+
+2018-09-10-12
+adam.fisher          , length: 246.214 , score: 0.1
+sophie.lambrakis     , length: 266.774 , score: 0.07
+justin               , length: 328.364 , score: 0.049
+
+2018-09-10-13
+adam.fisher          , length: 241.713 , score: 0.1
+sophie.lambrakis     , length: 272.214 , score: 0.07
+
+2018-09-10-14
+sophie.lambrakis     , length: 225.371 , score: 0.1
+adam.fisher          , length: 225.371 , score: 0.1
+
+2018-09-10-15
+adam.fisher          , length: 281.597 , score: 0.1
+sophie.lambrakis     , length: 301.249 , score: 0.07
+
+2018-09-10-16
+sophie.lambrakis     , length: 234.195 , score: 0.1
+adam.fisher          , length: 234.195 , score: 0.1
+
+2018-09-10-17
+adam.fisher          , length: 242.972 , score: 0.1
+sophie.lambrakis     , length: 253.134 , score: 0.07
+
+2018-09-10-18
+adam.fisher          , length: 273.664 , score: 0.1
+sophie.lambrakis     , length: 291.446 , score: 0.07
+
+2018-09-10-19
+adam.fisher          , length: 310.204 , score: 0.1
+sophie.lambrakis     , length: 312.352 , score: 0.07
+
+2018-09-10-20
+adam.fisher2         , length: 282.212 , score: 0.1
+adam.fisher          , length: 282.212 , score: 0.1
+sophie.lambrakis     , length: 294.973 , score: 0.07
+
+2018-09-10-21
+adam.fisher          , length: 268.586 , score: 0.1
+sophie.lambrakis     , length: 290.422 , score: 0.07
+
+2018-09-10-22
+adam.fisher          , length: 261.226 , score: 0.1
+sophie.lambrakis     , length: 283.712 , score: 0.07
+
+2018-09-10-23
+adam.fisher          , length: 259.101 , score: 0.1
+sophie.lambrakis     , length: 323.411 , score: 0.07
+
+2018-09-11-00
+adam.fisher          , length: 194.238 , score: 0.1
+sophie.lambrakis     , length: 237.291 , score: 0.07
+
+2018-09-11-01
+adam.fisher          , length: 251.57 , score: 0.1
+sophie.lambrakis     , length: 282.683 , score: 0.07
+
+2018-09-11-02
+adam.fisher          , length: 233.826 , score: 0.1
+sophie.lambrakis     , length: 261.603 , score: 0.07
+
+2018-09-11-03
+adam.fisher          , length: 309.031 , score: 0.1
+sophie.lambrakis     , length: 328.79 , score: 0.07
+
+2018-09-11-04
+adam.fisher          , length: 255.763 , score: 0.1
+sophie.lambrakis     , length: 270.029 , score: 0.07
+
+2018-09-11-05
+adam.fisher          , length: 270.666 , score: 0.1
+sophie.lambrakis     , length: 296.506 , score: 0.07
+
+2018-09-11-06
+adam.fisher          , length: 263.696 , score: 0.1
+sophie.lambrakis     , length: 312.763 , score: 0.07
+
+2018-09-11-07
+sophie.lambrakis     , length: 293.425 , score: 0.1
+
+2018-09-11-08
+adam.fisher          , length: 249.174 , score: 0.1
+sophie.lambrakis     , length: 266.034 , score: 0.07
+
+2018-09-11-09
+adam.fisher          , length: 284.42 , score: 0.1
+sophie.lambrakis     , length: 335.236 , score: 0.07
+justin               , length: 373.028 , score: 0.049
+
+2018-09-11-10
+adam.fisher          , length: 261.53 , score: 0.1
+sophie.lambrakis     , length: 281.623 , score: 0.07
+justin               , length: 320.43 , score: 0.049
+
+2018-09-11-11
+adam.fisher          , length: 267.282 , score: 0.1
+sophie.lambrakis     , length: 291.662 , score: 0.07
+
+2018-09-11-12
+jonathon.herbert     , length: 266.76 , score: 0.1
+adam.fisher          , length: 266.76 , score: 0.1
+sophie.lambrakis     , length: 282.523 , score: 0.07
+
+2018-09-11-13
+adam.fisher          , length: 244.421 , score: 0.1
+jonathon.herbert     , length: 252.817 , score: 0.07
+sophie.lambrakis     , length: 257.812 , score: 0.049
+
+2018-09-11-14
+adam.fisher          , length: 202.295 , score: 0.1
+sophie.lambrakis     , length: 246.538 , score: 0.07
+
+2018-09-11-15
+adam.fisher          , length: 241.001 , score: 0.1
+jonathon.herbert     , length: 253.006 , score: 0.07
+sophie.lambrakis     , length: 278.459 , score: 0.049
+
+2018-09-11-16
+jonathon.herbert     , length: 297.194 , score: 0.1
+adam.fisher          , length: 297.194 , score: 0.1
+sophie.lambrakis     , length: 321.8 , score: 0.07
+
+2018-09-11-17
+adam.fisher          , length: 267.57 , score: 0.1
+jonathon.herbert     , length: 296.284 , score: 0.07
+sophie.lambrakis     , length: 326.818 , score: 0.049
+
+2018-09-11-18
+adam.fisher          , length: 261.367 , score: 0.1
+sophie.lambrakis     , length: 272.73 , score: 0.07
+
+2018-09-11-19
+adam.fisher          , length: 250.717 , score: 0.1
+sophie.lambrakis     , length: 254.923 , score: 0.07
+
+2018-09-11-20
+adam.fisher          , length: 255.54 , score: 0.1
+sophie.lambrakis     , length: 269.099 , score: 0.07
+
+2018-09-11-21
+adam.fisher          , length: 250.707 , score: 0.1
+sophie.lambrakis     , length: 286.549 , score: 0.07
+
+2018-09-11-22
+adam.fisher          , length: 233.811 , score: 0.1
+sophie.lambrakis     , length: 266.466 , score: 0.07
+
+2018-09-11-23
+adam.fisher          , length: 245.094 , score: 0.1
+sophie.lambrakis     , length: 255.962 , score: 0.07
+
+2018-09-12-00
+adam.fisher          , length: 261.077 , score: 0.1
+sophie.lambrakis     , length: 312.737 , score: 0.07
+
+2018-09-12-01
+adam.fisher          , length: 261.328 , score: 0.1
+sophie.lambrakis     , length: 308.554 , score: 0.07
+
+2018-09-12-02
+adam.fisher          , length: 281.471 , score: 0.1
+sophie.lambrakis     , length: 297.992 , score: 0.07
+
+2018-09-12-03
+adam.fisher          , length: 211.139 , score: 0.1
+sophie.lambrakis     , length: 213.374 , score: 0.07
+
+2018-09-12-04
+adam.fisher          , length: 245.681 , score: 0.1
+sophie.lambrakis     , length: 308.219 , score: 0.07
+
+2018-09-12-05
+adam.fisher          , length: 238.139 , score: 0.1
+sophie.lambrakis     , length: 251.116 , score: 0.07
+
+2018-09-12-06
+adam.fisher          , length: 243.815 , score: 0.1
+sophie.lambrakis     , length: 271.062 , score: 0.07
+
+2018-09-12-07
+adam.fisher          , length: 290.811 , score: 0.1
+sophie.lambrakis     , length: 323.309 , score: 0.07
+
+2018-09-12-08
+adam.fisher          , length: 268.549 , score: 0.1
+jonathon.herbert     , length: 295.317 , score: 0.07
+sophie.lambrakis     , length: 320.654 , score: 0.049
+
+2018-09-12-09
+adam.fisher          , length: 262.958 , score: 0.1
+jonathon.herbert     , length: 290.392 , score: 0.07
+sophie.lambrakis     , length: 301.536 , score: 0.049
+
+2018-09-12-10
+adam.fisher          , length: 233.792 , score: 0.1
+jonathon.herbert     , length: 236.433 , score: 0.07
+sophie.lambrakis     , length: 254.339 , score: 0.049
+
+2018-09-12-11
+adam.fisher          , length: 253.315 , score: 0.1
+jonathon.herbert     , length: 254.37 , score: 0.07
+sophie.lambrakis     , length: 255.739 , score: 0.049
+
+2018-09-12-12
+jonathon.herbert     , length: 213.878 , score: 0.1
+adam.fisher          , length: 213.878 , score: 0.1
+sophie.lambrakis     , length: 235.863 , score: 0.07
+
+2018-09-12-13
+adam.fisher          , length: 227.579 , score: 0.1
+sophie.lambrakis     , length: 255.712 , score: 0.07
+
+2018-09-12-14
+adam.fisher          , length: 256.122 , score: 0.1
+jonathon.herbert     , length: 296.62 , score: 0.07
+sophie.lambrakis     , length: 296.62 , score: 0.07
+
+2018-09-12-15
+adam.fisher          , length: 271.326 , score: 0.1
+sophie.lambrakis     , length: 295.606 , score: 0.07
+
+2018-09-12-16
+adam.fisher          , length: 259.127 , score: 0.1
+sophie.lambrakis     , length: 309.198 , score: 0.07
+
+2018-09-12-17
+adam.fisher          , length: 229.675 , score: 0.1
+sophie.lambrakis     , length: 247.353 , score: 0.07
+
+Summary: 
+   - sophie.lambrakis     : 10.423
+   - adam.fisher          : 6.67
+   - jonathon.herbert     : 0.86
+   - justin               : 0.527
+   - regis                : 0.3
+   - sophietest           : 0.119
+   - adam.fisher2         : 0.1
+   - adam.fisher-TEST     : 0.1
+   - adam                 : 0.1
+   - sophietest2          : 0.049
