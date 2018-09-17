@@ -73,13 +73,11 @@ CapitalShip
 	}
 	"energy-level" : FLOAT
 	"energy-top-up-challenge" : CapitalShipTopUpChallenge
-	"shield-level" : FLOAT # between 0 and 1, see documentaton.
 	"alive"        : Boolean
 }
 ```
 
 - `location` is the same as a MapPoint.
-- `shield-level` is a float between 0 and 1, see documentation.
 - `energy-top-up-challenge` is used for the Capital Ship energy top up. See the section "Capital Ship top up" below for details.
 - `alive` indicates whether your ship is still alive. In this current version of the game the only reason it would not be alive is that it was hit by a bomb after its shield went down.
 
@@ -97,7 +95,6 @@ BattleCruiser
 		"coordinates" : [449.3, 932.24]
 	}
 	"energy-level" : FLOAT
-	"shield-level" : FLOAT # between 0 and 1, see documentaton.
 	"alive"        : Boolean
 	"space-probe-results"  : SpaceProbeResults
 }
@@ -137,12 +134,9 @@ EnergyCarrier
 		"coordinates" : [449.3, 932.24]
 	}
 	"energy-level" : FLOAT
-	"shield-level" : 0 
 	"alive"        : Boolean
 }
 ```
-
-The shield-level of energy carriers is hard coded to 0 to indicate that they do not have shields. A bomb exploding where they are means you lose the ship and its energy.
 
 ### Fleet Report
 

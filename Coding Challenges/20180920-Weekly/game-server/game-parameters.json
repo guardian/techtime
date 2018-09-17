@@ -1,7 +1,7 @@
 {
     "map:size" : 1000,
     "map:jump-points:cardinality" : 500,
-    "fleet:capital-ship:initial-energy-level" : 1000,
+    "fleet:capital-ship:initial-energy-level" : 2000,
     "fleet:capital-ship:top-up-challenge-difficulty" : 6,
     "fleet:capital-ship:top-up-energy-value" : 500,
     "fleet:battle-cruiser:build-energy-cost" : 50,

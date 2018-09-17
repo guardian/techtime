@@ -49,7 +49,6 @@ class UserFleet
             "location"     => mapPoint,
             "energy-level" => energyLevel,
             "energy-top-up-challenge" => UserFleet::spawnCapitalShipTopUpChallenge(topUpChallengeDifficulty),
-            "shield-level" => 1,
             "alive"        => true
         }
     end
@@ -106,7 +105,6 @@ class UserFleet
             "ship-uuid"    => SecureRandom.uuid,
             "location"     => mapPoint,
             "energy-level" => initialEnergyLevel,
-            "shield-level" => 1,
             "alive"        => true,
             "space-probe-results" => []
         }
@@ -119,7 +117,6 @@ class UserFleet
             "ship-uuid"    => SecureRandom.uuid,
             "location"     => mapPoint,
             "energy-level" => initialEnergyLevel,
-            "shield-level" => 1,
             "alive"        => true
         }
     end
