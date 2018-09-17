@@ -434,7 +434,7 @@ get '/game/v1/:username/:userkey/:mapid/jump/:shipuuid/:targetpointlabel' do
     ship = UserFleet::getShipPerUUIDOrNull(currentHour, username, uuid)
     if ship.nil? then
         status 404
-        return "404: Your fleet has not ship with this uuid.\n"
+        return "404: Your fleet has no ship with this uuid.\n"
     end
 
     # Need to check whether the ship is alive ot not
@@ -477,4 +477,163 @@ get '/game/v1/:username/:userkey/:mapid/jump/:shipuuid/:targetpointlabel' do
 
 end
 
+get '/game/v1/:username/:userkey/:mapid/energy-transfer-type1/:energycarriershipuuid/:energylevel' do
+
+    username = params["username"]
+    userkey = params["userkey"]
+    mapId = params["mapid"]
+
+    energyCarrierShipUUID = params["energycarriershipuuid"]
+    energyLevel = params["energylevel"]
+
+    currentHour = GameLibrary::hourCode()
+
+    # ------------------------------------------------------
+    # User Credentials and Map Validity Checks
+
+    if !UserKeys::validateUserCredentials(username, userkey) then
+        status 401
+        return "401: Invalid credentials\n"
+    end
+
+    if MapUtils::getCurrentMap()["mapId"] != mapId then
+        status 404
+        return "404: Map not found (mapId is incorrect or outdated)\n"
+    end
+
+    # ------------------------------------------------------
+    # User Fleet validation
+
+    userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
+
+    if userFleet.nil? then
+        status 404
+        return "404: You do not yet have a fleet for this hour. (You should initiate one.)\n"
+    end
+
+    energyCarrier = UserFleet::getShipPerUUIDOrNull(currentHour, username, energyCarrierShipUUID)
+    capital = userFleet["ship-inventory"]["capital"]
+
+    if energyCarrier.nil? then
+        status 404
+        return "404: Your fleet has no ship with uuid #{energyCarrierShipUUID}.\n"
+    end
+
+    if !energyCarrier["alive"] then
+        status 403
+        return "403: The energy carrier is dead.\n"
+    end
+
+    if !capital["alive"] then
+        status 403
+        return "403: Your capital ship is dead.\n"
+    end
+
+    if capital["location"]["label"] != energyCarrier["location"]["label"] then
+        status 403
+        return "403: You cannot transfer energy between the two ships, they are not at the same map location.\n"        
+    end
+
+    if capital["energy-level"] < energyLevel then
+        status 403
+        return "403: Your capital ship doesn't have enough energy for this transfer.\n"
+    end    
+
+    # ------------------------------------------------------
+
+    capital["energy-level"] = capital["energy-level"] - energyLevel
+    energyCarrier["energy-level"] = energyCarrier["energy-level"] + energyLevel
+
+    userFleet["ship-inventory"]["capital"] = capital
+    userFleet = UserFleet::insertOrUpdateShipAtFleet(userFleet, energyCarrier)
+    UserFleet::commitFleetToDisk(currentHour, username, userFleet)
+
+    JSON.pretty_generate([ energyCarrier, capital ])
+
+end
+
+get '/game/v1/:username/:userkey/:mapid/energy-transfer-type2/:energycarriershipuuid/:battlecruisershipuuid' do
+
+    username = params["username"]
+    userkey = params["userkey"]
+    mapId = params["mapid"]
+
+    energyCarrierShipUUID = params["energycarriershipuuid"]
+    battleCruiserShipUUID = params["battlecruisershipuuid"]
+
+    currentHour = GameLibrary::hourCode()
+
+    # ------------------------------------------------------
+    # User Credentials and Map Validity Checks
+
+    if !UserKeys::validateUserCredentials(username, userkey) then
+        status 401
+        return "401: Invalid credentials\n"
+    end
+
+    if MapUtils::getCurrentMap()["mapId"] != mapId then
+        status 404
+        return "404: Map not found (mapId is incorrect or outdated)\n"
+    end
+
+    # ------------------------------------------------------
+    # User Fleet validation
+
+    userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
+
+    if userFleet.nil? then
+        status 404
+        return "404: You do not yet have a fleet for this hour. (You should initiate one.)\n"
+    end
+
+    energyCarrier = UserFleet::getShipPerUUIDOrNull(currentHour, username, energyCarrierShipUUID)
+    battleCruiser = UserFleet::getShipPerUUIDOrNull(currentHour, username, battleCruiserShipUUID)
+
+    if energyCarrier.nil? then
+        status 404
+        return "404: Your fleet has no ship with uuid #{energyCarrierShipUUID}.\n"
+    end
+
+    if battleCruiser.nil? then
+        status 404
+        return "404: Your fleet has no ship with uuid #{battleCruiserShipUUID}.\n"
+    end
+
+    if !energyCarrier["alive"] then
+        status 403
+        return "403: The energy carrier is dead.\n"
+    end
+
+    if !battleCruiser["alive"] then
+        status 403
+        return "403: The battle cruiser is dead.\n"
+    end
+
+    if battleCruiser["location"]["label"] != energyCarrier["location"]["label"] then
+        status 403
+        return "403: You cannot transfer energy between the two ships, they are not at the same map location.\n"        
+    end
+
+    if energyCarrier["energy-level"] == 0 then
+        status 403
+        return "403: The energy carrier is empty.\n"
+    end    
+
+    # ------------------------------------------------------
+
+    battleCruiser["energy-level"] = battleCruiser["energy-level"] + energyCarrier["energy-level"]
+    energyCarrier["energy-level"] = 0
+
+    userFleet = UserFleet::insertOrUpdateShipAtFleet(userFleet, battleCruiser)
+    userFleet = UserFleet::insertOrUpdateShipAtFleet(userFleet, energyCarrier)
+    UserFleet::commitFleetToDisk(currentHour, username, userFleet)
+
+    JSON.pretty_generate([ energyCarrier, battleCruiser ])
+
+end
+
+get '/game/v1/:username/:userkey/:mapid/bomb/:battlecruisershipuuid/:targetpointlabel' do
+    status 404
+    return "404: Not implemented yet.\n"    
+end
 
