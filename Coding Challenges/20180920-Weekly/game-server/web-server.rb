@@ -30,6 +30,7 @@ require 'fileutils'
 # --  --------------------------------------------------
 
 require_relative "library/MapUtils.rb"
+require_relative "library/Navigation.rb"
 require_relative "library/UserKeys.rb"
 require_relative "library/UserFleet.rb"
 
@@ -243,7 +244,7 @@ get '/game/v1/:username/:userkey/:mapid/capital-ship/top-up/:code' do
 
     userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
 
-    if userFleet.nil then
+    if userFleet.nil? then
         status 404
         return "404: You do not yet have a fleet for this hour. (You should initiate one.)\n"
     end
@@ -293,7 +294,7 @@ get '/game/v1/:username/:userkey/:mapid/capital-ship/create-battle-cruiser' do
 
     userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
 
-    if userFleet.nil then
+    if userFleet.nil? then
         status 404
         return "404: You do not yet have a fleet for this hour. (You should initiate one.)\n"
     end
@@ -353,7 +354,7 @@ get '/game/v1/:username/:userkey/:mapid/capital-ship/create-energy-carrier/:ener
 
     userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
 
-    if userFleet.nil then
+    if userFleet.nil? then
         status 404
         return "404: You do not yet have a fleet for this hour. (You should initiate one.)\n"
     end
@@ -392,6 +393,11 @@ get '/game/v1/:username/:userkey/:mapid/jump/:shipuuid/:targetpointlabel' do
     userkey = params["userkey"]
     mapId = params["mapid"]
 
+    shipuuid = params["shipuuid"]
+    targetPointLabel = params["targetpointlabel"]
+
+    currentHour = GameLibrary::hourCode()
+
     # ------------------------------------------------------
     # User Credentials and Map Validity Checks
 
@@ -406,13 +412,69 @@ get '/game/v1/:username/:userkey/:mapid/jump/:shipuuid/:targetpointlabel' do
     end
 
     # ------------------------------------------------------
-    # Game Mechanics Validation
+    # Map Validation
+
+    targetMapPoint = MapUtils::getPointForlabelAtMapOrNull(label, map)
+    if targetMapPoint.nil? then
+        status 404
+        return "404: The specified point doesn't exist\n"
+    end
 
     # ------------------------------------------------------
+    # User Fleet validation
+
+    userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
+
+    if userFleet.nil? then
+        status 404
+        return "404: You do not yet have a fleet for this hour. (You should initiate one.)\n"
+    end
+
+    # Need to check whether we own a ship of with that uuid, and retrieve it.
+    ship = UserFleet::getShipPerUUIDOrNull(currentHour, username, uuid)
+    if ship.nil? then
+        status 404
+        return "404: Your fleet has not ship with this uuid.\n"
+    end
+
+    # Need to check whether the ship is alive ot not
+    if !ship["alive"] then
+        status 403
+        return "403: The ship is dead.\n"
+    end    
+
+    # In the current version of the game energy carriers need the capital ship to be alive 
+    # in order to be controlled. Therfore we record whether or not the capital is alive.
+
+    if ship["nomenclature"] == "energy-carrier" then
+        if !userFleet["ship-inventory"]["capital"]["alive"] then
+            status 403
+            return "403: Your capital ship is dead. You cannot jump energy carriers in that case.\n"
+        end 
+    end
+
+    sourceMapPoint = ship["location"]
+
+    jec = Navigation::jumpEnergyCost(sourceMapPoint, targetMapPoint, ship["nomenclature"])
+
+    # Need to check whether the ship has enough energy left to jump
+    if !ship["energy-level"] < jec then
+        status 403
+        return "403: The ship doesn't have enough energy for this jump. Available: #{ship["energy-level"]}. Required: #{jec}.\n"
+    end    
+
+    # ------------------------------------------------------
+    
+    # Now performing the jump
+    ship["location"] = targetMapPoint
+    ship["energy-level"] = ship["energy-level"] - jec
+
+    userFleet = UserFleet::insertOrUpdateShipAtFleet(userFleet, ship)
+    UserFleet::commitFleetToDisk(currentHour, username, userFleet)
 
     content_type 'application/json'
+    JSON.pretty_generate(userFleet)
 
-    "{}"
 end
 
 

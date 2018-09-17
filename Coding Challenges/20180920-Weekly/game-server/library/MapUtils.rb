@@ -17,12 +17,5 @@ class MapUtils
         nil
     end
 
-    # MapUtils::distanceBetweenTwoPoints(point1, point2)
-    def self.distanceBetweenTwoPoints(point1, point2)
-        dx = point1["coordinates"][0] - point2["coordinates"][0]
-        dy = point1["coordinates"][1] - point2["coordinates"][1]
-        Math.sqrt( (dx**2) + (dy**2) )
-    end
-    
 end
 

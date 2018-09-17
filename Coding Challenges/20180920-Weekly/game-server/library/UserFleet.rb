@@ -124,6 +124,18 @@ class UserFleet
         }
     end
 
+    # UserFleet::insertOrUpdateShipAtFleet(fleet, ship)
+    def self.insertOrUpdateShipAtFleet(fleet, ship)
+        if ship["nomenclature"] == "battle-cruiser" then
+            fleet["ship-inventory"]["battle-cruisers"] = fleet["ship-inventory"]["battle-cruisers"].reject{|s| s["ship-uuid"]==ship["ship-uuid"] }
+            fleet["ship-inventory"]["battle-cruisers"] << ship
+        end
+        if ship["nomenclature"] == "energy-carrier" then
+            fleet["ship-inventory"]["energy-carriers"] = fleet["ship-inventory"]["energy-carriers"].reject{|s| s["ship-uuid"]==ship["ship-uuid"] }
+            fleet["ship-inventory"]["energy-carriers"] << ship
+        end
+        fleet
+    end
 
 end
 

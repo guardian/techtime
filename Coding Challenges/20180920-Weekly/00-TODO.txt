@@ -1,14 +1,21 @@
 
+-> Needed before launch
+
+[] Implement Navigation::jumpEnergyCostShipType(sourceMapPoint, targetMapPoint, shipType)
+
 [] The game-parameters.json are looked for in two places.
     - The timeline and the source code. 
     - If found in the timeline, use that
     - If not use the source code one game-parameters.json
     - The creation of a map copies the file to the timeline.
 
-[] Implement: /jump/:shipuuid/:targetpointlabel 
+-> Can be done after launch
 
 [] Semaphore for all IO actions.
 
-[] Befine a convention to encode game actions
+[] Navigation::jumpEnergyCostShipType(sourceMapPoint, targetMapPoint, shipType)
+    Is currently not taking account of the ship type.
+
+[] Define a convention to encode game actions
     [] Implement game action log (to be able to reply battles)
     [] Implement the BBC player (it should log itself up, for replay)
