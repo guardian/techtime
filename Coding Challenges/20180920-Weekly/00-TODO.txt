@@ -1,11 +1,8 @@
 
 -> Needed before launch
 
-[] The game-parameters.json are looked for in two places.
-    - The timeline and the source code. 
-    - If found in the timeline, use that
-    - If not use the source code one game-parameters.json
-    - The creation of a map copies the file to the timeline.
+[] When the map is created, move the game parameters to the timeline and read it from there
+[] When a map is created create the BBC fleet.
 
 -> Can be done after launch
 
