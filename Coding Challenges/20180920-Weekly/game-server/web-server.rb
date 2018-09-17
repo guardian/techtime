@@ -29,6 +29,7 @@ require 'fileutils'
 
 # --  --------------------------------------------------
 
+require_relative "library/BombsUtils.rb"
 require_relative "library/MapUtils.rb"
 require_relative "library/Navigation.rb"
 require_relative "library/UserKeys.rb"
