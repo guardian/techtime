@@ -82,31 +82,45 @@ class GameLibrary
             .map{|filename| "#{GAME_DATA_FOLDERPATH}/Timeline/#{filename}" }
     end
 
-    # GameLibrary::getFolderpathForThisHourCreateIfNotExists(): folderpath
-    def self.getFolderpathForThisHourCreateIfNotExists()
+    # GameLibrary::getMapAtHourFolderpath(folderpath)
+    def self.getMapAtHourFolderpath(folderpath)
+        mapfilepath = "#{folderpath}/map.json"
+        JSON.parse(IO.read(mapfilepath))
+    end
+
+    # GameLibrary::ensureGameFolderSetUpForThisHour()
+    def self.ensureGameFolderSetUpForThisHour()
+
         folderpath = "#{GAME_DATA_FOLDERPATH}/Timeline/#{GameLibrary::hourCode()}"
         if !File.exists?(folderpath) then
             FileUtils.mkpath folderpath
         end
-        folderpath
-    end
 
-    # GameLibrary::getMapAtHourFolderCreateIfNotExists(folderpath)
-    def self.getMapAtHourFolderCreateIfNotExists(folderpath)
         mapfilepath = "#{folderpath}/map.json"
-        if !File.exists?(mapfilepath) then
-            map = {}
-            map["mapId"] = SecureRandom.uuid
-            map["timestamp"] = GameLibrary::hourCode()
-            map["points"] = (1..$GAME_PARAMETERS["map:jump-points:cardinality"]).map{|indx|
-                {
-                    "label" => SecureRandom.hex(4),
-                    "coordinates" => [ rand * $GAME_PARAMETERS["map:size"], rand * $GAME_PARAMETERS["map:size"] ].map{|c| c.round(2) }
-                }
+        return if File.exists?(mapfilepath)
+
+        # ---------------------------------------
+        # The Map
+        map = {}
+        map["mapId"] = SecureRandom.uuid
+        map["timestamp"] = GameLibrary::hourCode()
+        map["points"] = (1..$GAME_PARAMETERS["map:jump-points:cardinality"]).map{|indx|
+            {
+                "label" => SecureRandom.hex(4),
+                "coordinates" => [ rand * $GAME_PARAMETERS["map:size"], rand * $GAME_PARAMETERS["map:size"] ].map{|c| c.round(2) }
             }
-            File.open(mapfilepath, "w"){ |f| f.puts(JSON.pretty_generate(map)) }
-        end
-        JSON.parse(IO.read(mapfilepath))
+        }
+        File.open(mapfilepath, "w"){ |f| f.puts(JSON.pretty_generate(map)) }
+
+        # ---------------------------------------
+        # Game Parameters
+        FileUtils.cp(GAME_PARAMETERS_FILEPATH, "#{folderpath}/game-parameters.json")
+
+        # ---------------------------------------
+        # The BBC Fleet
+
+        folderpath
+
     end
 
 end
@@ -262,7 +276,8 @@ get '/game/v1/:username/:userkey/:mapid/capital-ship/top-up/:code' do
     if UserFleet::validateTopUpCode(currentHour, username, code) then
         # We need: (1) top up the value, (2) issue a new challenge 
         topUpEnergyValue = $GAME_PARAMETERS["fleet:capital-ship:top-up-energy-value"]
-        UserFleet::topUpEnergyValue(currentHour, username, topUpEnergyValue)
+        difficulty = $GAME_PARAMETERS["fleet:capital-ship:top-up-challenge-difficulty"]
+        UserFleet::topUpCapitalShipAndResetTopUpChallenge(currentHour, username, topUpEnergyValue)
         JSON.generate([true])
     else
         status 403

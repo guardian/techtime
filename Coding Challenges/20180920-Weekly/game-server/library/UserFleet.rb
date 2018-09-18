@@ -81,11 +81,12 @@ class UserFleet
         Digest::SHA1.hexdigest("#{challenge["input"]}#{code}")[-challenge["difficulty"], challenge["difficulty"]] == ("0"*challenge["difficulty"])
     end
 
-    # UserFleet::topUpEnergyValue(currentHour, username, topUpValue)
-    def self.topUpEnergyValue(currentHour, username, topUpValue)
+    # UserFleet::topUpCapitalShipAndResetTopUpChallenge(currentHour, username, topUpValue, difficulty)
+    def self.topUpCapitalShipAndResetTopUpChallenge(currentHour, username, topUpValue, difficulty)
         userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
         currentLevel = userFleet["ship-inventory"]["capital"]["energy-level"]
         userFleet["ship-inventory"]["capital"]["energy-level"] = currentLevel + topUpValue
+        userFleet["ship-inventory"]["capital"]["energy-top-up-challenge"] = UserFleet::spawnCapitalShipTopUpChallenge(difficulty)
         UserFleet::commitFleetToDisk(currentHour, username, userFleet)
     end
 

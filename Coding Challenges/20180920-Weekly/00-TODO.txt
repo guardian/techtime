@@ -1,18 +1,20 @@
 
 -> Needed before launch
 
-[] Need to run UserFleet::spawnCapitalShipTopUpChallenge after a top up :)
-[] When the map is created, move the game parameters to the timeline and read it from there
+[] Design, document and implement the scoring system
 [] When a map is created create the BBC fleet.
 [] Make sure that all the end points are in the game API
 [] Implement /bomb/:battlecruisershipuuid/:targetpointlabel
 [] Implement throttling
+[] GameLibrary::ensureGameFolderSetUpForThisHour() is not yet setting the bbc
 [] Test every end point (^_^)
+[] Write 02-Start Playing.md 
+[] Release the server as a daemon. 
 
 -> Can be done after launch
 
 [] Semaphore for all IO actions.
-
+[] There is too much logic into the route file. 
 [] Define a convention to encode game actions
     [] Implement game action log (to be able to reply battles)
     [] Implement the BBC player (it should log itself up, for replay)

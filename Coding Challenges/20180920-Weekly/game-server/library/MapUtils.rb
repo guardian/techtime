@@ -5,8 +5,8 @@ class MapUtils
 
     # MapUtils::getCurrentMap()
     def self.getCurrentMap()
-        folderpath = GameLibrary::getFolderpathForThisHourCreateIfNotExists()
-        GameLibrary::getMapAtHourFolderCreateIfNotExists(folderpath)
+        folderpath = GameLibrary::ensureGameFolderSetUpForThisHour()
+        GameLibrary::getMapAtHourFolderpath(folderpath)
     end
 
     # MapUtils::getPointForlabelAtMapOrNull(label, map)
