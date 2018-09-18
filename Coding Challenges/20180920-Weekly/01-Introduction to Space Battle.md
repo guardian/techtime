@@ -1,50 +1,32 @@
+## Space Battle
 
-## Introduction
+**Space Battle** is a game born out of (move exactly evolved from) the weekly coding challenges of Summer 2018. 
 
-So... last week (phase 1) we did the travelling salesman problem. This week (phase 2) we are doing space exploration with quantum jumps between energy points (a sort of travelling optimization problem). Phase 1 and 2 had the characteristic that players were playing independently of each other, the only "interaction" between players was the ordering of path values, leading to the scoring.
+The main idea of the game is simple: you control a space fleet and your objective is to destroy enemy space ships before they destroy yours.
 
-Phase 3 is going to be a real step up in game mechanics, as Phase 3 will have players play directly against each other.
+The game mechanics allow for complex game strategies and game styles, allowing you to showcase your skills as fleet commander.
 
-There will be one battle per hour. (At each hour a new battle starts.)
+The most striking aspect of this game, relatively to other games you may have played, is that it comes without a graphical user interface. It only comes with an HTTP interface. You could play on the command line, as all the actions (from generating energy, to building or moving your ships, to shooting at enemies) are simple curl+url commands. Obviously, you may also want, as it's been done with challenges of previous weeks that came with an HTTP interface, just build a small client, in the programming language of your choice, and let it play for you.
 
-First let me share the game elements. There will be **Capital Ships**, each player will have one of those. **Battle Cruisers** (you will have zero or more of those) and **Energy Carriers** (you will have zero or more of those).
+In this sense it's a game made for developers. 
 
-The principle of the game will be very simple. You want to inflict damages and possibly destroy other players ships and ideally their Capital Ship. The more destroying you do, the better. 
 
-## Game actions
+## Game mechanics
 
-The map is a set of randomly generated points (pure coordinates, not energy points).
+The game has three kind of objects: your **Capital Ships**, **Battle Cruisers** and **Energy Carriers**.
 
-At the beginning of the hour you get one capital ship. It comes with a certain initial amount of **energy**. 
+We carry on to this game the same scheduling that has shown to be great for previous weekly challenges: a new game starts at the top of every hour. At the end of each hours the points you made are added to the general weekly challenge leaderboard that started during the last techtime of June.
 
-You can move the Capital Ship around by quantum jumping between points. This costs energy (taken from the Capital Ship's own energy tank).
 
-You can build new battle cruisers. This costs energy (taken from the Capital Ship's own energy tank). 
+## Why you should play
 
-You can move the battle cruisers around by quantum jumping between points. This costs energy (taken from the battle cruiser's own energy tank).
+Some of us already play as part of work. The Thursday Board Games meeting is an example of that. 
 
-You can build energy carriers. This costs energy (taken from the Capital Ship's own energy tank).
+Weekly coding challenges have been my best invention yet at the Guardian, and there is nothing like seeing people who take part being so delighted about them. You can spend a bit of your lunch times (or evenings if you are hard core like some of us), thinking about the challenges and come up with innovative solutions. They put the fun back in software engineering in a way we don't always experience during day job activities. 
 
-You can move energy carriers around by quantum jumping between points. This costs energy (taken from the energy carrier's own energy tank).
+Unlike previous challenges where the few lines of code you wrote were challenge specific and obsolete at the end of the challenge weeks, work you will put here, either as a player or somebody contributing to the game design or its code will last indefinitely :) 
 
-When a battle cuiser and an energy carrier are at the same location, the energy carrier can transfer its energy to the battle cruiser. Hence the name "energy carrier".
 
-You can scan some part of the space around the Battle Cruisers and retrieve the location of ships belonging to other players. This costs energy (taken from the Battle Cruiser's own energy tank). Your battle cruisers are how you probe space and retrieve the location of enemy ships
+## How do I join (or just keep an eye on it) ?
 
-You can instruct a Battle Cruiser to shoot at another ship possibly located at another location. How much damage you produce to the target ship depends on the distance between you and the target. This costs energy (taken from the Battle Cruiser's own energy tank).
-
-## Game winning conditions
-
-Just blow stuff up. Points will be awarded depending how big the stuff you destroyed is. 
-
-## The big question
-
-At that point your main question should be "Pascal, given that all those actions need energy to perform, where do I find more of it ?". Answer: there will be a special action you can perform (that require CPU cycles on your own computer) that when completed tops up your Capital Ship energy tank. After which you can use energy carriers to distribute it to your battle cruisers, so that they carry on moving and blowing things up, or build more ships.
-
-## Basic play actions and time limitations
-
-You will be able to retrieve, in one single JSON object, the complete status of your entire fleet (types, locations, energy capabilities, log of recently inflicted damages and last known locations of the shooter), as well as the latest space probings performed by your battle cruisers.
-
-Other actions are moving your ships and shooting at things.
-
-You will be limited to one action per second (this is not to prevent overloading the server, but simply to prevent faster bots to have an unfair advantage on slower ones).
+Meet us at the Hangout Chat "Weekly Coding Challenge" channel.
