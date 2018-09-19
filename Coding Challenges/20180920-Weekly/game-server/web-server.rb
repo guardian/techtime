@@ -140,6 +140,23 @@ class GameLibrary
             .map{|filepath| IO.read(filepath) }
     end
 
+    # GameLibrary::generate200Answer(answer, userFleet)
+    def self.generate200Answer(answer, userFleet)
+        {
+            "status" => 200
+            "answer" => data,
+            "userFleet" => userFleet
+        }
+    end
+
+    # GameLibrary::generateErrorAnswer(errorcode, errormessage)
+    def self.generateErrorAnswer(errorcode, errormessage)
+        {
+            "status" => errorcode
+            "message" => errormessage
+        }
+    end
+
 end
 
 # -- --------------------------------------------------
@@ -174,14 +191,12 @@ get '/game/v1/get-userkey/:username' do
     username = params["username"]
 
     if username.include?(":") then
-        status 403
-        return "Usernames cannot contain a colon (character ':')\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(403, "Usernames cannot contain a colon (character ':')"))
     end
 
     userKeysData = UserKeys::getUserKeysData()
     if userKeysData.any?{|record| record[0]==username } then
-        status 403
-        "There has already been a userkey issued for this username. If you think this is a mistake or you have forgotten your userkey, please contact Pascal.\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(403, "There has already been a userkey issued for this username. If you think this is a mistake or you have forgotten your userkey, please contact Pascal."))
     else
         userkey = SecureRandom.hex(4)
         UserKeys::commitUserKey(username, userkey)
@@ -221,21 +236,18 @@ get '/game/v1/:userkey/:mapid/capital-ship/init' do
     username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
 
     if !username.nil? then
-        status 401
-        return "401: Invalid userkey\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(401, "Invalid userkey"))
     end
 
     if MapUtils::getCurrentMap()["mapId"] != mapId then
-        status 404
-        return "404: Map not found (mapId is incorrect or outdated)\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(404, "Map not found (mapId is incorrect or outdated)"))
     end
 
     # ------------------------------------------------------
     # User Fleet validation
 
     if UserFleet::getUserFleetDataOrNull(currentHour, username) then
-        status 403
-        return "403: You cannot init a Capital Ship, you already have one for this hour\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(403, "You cannot init a Capital Ship, you already have one for this hour"))
     end
 
     # ------------------------------------------------------
@@ -266,13 +278,11 @@ get '/game/v1/:userkey/:mapid/capital-ship/top-up/:code' do
     username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
 
     if !username.nil? then
-        status 401
-        return "401: Invalid userkey\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(401, "Invalid userkey"))
     end
 
     if MapUtils::getCurrentMap()["mapId"] != mapId then
-        status 404
-        return "404: Map not found (mapId is incorrect or outdated)\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(404, "Map not found (mapId is incorrect or outdated)"))
     end
 
     # ------------------------------------------------------
@@ -281,13 +291,11 @@ get '/game/v1/:userkey/:mapid/capital-ship/top-up/:code' do
     userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
 
     if userFleet.nil? then
-        status 404
-        return "404: You do not yet have a fleet for this hour. (You should initiate one.)\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(404, "You do not yet have a fleet for this hour. (You should initiate one.)"))
     end
 
     if !userFleet["shipInventory"]["capital"]["alive"] then
-        status 403
-        return "403: Your capital ship for this hour is dead.\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(403, "Your capital ship for this hour is dead"))
     end
 
     # ------------------------------------------------------    
@@ -301,12 +309,10 @@ get '/game/v1/:userkey/:mapid/capital-ship/top-up/:code' do
             UserFleet::topUpCapitalShipAndResetTopUpChallenge(currentHour, username, topUpEnergyValue)
             JSON.generate([true])
         else
-            status 403
-            return "403: Your code is correct, please keep it (!), but you cannot submit it at this time. Your ship has too much energy in reserve.\n"
+            JSON.generate(GameLibrary::generateErrorAnswer(403, "Your code is correct, please keep it (!), but you cannot submit it at this time. Your ship has too much energy in reserve."))
         end
     else
-        status 403
-        return "403: Your code is not a solution to the challenge.\n"
+        JSON.generate(GameLibrary::generateErrorAnswer(403, "Your code is not a solution to the challenge"))
     end
 end
 
@@ -323,13 +329,11 @@ get '/game/v1/:userkey/:mapid/capital-ship/create-battle-cruiser' do
     username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
 
     if !username.nil? then
-        status 401
-        return "401: Invalid userkey\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(401, "Invalid userkey"))
     end
 
     if MapUtils::getCurrentMap()["mapId"] != mapId then
-        status 404
-        return "404: Map not found (mapId is incorrect or outdated)\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(404, "Map not found (mapId is incorrect or outdated)"))
     end
 
     # ------------------------------------------------------
@@ -338,13 +342,11 @@ get '/game/v1/:userkey/:mapid/capital-ship/create-battle-cruiser' do
     userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
 
     if userFleet.nil? then
-        status 404
-        return "404: You do not yet have a fleet for this hour. (You should initiate one.)\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(404, "You do not yet have a fleet for this hour. (You should initiate one.)"))
     end
 
     if !userFleet["shipInventory"]["capital"]["alive"] then
-        status 403
-        return "403: Your capital ship for this hour is dead.\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(403, "Your capital ship for this hour is dead"))
     end
 
     # ------------------------------------------------------ 
@@ -364,8 +366,9 @@ get '/game/v1/:userkey/:mapid/capital-ship/create-battle-cruiser' do
         UserFleet::commitFleetToDisk(currentHour, username, userFleet)
         JSON.generate(battleCruiser)
     else
-        status 403
-        "403: Your capital ship doesn't have enough energy to complete the construction of a battle cruiser. You have #{userFleet["shipInventory"]["capital"]["energyLevel"]} but you need #{(battleCruiserBuildEnergyCost+battleCruiserInitialEnergyLevel)}\n"
+        if !userFleet["shipInventory"]["capital"]["alive"] then
+            return JSON.generate(GameLibrary::generateErrorAnswer(403, "Your capital ship doesn't have enough energy to complete the construction of a battle cruiser. You have #{userFleet["shipInventory"]["capital"]["energyLevel"]} but you need #{(battleCruiserBuildEnergyCost+battleCruiserInitialEnergyLevel)}"))
+        end
     end
 
 end
@@ -385,13 +388,11 @@ get '/game/v1/:userkey/:mapid/capital-ship/create-energy-carrier/:energyamount' 
     username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
 
     if !username.nil? then
-        status 401
-        return "401: Invalid userkey\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(401, "Invalid userkey"))
     end
 
     if MapUtils::getCurrentMap()["mapId"] != mapId then
-        status 404
-        return "404: Map not found (mapId is incorrect or outdated)\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(404, "Map not found (mapId is incorrect or outdated)"))
     end
 
     # ------------------------------------------------------
@@ -400,18 +401,15 @@ get '/game/v1/:userkey/:mapid/capital-ship/create-energy-carrier/:energyamount' 
     userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
 
     if userFleet.nil? then
-        status 404
-        return "404: You do not yet have a fleet for this hour. (You should initiate one.)\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(404, "You do not yet have a fleet for this hour. (You should initiate one.)"))
     end
 
     if !userFleet["shipInventory"]["capital"]["alive"] then
-        status 403
-        return "403: Your capital ship for this hour is dead.\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(403, "Your capital ship for this hour is dead"))
     end
 
     if energyamount > $GAME_PARAMETERS["fleetShipsMaxEnergy"]["energyCarrier"] then
-        status 403
-        return "403: You are creating a carrier with too much energy. Upper limit is #{$GAME_PARAMETERS["fleetShipsMaxEnergy"]["energyCarrier"]} units of energy.\n"        
+        return JSON.generate(GameLibrary::generateErrorAnswer(403, "You are creating a carrier with too much energy. Upper limit is #{$GAME_PARAMETERS["fleetShipsMaxEnergy"]["energyCarrier"]} units of energy."))    
     end
 
     # ------------------------------------------------------ 
@@ -431,8 +429,7 @@ get '/game/v1/:userkey/:mapid/capital-ship/create-energy-carrier/:energyamount' 
         UserFleet::commitFleetToDisk(currentHour, username, userFleet)
         JSON.generate(energyCarrier)
     else
-        status 403
-        "403: Your capital ship doesn't have enough energy to complete the construction of an energy carrier carrying #{carrierInitialEnergyLevel}. You have #{userFleet["shipInventory"]["capital"]["energyLevel"]} but you need #{(carrierBuildEnergyCost+carrierInitialEnergyLevel)}\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(403, "Your capital ship doesn't have enough energy to complete the construction of an energy carrier carrying #{carrierInitialEnergyLevel}. You have #{userFleet["shipInventory"]["capital"]["energyLevel"]} but you need #{(carrierBuildEnergyCost+carrierInitialEnergyLevel)}"))
     end
 
     "{}"
@@ -454,13 +451,11 @@ get '/game/v1/:userkey/:mapid/jump/:shipuuid/:targetpointlabel' do
     username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
 
     if !username.nil? then
-        status 401
-        return "401: Invalid userkey\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(401, "Invalid userkey"))
     end
 
     if MapUtils::getCurrentMap()["mapId"] != mapId then
-        status 404
-        return "404: Map not found (mapId is incorrect or outdated)\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(404, "Map not found (mapId is incorrect or outdated)"))
     end
 
     # ------------------------------------------------------
@@ -470,8 +465,7 @@ get '/game/v1/:userkey/:mapid/jump/:shipuuid/:targetpointlabel' do
 
     targetMapPoint = MapUtils::getPointForlabelAtMapOrNull(label, map)
     if targetMapPoint.nil? then
-        status 404
-        return "404: The specified point doesn't exist\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(404, "The specified point doesn't exist"))
     end
 
     # ------------------------------------------------------
@@ -480,21 +474,18 @@ get '/game/v1/:userkey/:mapid/jump/:shipuuid/:targetpointlabel' do
     userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
 
     if userFleet.nil? then
-        status 404
-        return "404: You do not yet have a fleet for this hour. (You should initiate one.)\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(404, "You do not yet have a fleet for this hour. (You should initiate one.)"))
     end
 
     # Need to check whether we own a ship of with that uuid, and retrieve it.
     ship = UserFleet::getShipPerUUIDOrNull(currentHour, username, uuid)
     if ship.nil? then
-        status 404
-        return "404: Your fleet has no ship with this uuid.\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(404, "Your fleet has no ship with this uuid"))
     end
 
     # Need to check whether the ship is alive ot not
     if !ship["alive"] then
-        status 403
-        return "403: The ship is dead.\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(403, "The ship is dead"))
     end    
 
     # In the current version of the game energy carriers need the capital ship to be alive 
@@ -502,8 +493,7 @@ get '/game/v1/:userkey/:mapid/jump/:shipuuid/:targetpointlabel' do
 
     if ship["nomenclature"] == "energyCarrier" then
         if !userFleet["shipInventory"]["capital"]["alive"] then
-            status 403
-            return "403: Your capital ship is dead. You cannot jump energy carriers in that case.\n"
+            return JSON.generate(GameLibrary::generateErrorAnswer(403, "Your capital ship is dead. You cannot jump energy carriers in that case."))
         end 
     end
 
@@ -513,8 +503,7 @@ get '/game/v1/:userkey/:mapid/jump/:shipuuid/:targetpointlabel' do
 
     # Need to check whether the ship has enough energy left to jump
     if !ship["energyLevel"] < jec then
-        status 403
-        return "403: The ship doesn't have enough energy for this jump. Available: #{ship["energyLevel"]}. Required: #{jec}.\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(403, "The ship doesn't have enough energy for this jump. Available: #{ship["energyLevel"]}. Required: #{jec}"))
     end    
 
     # ------------------------------------------------------
@@ -547,13 +536,11 @@ get '/game/v1/:userkey/:mapid/energy-transfer-type1/:energycarriershipuuid/:ener
     username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
 
     if !username.nil? then
-        status 401
-        return "401: Invalid userkey\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(401, "Invalid userkey"))
     end
 
     if MapUtils::getCurrentMap()["mapId"] != mapId then
-        status 404
-        return "404: Map not found (mapId is incorrect or outdated)\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(404, "Map not found (mapId is incorrect or outdated)"))
     end
 
     # ------------------------------------------------------
@@ -562,41 +549,34 @@ get '/game/v1/:userkey/:mapid/energy-transfer-type1/:energycarriershipuuid/:ener
     userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
 
     if userFleet.nil? then
-        status 404
-        return "404: You do not yet have a fleet for this hour. (You should initiate one.)\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(404, "You do not yet have a fleet for this hour. (You should initiate one.)"))
     end
 
     energyCarrier = UserFleet::getShipPerUUIDOrNull(currentHour, username, energyCarrierShipUUID)
     capital = userFleet["shipInventory"]["capital"]
 
     if energyCarrier.nil? then
-        status 404
-        return "404: Your fleet has no ship with uuid #{energyCarrierShipUUID}.\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(404, "Your fleet has no ship with uuid #{energyCarrierShipUUID}"))
     end
 
     if !energyCarrier["alive"] then
-        status 403
-        return "403: The energy carrier is dead.\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(403, "The energy carrier is dead"))
     end
 
     if !capital["alive"] then
-        status 403
-        return "403: Your capital ship is dead.\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(403, "Your capital ship is dead"))
     end
 
     if capital["location"]["label"] != energyCarrier["location"]["label"] then
-        status 403
-        return "403: You cannot transfer energy between the two ships, they are not at the same map location.\n"        
+        return JSON.generate(GameLibrary::generateErrorAnswer(403, "You cannot transfer energy between the two ships, they are not at the same map location"))  
     end
 
     if capital["energyLevel"] < energyLevel then
-        status 403
-        return "403: Your capital ship doesn't have enough energy for this transfer.\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(403, "Your capital ship doesn't have enough energy for this transfer"))  
     end    
 
     if (energyCarrier["energyLevel"]+energyLevel) > $GAME_PARAMETERS["fleetShipsMaxEnergy"]["energyCarrier"] then
-        status 403
-        return "403: You are creating a carrier with too much energy. Upper limit is #{$GAME_PARAMETERS["fleetShipsMaxEnergy"]["energyCarrier"]} units of energy.\n"       
+        return JSON.generate(GameLibrary::generateErrorAnswer(403, "You are creating a carrier with too much energy. Upper limit is #{$GAME_PARAMETERS["fleetShipsMaxEnergy"]["energyCarrier"]} units of energy"))         
     end        
 
     # ------------------------------------------------------
@@ -628,13 +608,11 @@ get '/game/v1/:userkey/:mapid/energy-transfer-type2/:energycarriershipuuid/:batt
     username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
 
     if !username.nil? then
-        status 401
-        return "401: Invalid userkey\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(401, "Invalid userkey"))
     end
 
     if MapUtils::getCurrentMap()["mapId"] != mapId then
-        status 404
-        return "404: Map not found (mapId is incorrect or outdated)\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(404, "Map not found (mapId is incorrect or outdated)"))
     end
 
     # ------------------------------------------------------
@@ -643,46 +621,38 @@ get '/game/v1/:userkey/:mapid/energy-transfer-type2/:energycarriershipuuid/:batt
     userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
 
     if userFleet.nil? then
-        status 404
-        return "404: You do not yet have a fleet for this hour. (You should initiate one.)\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(404, "You do not yet have a fleet for this hour. (You should initiate one.)"))
     end
 
     energyCarrier = UserFleet::getShipPerUUIDOrNull(currentHour, username, energyCarrierShipUUID)
     battleCruiser = UserFleet::getShipPerUUIDOrNull(currentHour, username, battleCruiserShipUUID)
 
     if energyCarrier.nil? then
-        status 404
-        return "404: Your fleet has no ship with uuid #{energyCarrierShipUUID}.\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(404, "Your fleet has no ship with uuid #{energyCarrierShipUUID}"))
     end
 
     if battleCruiser.nil? then
-        status 404
-        return "404: Your fleet has no ship with uuid #{battleCruiserShipUUID}.\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(404, "Your fleet has no ship with uuid #{battleCruiserShipUUID}"))
     end
 
     if !energyCarrier["alive"] then
-        status 403
-        return "403: The energy carrier is dead.\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(403, "The energy carrier is dead"))
     end
 
     if !battleCruiser["alive"] then
-        status 403
-        return "403: The battle cruiser is dead.\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(403, "The energy carrier is dead"))
     end
 
     if battleCruiser["location"]["label"] != energyCarrier["location"]["label"] then
-        status 403
-        return "403: You cannot transfer energy between the two ships, they are not at the same map location.\n"        
+        return JSON.generate(GameLibrary::generateErrorAnswer(403, "You cannot transfer energy between the two ships, they are not at the same map location"))
     end
 
     if energyCarrier["energyLevel"] == 0 then
-        status 403
-        return "403: The energy carrier is empty.\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(403, "The energy carrier is empty"))
     end    
 
     if (battleCruiser["energyLevel"]+energyCarrier["energyLevel"]) > $GAME_PARAMETERS["fleetShipsMaxEnergy"]["battleCruiser"] then
-        status 403
-        return "403: You cannot perform this transfer as it would exceed the battle cruiser capacity.\n"       
+        return JSON.generate(GameLibrary::generateErrorAnswer(403, "You cannot perform this transfer as it would exceed the battle cruiser capacity"))    
     end 
 
     # ------------------------------------------------------
@@ -713,13 +683,11 @@ get '/game/v1/:userkey/:mapid/bomb/:battlecruisershipuuid/:targetpointlabel' do
     username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
 
     if !username.nil? then
-        status 401
-        return "401: Invalid userkey\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(401, "Invalid userkey"))
     end
 
     if MapUtils::getCurrentMap()["mapId"] != mapId then
-        status 404
-        return "404: Map not found (mapId is incorrect or outdated)\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(404, "Map not found (mapId is incorrect or outdated)"))
     end    
 
     # ------------------------------------------------------
@@ -729,8 +697,7 @@ get '/game/v1/:userkey/:mapid/bomb/:battlecruisershipuuid/:targetpointlabel' do
 
     targetMapPoint = MapUtils::getPointForlabelAtMapOrNull(targetpointlabel, map)
     if targetMapPoint.nil? then
-        status 404
-        return "404: The specified point doesn't exist\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(404, "The specified point doesn't exist"))
     end
 
     # ------------------------------------------------------
@@ -739,28 +706,24 @@ get '/game/v1/:userkey/:mapid/bomb/:battlecruisershipuuid/:targetpointlabel' do
     userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
 
     if userFleet.nil? then
-        status 404
-        return "404: You do not yet have a fleet for this hour. (You should initiate one.)\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(404, "You do not yet have a fleet for this hour. (You should initiate one.)"))
     end
 
     battleCruiser = UserFleet::getShipPerUUIDOrNull(currentHour, username, battleCruiserShipUUID)
 
     if battleCruiser.nil? then
-        status 404
-        return "404: Your fleet has no ship with uuid #{battleCruiserShipUUID}.\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(404, "Your fleet has no ship with uuid #{battleCruiserShipUUID}"))
     end
 
     if !battleCruiser["alive"] then
-        status 403
-        return "403: The battle cruiser is dead.\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(403, "The battle cruiser is dead"))
     end
 
     # ------------------------------------------------------
     # At this point we can attempt shooting
 
     if battleCruiser["energyLevel"] < ( $GAME_PARAMETERS["fleetBattleCruiserBombBuildingCost"] + $GAME_PARAMETERS["fleetBattleCruiserBombNominalEnergy"] ) then
-        status 403
-        return "403: Your cruiser doesn't have enough energy to complete the construction of a bomb.\n"        
+        return JSON.generate(GameLibrary::generateErrorAnswer(403, "Your cruiser doesn't have enough energy to complete the construction of a bomb"))   
     end
 
     battleCruiser["energyLevel"] = battleCruiser["energyLevel"] - ( $GAME_PARAMETERS["fleetBattleCruiserBombBuildingCost"] + $GAME_PARAMETERS["fleetBattleCruiserBombNominalEnergy"] )
@@ -801,13 +764,11 @@ get '/game/v1/:userkey/:mapid/space-probe/:battlecruisershipuuid' do
     username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
 
     if !username.nil? then
-        status 401
-        return "401: Invalid userkey\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(401, "Invalid userkey"))
     end
 
     if MapUtils::getCurrentMap()["mapId"] != mapId then
-        status 404
-        return "404: Map not found (mapId is incorrect or outdated)\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(404, "Map not found (mapId is incorrect or outdated)"))
     end    
 
     # ------------------------------------------------------
@@ -816,20 +777,17 @@ get '/game/v1/:userkey/:mapid/space-probe/:battlecruisershipuuid' do
     userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
 
     if userFleet.nil? then
-        status 404
-        return "404: You do not yet have a fleet for this hour. (You should initiate one.)\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(404, "You do not yet have a fleet for this hour. (You should initiate one.)"))
     end
 
     battleCruiser = UserFleet::getShipPerUUIDOrNull(currentHour, username, battleCruiserShipUUID)
 
     if battleCruiser.nil? then
-        status 404
-        return "404: Your fleet has no ship with uuid #{battleCruiserShipUUID}.\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(404, "Your fleet has no ship with uuid #{battleCruiserShipUUID}"))
     end
 
     if !battleCruiser["alive"] then
-        status 403
-        return "403: The battle cruiser is dead.\n"
+        return JSON.generate(GameLibrary::generateErrorAnswer(403, "The battle cruiser is dead"))
     end
 
     # ------------------------------------------------------
