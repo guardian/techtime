@@ -1,7 +1,6 @@
 
 -> Needed before launch
 
-[] Enforce coding convention #2
 [] Make sure that all the end points are in the game API
 [] Implement /bomb/:battlecruisershipuuid/:targetpointlabel
 [] Implement throttling
@@ -12,6 +11,7 @@
 
 -> Can be done after launch
 
+[] Enforce coding convention #2
 [] Semaphore for all IO actions.
 [] There is too much logic into the route file. 
 [] Define a convention to encode game actions
