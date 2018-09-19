@@ -8,6 +8,11 @@
 [] Write 02-Start Playing.md
 [] Write the server PID in a file
 [] Modify all the end point answers with the entire fleet report
+
+[] top up types (1 / 2) seems irrelevant. 
+    You know what it is from the ship types.
+    I see what you're saying, but they are not the same type of operation. In one case you supply a ship uuid and an amount and in the other you supply two ship uuids. Leave it to me  though. I will simplify it before tomorrow.
+
 [] Release the server as a daemon.
 
 [] Document damageCausedForAttacker in the Game API
