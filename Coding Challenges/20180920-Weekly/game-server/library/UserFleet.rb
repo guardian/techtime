@@ -49,7 +49,6 @@ class UserFleet
             "location"     => mapPoint,
             "energy-level" => energyLevel,
             "energy-top-up-challenge" => UserFleet::spawnCapitalShipTopUpChallenge(topUpChallengeDifficulty),
-            "shield-level" => 1,
             "alive"        => true
         }
     end
@@ -60,7 +59,7 @@ class UserFleet
         {
             "username" => username,
             "in-play" => true,
-            "score" => 0,
+            "game-score" => 0,
             "ship-inventory" => {
                 "capital" => capitalShip,
                 "battle-cruisers" => [],
@@ -82,11 +81,12 @@ class UserFleet
         Digest::SHA1.hexdigest("#{challenge["input"]}#{code}")[-challenge["difficulty"], challenge["difficulty"]] == ("0"*challenge["difficulty"])
     end
 
-    # UserFleet::topUpEnergyValue(currentHour, username, topUpValue)
-    def self.topUpEnergyValue(currentHour, username, topUpValue)
+    # UserFleet::topUpCapitalShipAndResetTopUpChallenge(currentHour, username, topUpValue, difficulty)
+    def self.topUpCapitalShipAndResetTopUpChallenge(currentHour, username, topUpValue, difficulty)
         userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
         currentLevel = userFleet["ship-inventory"]["capital"]["energy-level"]
         userFleet["ship-inventory"]["capital"]["energy-level"] = currentLevel + topUpValue
+        userFleet["ship-inventory"]["capital"]["energy-top-up-challenge"] = UserFleet::spawnCapitalShipTopUpChallenge(difficulty)
         UserFleet::commitFleetToDisk(currentHour, username, userFleet)
     end
 
@@ -106,7 +106,6 @@ class UserFleet
             "ship-uuid"    => SecureRandom.uuid,
             "location"     => mapPoint,
             "energy-level" => initialEnergyLevel,
-            "shield-level" => 1,
             "alive"        => true,
             "space-probe-results" => []
         }
@@ -119,11 +118,22 @@ class UserFleet
             "ship-uuid"    => SecureRandom.uuid,
             "location"     => mapPoint,
             "energy-level" => initialEnergyLevel,
-            "shield-level" => 1,
             "alive"        => true
         }
     end
 
+    # UserFleet::insertOrUpdateShipAtFleet(fleet, ship)
+    def self.insertOrUpdateShipAtFleet(fleet, ship)
+        if ship["nomenclature"] == "battle-cruiser" then
+            fleet["ship-inventory"]["battle-cruisers"] = fleet["ship-inventory"]["battle-cruisers"].reject{|s| s["ship-uuid"]==ship["ship-uuid"] }
+            fleet["ship-inventory"]["battle-cruisers"] << ship
+        end
+        if ship["nomenclature"] == "energy-carrier" then
+            fleet["ship-inventory"]["energy-carriers"] = fleet["ship-inventory"]["energy-carriers"].reject{|s| s["ship-uuid"]==ship["ship-uuid"] }
+            fleet["ship-inventory"]["energy-carriers"] << ship
+        end
+        fleet
+    end
 
 end
 
