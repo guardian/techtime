@@ -10,7 +10,9 @@
 [] Test every end point (^_^)
 [] Write 02-Start Playing.md
 [] Write the server PID in a file
-[] Release the server as a daemon. 
+[] Modify all the end point answers with the entire fleet report
+[] Release the server as a daemon.
+[] Read proof the GAME-API
 
 -> Can be done after launch
 

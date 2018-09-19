@@ -281,11 +281,15 @@ get '/game/v1/:username/:userkey/:mapid/capital-ship/top-up/:code' do
     content_type 'application/json'
 
     if UserFleet::validateTopUpCode(currentHour, username, code) then
-        # We need: (1) top up the value, (2) issue a new challenge 
-        topUpEnergyValue = $GAME_PARAMETERS["fleet:capital-ship:top-up-energy-value"]
-        difficulty = $GAME_PARAMETERS["fleet:capital-ship:top-up-challenge-difficulty"]
-        UserFleet::topUpCapitalShipAndResetTopUpChallenge(currentHour, username, topUpEnergyValue)
-        JSON.generate([true])
+        if userFleet["ship-inventory"]["capital"]["energy-level"] + $GAME_PARAMETERS["fleet:capital-ship:top-up-energy-value"] <= $GAME_PARAMETERS["fleet:ships-max-energy"]["capital-ship"] then
+            topUpEnergyValue = $GAME_PARAMETERS["fleet:capital-ship:top-up-energy-value"]
+            difficulty = $GAME_PARAMETERS["fleet:capital-ship:top-up-challenge-difficulty"]
+            UserFleet::topUpCapitalShipAndResetTopUpChallenge(currentHour, username, topUpEnergyValue)
+            JSON.generate([true])
+        else
+            status 403
+            return "403: Your code is correct, please keep it (!), but you cannot submit it at this time. Your ship has too much energy in reserve.\n"
+        end
     else
         status 403
         return "403: Your code is not a solution to the challenge.\n"
@@ -385,6 +389,11 @@ get '/game/v1/:username/:userkey/:mapid/capital-ship/create-energy-carrier/:ener
     if !userFleet["ship-inventory"]["capital"]["alive"] then
         status 403
         return "403: Your capital ship for this hour is dead.\n"
+    end
+
+    if energyamount > $GAME_PARAMETERS["fleet:ships-max-energy"]["energy-carrier"] then
+        status 403
+        return "403: You are creating a carrier with too much energy. Upper limit is #{$GAME_PARAMETERS["fleet:ships-max-energy"]["energy-carrier"]} units of energy.\n"        
     end
 
     # ------------------------------------------------------ 
@@ -562,6 +571,11 @@ get '/game/v1/:username/:userkey/:mapid/energy-transfer-type1/:energycarriership
         return "403: Your capital ship doesn't have enough energy for this transfer.\n"
     end    
 
+    if (energyCarrier["energy-level"]+energyLevel) > $GAME_PARAMETERS["fleet:ships-max-energy"]["energy-carrier"] then
+        status 403
+        return "403: You are creating a carrier with too much energy. Upper limit is #{$GAME_PARAMETERS["fleet:ships-max-energy"]["energy-carrier"]} units of energy.\n"       
+    end        
+
     # ------------------------------------------------------
 
     capital["energy-level"] = capital["energy-level"] - energyLevel
@@ -641,6 +655,11 @@ get '/game/v1/:username/:userkey/:mapid/energy-transfer-type2/:energycarriership
         status 403
         return "403: The energy carrier is empty.\n"
     end    
+
+    if (battleCruiser["energy-level"]+energyCarrier["energy-level"]) > $GAME_PARAMETERS["fleet:ships-max-energy"]["battle-cruiser"] then
+        status 403
+        return "403: You cannot perform this transfer as it would exceed the battle cruiser capacity.\n"       
+    end 
 
     # ------------------------------------------------------
 
