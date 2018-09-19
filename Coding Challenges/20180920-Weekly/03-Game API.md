@@ -147,7 +147,7 @@ FleetReport
 {
 	"username" : YOUR-USERNAME
 	"in-play" : Boolean
-	"score" : Float
+	"game-score" : Float
 	"ship-inventory" : {
 		"capital" : CapitalShip
 		"battle-cruisers" : Array[BattleCruiser]

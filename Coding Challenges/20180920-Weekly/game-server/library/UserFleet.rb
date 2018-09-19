@@ -59,7 +59,7 @@ class UserFleet
         {
             "username" => username,
             "in-play" => true,
-            "score" => 0,
+            "game-score" => 0,
             "ship-inventory" => {
                 "capital" => capitalShip,
                 "battle-cruisers" => [],

@@ -1,8 +1,7 @@
 
 -> Needed before launch
 
-[] Design, document and implement the scoring system
-[] When a map is created create the BBC fleet.
+[in progress] Design, document and implement the scoring system
 [] Make sure that all the end points are in the game API
 [] Implement /bomb/:battlecruisershipuuid/:targetpointlabel
 [] Implement throttling

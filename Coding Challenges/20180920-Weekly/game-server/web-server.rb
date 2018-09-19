@@ -123,6 +123,13 @@ class GameLibrary
 
     end
 
+    # GameLibrary::doUserFleetPointIncreaseForShipDestroyed(currentHour, username, nomenclature)
+    def self.doUserFleetPointIncreaseForShipDestroyed(currentHour, username, nomenclature)
+        userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
+        userFleet = ScoringUtils::userFleetPointIncreaseForShipDestroyed(userFleet, nomenclature)
+        UserFleet::commitFleetToDisk(currentHour, username, fleet)
+    end
+
 end
 
 # -- --------------------------------------------------
@@ -650,6 +657,8 @@ end
 
 get '/game/v1/:username/:userkey/:mapid/bomb/:battlecruisershipuuid/:targetpointlabel' do
     status 404
-    return "404: Not implemented yet.\n"    
+    return "404: Not implemented yet.\n"
+
+    # GameLibrary::doUserFleetPointIncreaseForShipDestroyed(currentHour, username, nomenclature)
 end
 
