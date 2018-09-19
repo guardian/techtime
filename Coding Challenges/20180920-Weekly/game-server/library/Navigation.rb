@@ -13,7 +13,7 @@ class Navigation
     # Navigation::jumpEnergyCost(sourceMapPoint, targetMapPoint, shipNomenclature)
     def self.jumpEnergyCost(sourceMapPoint, targetMapPoint, shipNomenclature)
         distanceBetweenPoints = Navigation::distanceBetweenTwoMapPoints(sourceMapPoint, targetMapPoint)
-        coefficient = $GAME_PARAMETERS["fleet:ship-nomenclature-2-jump-cost-coefficient"][shipNomenclature]
+        coefficient = $GAME_PARAMETERS["fleetShipNomenclature2JumpCostCoefficient"][shipNomenclature]
         (distanceBetweenPoints**1.1)*coefficient
     end
 

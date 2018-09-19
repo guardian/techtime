@@ -31,7 +31,7 @@ class UserFleet
     def self.trueIfUserFleetIsAlive(currentHour, username)
         fleetdata = UserFleet::getUserFleetDataOrNull(currentHour, username)
         return false if fleetdata.nil?
-        fleetdata["ship-inventory"]["capital"]["alive"]
+        fleetdata["shipInventory"]["capital"]["alive"]
     end
 
     # UserFleet::spawnCapitalShipTopUpChallenge(difficulty)
@@ -45,10 +45,10 @@ class UserFleet
     # UserFleet::spawnCapitalShip(mapPoint, energyLevel, topUpChallengeDifficulty)
     def self.spawnCapitalShip(mapPoint, energyLevel, topUpChallengeDifficulty)
         {
-            "nomenclature" => "capital-ship",
+            "nomenclature" => "capitalShip",
             "location"     => mapPoint,
-            "energy-level" => energyLevel,
-            "energy-top-up-challenge" => UserFleet::spawnCapitalShipTopUpChallenge(topUpChallengeDifficulty),
+            "energyLevel" => energyLevel,
+            "energyTopUpChallenge" => UserFleet::spawnCapitalShipTopUpChallenge(topUpChallengeDifficulty),
             "alive"        => true
         }
     end
@@ -58,22 +58,22 @@ class UserFleet
         capitalShip = UserFleet::spawnCapitalShip(mapPoint, capitalShipInitialEnergy, topUpChallengeDifficulty)
         {
             "username" => username,
-            "in-play" => true,
-            "game-score" => 0,
-            "ship-inventory" => {
+            "inPlay" => true,
+            "gameScore" => 0,
+            "shipInventory" => {
                 "capital" => capitalShip,
-                "battle-cruisers" => [],
-                "energy-carriers" => []
+                "battleCruisers" => [],
+                "energyCarriers" => []
             },
-            "log-warnings" => []
+            "logWarnings" => []
         }
     end
 
     # UserFleet::validateTopUpCode(currentHour, username, code)
     def self.validateTopUpCode(currentHour, username, code)
         userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
-        capital = userFleet["ship-inventory"]["capital"]
-        challenge = capital["energy-top-up-challenge"]
+        capital = userFleet["shipInventory"]["capital"]
+        challenge = capital["energyTopUpChallenge"]
         # {
         #    "input"      => String
         #    "difficulty" => Integer
@@ -84,9 +84,9 @@ class UserFleet
     # UserFleet::topUpCapitalShipAndResetTopUpChallenge(currentHour, username, topUpValue, difficulty)
     def self.topUpCapitalShipAndResetTopUpChallenge(currentHour, username, topUpValue, difficulty)
         userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
-        currentLevel = userFleet["ship-inventory"]["capital"]["energy-level"]
-        userFleet["ship-inventory"]["capital"]["energy-level"] = currentLevel + topUpValue
-        userFleet["ship-inventory"]["capital"]["energy-top-up-challenge"] = UserFleet::spawnCapitalShipTopUpChallenge(difficulty)
+        currentLevel = userFleet["shipInventory"]["capital"]["energyLevel"]
+        userFleet["shipInventory"]["capital"]["energyLevel"] = currentLevel + topUpValue
+        userFleet["shipInventory"]["capital"]["energyTopUpChallenge"] = UserFleet::spawnCapitalShipTopUpChallenge(difficulty)
         UserFleet::commitFleetToDisk(currentHour, username, userFleet)
     end
 
@@ -102,35 +102,35 @@ class UserFleet
     # UserFleet::spawnBattleCruiser(mapPoint, initialEnergyLevel)
     def self.spawnBattleCruiser(mapPoint, initialEnergyLevel)
         {
-            "nomenclature" => "battle-cruiser",
-            "ship-uuid"    => SecureRandom.uuid,
+            "nomenclature" => "battleCruiser",
+            "shipUUID"    => SecureRandom.uuid,
             "location"     => mapPoint,
-            "energy-level" => initialEnergyLevel,
+            "energyLevel" => initialEnergyLevel,
             "alive"        => true,
-            "space-probe-results" => []
+            "spaceProbeResults" => []
         }
     end
 
     # UserFleet::spawnEnergyCarrier(mapPoint, initialEnergyLevel)
     def self.spawnEnergyCarrier(mapPoint, initialEnergyLevel)
         {
-            "nomenclature" => "energy-carrier",
-            "ship-uuid"    => SecureRandom.uuid,
+            "nomenclature" => "energyCarrier",
+            "shipUUID"    => SecureRandom.uuid,
             "location"     => mapPoint,
-            "energy-level" => initialEnergyLevel,
+            "energyLevel" => initialEnergyLevel,
             "alive"        => true
         }
     end
 
     # UserFleet::insertOrUpdateShipAtFleet(fleet, ship)
     def self.insertOrUpdateShipAtFleet(fleet, ship)
-        if ship["nomenclature"] == "battle-cruiser" then
-            fleet["ship-inventory"]["battle-cruisers"] = fleet["ship-inventory"]["battle-cruisers"].reject{|s| s["ship-uuid"]==ship["ship-uuid"] }
-            fleet["ship-inventory"]["battle-cruisers"] << ship
+        if ship["nomenclature"] == "battleCruiser" then
+            fleet["shipInventory"]["battleCruisers"] = fleet["shipInventory"]["battleCruisers"].reject{|s| s["shipUUID"]==ship["shipUUID"] }
+            fleet["shipInventory"]["battleCruisers"] << ship
         end
-        if ship["nomenclature"] == "energy-carrier" then
-            fleet["ship-inventory"]["energy-carriers"] = fleet["ship-inventory"]["energy-carriers"].reject{|s| s["ship-uuid"]==ship["ship-uuid"] }
-            fleet["ship-inventory"]["energy-carriers"] << ship
+        if ship["nomenclature"] == "energyCarrier" then
+            fleet["shipInventory"]["energyCarriers"] = fleet["shipInventory"]["energyCarriers"].reject{|s| s["shipUUID"]==ship["shipUUID"] }
+            fleet["shipInventory"]["energyCarriers"] << ship
         end
         fleet
     end
@@ -145,7 +145,7 @@ class UserFleet
     # UserFleet::userShipsWithinDisk(currentHour, username, mapPoint, radius) # radius in kilometers
     def self.userShipsWithinDisk(currentHour, username, mapPoint, radius)
         userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
-        ships = [ userFleet["ship-inventory"]["capital-ship"] ] + userFleet["ship-inventory"]["battle-cruisers"] + userFleet["ship-inventory"]["energy-carriers"]
+        ships = [ userFleet["shipInventory"]["capitalShip"] ] + userFleet["shipInventory"]["battleCruisers"] + userFleet["shipInventory"]["energyCarriers"]
         ships.select{|ship|
             UserFleet::distanceBetweenTwoMapPoints(ship["location"], mapPoint) <= radius
         }
@@ -155,9 +155,9 @@ class UserFleet
     def self.spawnWarningLogItem(attackerMapPoint, attackerUsername, targetShip)
         {
             "unixtime"        => Time.new.to_f,
-            "event-unique-id" => SecureRandom.uuid,
-            "event-type"      => "WormholeBomb",
-            "event-data"      => {
+            "eventUUID" => SecureRandom.uuid,
+            "eventType"      => "WormholeBomb",
+            "eventData"      => {
                 "source" => {
                     "location"     => attackerMapPoint,
                     "nomenclature" => "BattleCruiser",
@@ -172,7 +172,7 @@ class UserFleet
     def self.registerShipTakingBombImpact(userFleet, attackerMapPoint, attackerUsername, targetShip)
         damageCausedForAttackerReport = nil
         return [userFleet, targetShip, damageCausedForAttackerReport] if !targetShip["alive"] 
-        if targetShip["nomenclature"] == "energy-carrier" then
+        if targetShip["nomenclature"] == "energyCarrier" then
             targetShip["energy-value"] = 0
             targetShip["alive"] = false
         else
@@ -185,7 +185,7 @@ class UserFleet
             "nomenclature" => targetShip["nomenclature"],
             "alive" => targetShip["alive"]
         }
-        userFleet["log-warnings"] << UserFleet::spawnWarningLogItem(attackerMapPoint, attackerUsername, targetShip)
+        userFleet["logWarnings"] << UserFleet::spawnWarningLogItem(attackerMapPoint, attackerUsername, targetShip)
         [userFleet, targetShip, damageCausedForAttackerReport]
     end
 

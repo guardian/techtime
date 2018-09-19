@@ -106,10 +106,10 @@ class GameLibrary
         map = {}
         map["mapId"] = SecureRandom.uuid
         map["timestamp"] = GameLibrary::hourCode()
-        map["points"] = (1..$GAME_PARAMETERS["map:jump-points:cardinality"]).map{|indx|
+        map["points"] = (1..$GAME_PARAMETERS["mapJumpPointsCardinality"]).map{|indx|
             {
                 "label" => SecureRandom.hex(4),
-                "coordinates" => [ rand * $GAME_PARAMETERS["map:size"], rand * $GAME_PARAMETERS["map:size"] ].map{|c| c.round(2) }
+                "coordinates" => [ rand * $GAME_PARAMETERS["mapSize"], rand * $GAME_PARAMETERS["mapSize"] ].map{|c| c.round(2) }
             }
         }
         File.open(mapfilepath, "w"){ |f| f.puts(JSON.pretty_generate(map)) }
@@ -243,8 +243,8 @@ get '/game/v1/:userkey/:mapid/capital-ship/init' do
     content_type 'application/json'
 
     mapPoint = MapUtils::getCurrentMap()["points"].sample
-    capitalShipInitialEnergy = $GAME_PARAMETERS["fleet:capital-ship:initial-energy-level"]
-    topUpChallengeDifficulty = $GAME_PARAMETERS["fleet:capital-ship:top-up-challenge-difficulty"]
+    capitalShipInitialEnergy = $GAME_PARAMETERS["fleetCapitalShipInitialEnergyLevel"]
+    topUpChallengeDifficulty = $GAME_PARAMETERS["fleetCapitalShipTopUpChallengeDifficulty"]
     userFleet = UserFleet::spawnUserFleet(username, mapPoint, capitalShipInitialEnergy, topUpChallengeDifficulty)
 
     UserFleet::commitFleetToDisk(currentHour, username, userFleet)
@@ -285,7 +285,7 @@ get '/game/v1/:userkey/:mapid/capital-ship/top-up/:code' do
         return "404: You do not yet have a fleet for this hour. (You should initiate one.)\n"
     end
 
-    if !userFleet["ship-inventory"]["capital"]["alive"] then
+    if !userFleet["shipInventory"]["capital"]["alive"] then
         status 403
         return "403: Your capital ship for this hour is dead.\n"
     end
@@ -295,9 +295,9 @@ get '/game/v1/:userkey/:mapid/capital-ship/top-up/:code' do
     content_type 'application/json'
 
     if UserFleet::validateTopUpCode(currentHour, username, code) then
-        if userFleet["ship-inventory"]["capital"]["energy-level"] + $GAME_PARAMETERS["fleet:capital-ship:top-up-energy-value"] <= $GAME_PARAMETERS["fleet:ships-max-energy"]["capital-ship"] then
-            topUpEnergyValue = $GAME_PARAMETERS["fleet:capital-ship:top-up-energy-value"]
-            difficulty = $GAME_PARAMETERS["fleet:capital-ship:top-up-challenge-difficulty"]
+        if userFleet["shipInventory"]["capital"]["energyLevel"] + $GAME_PARAMETERS["fleetCapitalShipTopUpEnergyValue"] <= $GAME_PARAMETERS["fleetShipsMaxEnergy"]["capitalShip"] then
+            topUpEnergyValue = $GAME_PARAMETERS["fleetCapitalShipTopUpEnergyValue"]
+            difficulty = $GAME_PARAMETERS["fleetCapitalShipTopUpChallengeDifficulty"]
             UserFleet::topUpCapitalShipAndResetTopUpChallenge(currentHour, username, topUpEnergyValue)
             JSON.generate([true])
         else
@@ -342,7 +342,7 @@ get '/game/v1/:userkey/:mapid/capital-ship/create-battle-cruiser' do
         return "404: You do not yet have a fleet for this hour. (You should initiate one.)\n"
     end
 
-    if !userFleet["ship-inventory"]["capital"]["alive"] then
+    if !userFleet["shipInventory"]["capital"]["alive"] then
         status 403
         return "403: Your capital ship for this hour is dead.\n"
     end
@@ -351,21 +351,21 @@ get '/game/v1/:userkey/:mapid/capital-ship/create-battle-cruiser' do
 
     content_type 'application/json'
 
-    battleCruiserBuildEnergyCost = $GAME_PARAMETERS["fleet:battle-cruiser:build-energy-cost"]
-    battleCruiserInitialEnergyLevel = $GAME_PARAMETERS["fleet:battle-cruiser:initial-energy-level"]
+    battleCruiserBuildEnergyCost = $GAME_PARAMETERS["fleetBattleCruiserBuildEnergyCost"]
+    battleCruiserInitialEnergyLevel = $GAME_PARAMETERS["fleetBattleCruiserInitialEnergyLevel"]
 
     userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
-    capitalShipCanPerformBattleShipCreation = userFleet["ship-inventory"]["capital"]["energy-level"] >= ( battleCruiserBuildEnergyCost + battleCruiserInitialEnergyLevel )
+    capitalShipCanPerformBattleShipCreation = userFleet["shipInventory"]["capital"]["energyLevel"] >= ( battleCruiserBuildEnergyCost + battleCruiserInitialEnergyLevel )
     if capitalShipCanPerformBattleShipCreation then
-        userFleet["ship-inventory"]["capital"]["energy-level"] = userFleet["ship-inventory"]["capital"]["energy-level"] - ( battleCruiserBuildEnergyCost + battleCruiserInitialEnergyLevel )
+        userFleet["shipInventory"]["capital"]["energyLevel"] = userFleet["shipInventory"]["capital"]["energyLevel"] - ( battleCruiserBuildEnergyCost + battleCruiserInitialEnergyLevel )
         mapPoint = MapUtils::getCurrentMap()["points"].sample
         battleCruiser = UserFleet::spawnBattleCruiser(mapPoint, battleCruiserInitialEnergyLevel)
-        userFleet["ship-inventory"]["battle-cruisers"] << battleCruiser
+        userFleet["shipInventory"]["battleCruisers"] << battleCruiser
         UserFleet::commitFleetToDisk(currentHour, username, userFleet)
         JSON.generate(battleCruiser)
     else
         status 403
-        "403: Your capital ship doesn't have enough energy to complete the construction of a battle cruiser. You have #{userFleet["ship-inventory"]["capital"]["energy-level"]} but you need #{(battleCruiserBuildEnergyCost+battleCruiserInitialEnergyLevel)}\n"
+        "403: Your capital ship doesn't have enough energy to complete the construction of a battle cruiser. You have #{userFleet["shipInventory"]["capital"]["energyLevel"]} but you need #{(battleCruiserBuildEnergyCost+battleCruiserInitialEnergyLevel)}\n"
     end
 
 end
@@ -404,35 +404,35 @@ get '/game/v1/:userkey/:mapid/capital-ship/create-energy-carrier/:energyamount' 
         return "404: You do not yet have a fleet for this hour. (You should initiate one.)\n"
     end
 
-    if !userFleet["ship-inventory"]["capital"]["alive"] then
+    if !userFleet["shipInventory"]["capital"]["alive"] then
         status 403
         return "403: Your capital ship for this hour is dead.\n"
     end
 
-    if energyamount > $GAME_PARAMETERS["fleet:ships-max-energy"]["energy-carrier"] then
+    if energyamount > $GAME_PARAMETERS["fleetShipsMaxEnergy"]["energyCarrier"] then
         status 403
-        return "403: You are creating a carrier with too much energy. Upper limit is #{$GAME_PARAMETERS["fleet:ships-max-energy"]["energy-carrier"]} units of energy.\n"        
+        return "403: You are creating a carrier with too much energy. Upper limit is #{$GAME_PARAMETERS["fleetShipsMaxEnergy"]["energyCarrier"]} units of energy.\n"        
     end
 
     # ------------------------------------------------------ 
 
     content_type 'application/json'
 
-    carrierBuildEnergyCost = $GAME_PARAMETERS["fleet:energy-carrier:build-energy-cost"]
+    carrierBuildEnergyCost = $GAME_PARAMETERS["fleetEnergyCarrierBuildEnergyCost"]
     carrierInitialEnergyLevel = energyamount 
 
     userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
-    capitalShipCanPerformCarrierCreation = userFleet["ship-inventory"]["capital"]["energy-level"] >= ( carrierBuildEnergyCost + carrierInitialEnergyLevel )
+    capitalShipCanPerformCarrierCreation = userFleet["shipInventory"]["capital"]["energyLevel"] >= ( carrierBuildEnergyCost + carrierInitialEnergyLevel )
     if capitalShipCanPerformCarrierCreation then
-        userFleet["ship-inventory"]["capital"]["energy-level"] = userFleet["ship-inventory"]["capital"]["energy-level"] - ( carrierBuildEnergyCost + carrierInitialEnergyLevel )
+        userFleet["shipInventory"]["capital"]["energyLevel"] = userFleet["shipInventory"]["capital"]["energyLevel"] - ( carrierBuildEnergyCost + carrierInitialEnergyLevel )
         mapPoint = MapUtils::getCurrentMap()["points"].sample
         energyCarrier = UserFleet::spawnEnergyCarrier(mapPoint, carrierInitialEnergyLevel)
-        userFleet["ship-inventory"]["energy-carriers"] << energyCarrier
+        userFleet["shipInventory"]["energyCarriers"] << energyCarrier
         UserFleet::commitFleetToDisk(currentHour, username, userFleet)
         JSON.generate(energyCarrier)
     else
         status 403
-        "403: Your capital ship doesn't have enough energy to complete the construction of an energy carrier carrying #{carrierInitialEnergyLevel}. You have #{userFleet["ship-inventory"]["capital"]["energy-level"]} but you need #{(carrierBuildEnergyCost+carrierInitialEnergyLevel)}\n"
+        "403: Your capital ship doesn't have enough energy to complete the construction of an energy carrier carrying #{carrierInitialEnergyLevel}. You have #{userFleet["shipInventory"]["capital"]["energyLevel"]} but you need #{(carrierBuildEnergyCost+carrierInitialEnergyLevel)}\n"
     end
 
     "{}"
@@ -500,8 +500,8 @@ get '/game/v1/:userkey/:mapid/jump/:shipuuid/:targetpointlabel' do
     # In the current version of the game energy carriers need the capital ship to be alive 
     # in order to be controlled. Therfore we record whether or not the capital is alive.
 
-    if ship["nomenclature"] == "energy-carrier" then
-        if !userFleet["ship-inventory"]["capital"]["alive"] then
+    if ship["nomenclature"] == "energyCarrier" then
+        if !userFleet["shipInventory"]["capital"]["alive"] then
             status 403
             return "403: Your capital ship is dead. You cannot jump energy carriers in that case.\n"
         end 
@@ -512,16 +512,16 @@ get '/game/v1/:userkey/:mapid/jump/:shipuuid/:targetpointlabel' do
     jec = Navigation::jumpEnergyCost(sourceMapPoint, targetMapPoint, ship["nomenclature"])
 
     # Need to check whether the ship has enough energy left to jump
-    if !ship["energy-level"] < jec then
+    if !ship["energyLevel"] < jec then
         status 403
-        return "403: The ship doesn't have enough energy for this jump. Available: #{ship["energy-level"]}. Required: #{jec}.\n"
+        return "403: The ship doesn't have enough energy for this jump. Available: #{ship["energyLevel"]}. Required: #{jec}.\n"
     end    
 
     # ------------------------------------------------------
     
     # Now performing the jump
     ship["location"] = targetMapPoint
-    ship["energy-level"] = ship["energy-level"] - jec
+    ship["energyLevel"] = ship["energyLevel"] - jec
 
     userFleet = UserFleet::insertOrUpdateShipAtFleet(userFleet, ship)
     UserFleet::commitFleetToDisk(currentHour, username, userFleet)
@@ -567,7 +567,7 @@ get '/game/v1/:userkey/:mapid/energy-transfer-type1/:energycarriershipuuid/:ener
     end
 
     energyCarrier = UserFleet::getShipPerUUIDOrNull(currentHour, username, energyCarrierShipUUID)
-    capital = userFleet["ship-inventory"]["capital"]
+    capital = userFleet["shipInventory"]["capital"]
 
     if energyCarrier.nil? then
         status 404
@@ -589,22 +589,22 @@ get '/game/v1/:userkey/:mapid/energy-transfer-type1/:energycarriershipuuid/:ener
         return "403: You cannot transfer energy between the two ships, they are not at the same map location.\n"        
     end
 
-    if capital["energy-level"] < energyLevel then
+    if capital["energyLevel"] < energyLevel then
         status 403
         return "403: Your capital ship doesn't have enough energy for this transfer.\n"
     end    
 
-    if (energyCarrier["energy-level"]+energyLevel) > $GAME_PARAMETERS["fleet:ships-max-energy"]["energy-carrier"] then
+    if (energyCarrier["energyLevel"]+energyLevel) > $GAME_PARAMETERS["fleetShipsMaxEnergy"]["energyCarrier"] then
         status 403
-        return "403: You are creating a carrier with too much energy. Upper limit is #{$GAME_PARAMETERS["fleet:ships-max-energy"]["energy-carrier"]} units of energy.\n"       
+        return "403: You are creating a carrier with too much energy. Upper limit is #{$GAME_PARAMETERS["fleetShipsMaxEnergy"]["energyCarrier"]} units of energy.\n"       
     end        
 
     # ------------------------------------------------------
 
-    capital["energy-level"] = capital["energy-level"] - energyLevel
-    energyCarrier["energy-level"] = energyCarrier["energy-level"] + energyLevel
+    capital["energyLevel"] = capital["energyLevel"] - energyLevel
+    energyCarrier["energyLevel"] = energyCarrier["energyLevel"] + energyLevel
 
-    userFleet["ship-inventory"]["capital"] = capital
+    userFleet["shipInventory"]["capital"] = capital
     userFleet = UserFleet::insertOrUpdateShipAtFleet(userFleet, energyCarrier)
     UserFleet::commitFleetToDisk(currentHour, username, userFleet)
 
@@ -675,20 +675,20 @@ get '/game/v1/:userkey/:mapid/energy-transfer-type2/:energycarriershipuuid/:batt
         return "403: You cannot transfer energy between the two ships, they are not at the same map location.\n"        
     end
 
-    if energyCarrier["energy-level"] == 0 then
+    if energyCarrier["energyLevel"] == 0 then
         status 403
         return "403: The energy carrier is empty.\n"
     end    
 
-    if (battleCruiser["energy-level"]+energyCarrier["energy-level"]) > $GAME_PARAMETERS["fleet:ships-max-energy"]["battle-cruiser"] then
+    if (battleCruiser["energyLevel"]+energyCarrier["energyLevel"]) > $GAME_PARAMETERS["fleetShipsMaxEnergy"]["battleCruiser"] then
         status 403
         return "403: You cannot perform this transfer as it would exceed the battle cruiser capacity.\n"       
     end 
 
     # ------------------------------------------------------
 
-    battleCruiser["energy-level"] = battleCruiser["energy-level"] + energyCarrier["energy-level"]
-    energyCarrier["energy-level"] = 0
+    battleCruiser["energyLevel"] = battleCruiser["energyLevel"] + energyCarrier["energyLevel"]
+    energyCarrier["energyLevel"] = 0
 
     userFleet = UserFleet::insertOrUpdateShipAtFleet(userFleet, battleCruiser)
     userFleet = UserFleet::insertOrUpdateShipAtFleet(userFleet, energyCarrier)
@@ -758,18 +758,18 @@ get '/game/v1/:userkey/:mapid/bomb/:battlecruisershipuuid/:targetpointlabel' do
     # ------------------------------------------------------
     # At this point we can attempt shooting
 
-    if battleCruiser["energy-level"] < ( $GAME_PARAMETERS["fleet:battle-cruiser:bomb:build-cost"] + $GAME_PARAMETERS["fleet:battle-cruiser:bomb:nominal-energy"] ) then
+    if battleCruiser["energyLevel"] < ( $GAME_PARAMETERS["fleetBattleCruiserBombBuildingCost"] + $GAME_PARAMETERS["fleetBattleCruiserBombNominalEnergy"] ) then
         status 403
         return "403: Your cruiser doesn't have enough energy to complete the construction of a bomb.\n"        
     end
 
-    battleCruiser["energy-level"] = battleCruiser["energy-level"] - ( $GAME_PARAMETERS["fleet:battle-cruiser:bomb:build-cost"] + $GAME_PARAMETERS["fleet:battle-cruiser:bomb:nominal-energy"] )
+    battleCruiser["energyLevel"] = battleCruiser["energyLevel"] - ( $GAME_PARAMETERS["fleetBattleCruiserBombBuildingCost"] + $GAME_PARAMETERS["fleetBattleCruiserBombNominalEnergy"] )
     userFleet = UserFleet::insertOrUpdateShipAtFleet(userFleet, battleCruiser)
 
     # Ok, now time to do damage
 
     distanceToTargetPoint = MapUtils::distanceBetweenTwoMapPoints(battleCruiser["location"], targetMapPoint)
-    bombEffectiveEnergy = BombsUtils::bombEffectiveEnergy($GAME_PARAMETERS["fleet:battle-cruiser:bomb:nominal-energy"], distanceToTargetPoint)
+    bombEffectiveEnergy = BombsUtils::bombEffectiveEnergy($GAME_PARAMETERS["fleetBattleCruiserBombNominalEnergy"], distanceToTargetPoint)
 
     attackerDamageReport = []
 

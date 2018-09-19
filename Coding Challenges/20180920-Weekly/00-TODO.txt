@@ -21,6 +21,22 @@
             "alive" => targetShip["alive"]
         }
 
+[] I am not doing this
+BombReport
+    {
+        "shipsHit" : Array[BombReportShipDetail]
+    }
+
+    BombReportShipDetail
+    {
+        "username"     : USERNAME
+        "nomenclature" : SHIP-NOMENCLATURE
+        "destroyed"    : Boolean
+    }
+
+[] Do I take account of "bombsEffectMultiplier" ?
+
+
 [] Read proof the GAME-API
 
 -> Can be done after launch

@@ -66,19 +66,19 @@ This is your main ship. It is the one that receives your energy mining codes and
 ```
 CapitalShip 
 {
-	"nomenclature" : "capital-ship"
+	"nomenclature" : "capitalShip"
 	"location" : {
 		"label" : POINT-LABEL
 		"coordinates" : [449.3, 932.24]
 	}
-	"energy-level" : FLOAT
-	"energy-top-up-challenge" : CapitalShipTopUpChallenge
+	"energyLevel" : FLOAT
+	"energyTopUpChallenge" : CapitalShipTopUpChallenge
 	"alive"        : Boolean
 }
 ```
 
 - `location` is the same as a MapPoint.
-- `energy-top-up-challenge` is used for the Capital Ship energy top up. See the section "Capital Ship top up" below for details.
+- `energyTopUpChallenge` is used for the Capital Ship energy top up. See the section "Capital Ship top up" below for details.
 - `alive` indicates whether your ship is still alive. In this current version of the game the only reason it would not be alive is that it was hit by a bomb after its shield went down.
 
 ### Battle Cruiser
@@ -88,19 +88,19 @@ Battle Cruisers are your main offensive units. They are the only ships that can 
 ```
 BattleCruiser
 {
-	"nomenclature" : "battle-cruiser"
-	"ship-uuid" : UUID
+	"nomenclature" : "battleCruiser"
+	"shipUUID" : UUID
 	"location" : {
 		"label" : POINT-LABEL
 		"coordinates" : [449.3, 932.24]
 	}
-	"energy-level" : FLOAT
+	"energyLevel" : FLOAT
 	"alive"        : Boolean
-	"space-probe-results"  : SpaceProbeResults
+	"spaceProbeResults"  : SpaceProbeResults
 }
 ```
 
-- ship-uuid: is a completely unique uuid of this ship. It's a length 8 hexadecimal string. You use it to refer to the ship when sending commands to it. 
+- shipUUID: is a completely unique uuid of this ship. It's a length 8 hexadecimal string. You use it to refer to the ship when sending commands to it. 
 
 - Space probe results are the results of a battle cruiser scanning space and retriving the location of enemy ships. The report is dated, with a timestamp expressed in Unixtime, and the type and location of enemy ships are given. Note that ships probing capabilities only extend to a disc of radius 300 kilometers from the current location of the ship. 
 
@@ -127,13 +127,13 @@ Energy Carriers are special purpose ships essentially used to transfer energy be
 ```
 EnergyCarrier
 {
-	"nomenclature" : "energy-carrier"
-	"ship-uuid" : UUID
+	"nomenclature" : "energyCarrier"
+	"shipUUID" : UUID
 	"location" : {
 		"label" : POINT-LABEL
 		"coordinates" : [449.3, 932.24]
 	}
-	"energy-level" : FLOAT
+	"energyLevel" : FLOAT
 	"alive"        : Boolean
 }
 ```
@@ -146,22 +146,22 @@ The fleet report contains all information about your entire fleet
 FleetReport
 {
 	"username" : YOUR-USERNAME
-	"in-play" : Boolean
-	"game-score" : Float
-	"ship-inventory" : {
+	"inPlay" : Boolean
+	"gameScore" : Float
+	"shipInventory" : {
 		"capital" : CapitalShip
-		"battle-cruisers" : Array[BattleCruiser]
-		"energy-carriers" : Array[EnergyCarrier]
+		"battleCruisers" : Array[BattleCruiser]
+		"energyCarriers" : Array[EnergyCarrier]
 	}
-	"log-warnings" : Array[WarningLogItem]
+	"logWarnings" : Array[WarningLogItem]
 }
 ``` 
 
-- `in-play` indicates whether or not you are still in play. The only reason why you would not be in play is that you have lost your capital ship. 
+- `inPlay` indicates whether or not you are still in play. The only reason why you would not be in play is that you have lost your capital ship. 
 
 - The score indicates how many points you have accumulated so far. 
 
-- The `log-warnings` indicates even that have occured that you might (should) be interested in. Mostly that enemy Battle Cruisers are shooting at you.
+- The `logWarnings` indicates even that have occured that you might (should) be interested in. Mostly that enemy Battle Cruisers are shooting at you.
 
 	```
 	WarningLogItemEventType
@@ -170,9 +170,9 @@ FleetReport
 	WarningLogItem
 	{
 		"unixtime"        : Unixtime
-		"event-unique-id" : UUID
-		"event-type"      : "WormholeBomb"
-		"event-data"      : {
+		"eventUUID" : UUID
+		"eventType"      : "WormholeBomb"
+		"eventData"      : {
 			"source" : {
 				"location"     : MapPoint
 				"nomenclature" : "BattleCruiser"
@@ -260,7 +260,7 @@ The answer is a BombReport
 ```
 BombReport
 {
-	"ships-hit" : Array[BombReportShipDetail]
+	"shipsHit" : Array[BombReportShipDetail]
 }
 
 BombReportShipDetail
@@ -301,6 +301,7 @@ cf97896ca2dfb9185cf62f4574cbc067b7b95b20
 
 Therefore you could use "nnaywpahgahl" as your top up code. How much energy is added to your Capital Ship energy level is defined by the game parameters.
 
-When you complete a top-up challenge and commit your top-up code, a new challenge is written into your Capital "energy-top-up-challenge" key, allowing you to start working on a new top up.
+When you complete a top-up challenge and commit your top-up code, a new challenge is written into your Capital "energyTopUpChallenge" key, allowing you to start working on a new top up.
 
 The top up call return `[true]` when successful, otherwise you get a 403.
+
