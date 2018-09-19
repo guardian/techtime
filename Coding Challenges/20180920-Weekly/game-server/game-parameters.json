@@ -1,9 +1,9 @@
 {
     "map:size": 1000,
     "map:jump-points:cardinality": 500,
-    "fleet:capital-ship:initial-energy-level": 5000,
-    "fleet:capital-ship:top-up-challenge-difficulty": 6,
-    "fleet:capital-ship:top-up-energy-value": 2000,
+    "fleet:capital-ship:initial-energy-level": 2000,
+    "fleet:capital-ship:top-up-challenge-difficulty": 5,
+    "fleet:capital-ship:top-up-energy-value": 1000,
     "fleet:battle-cruiser:build-energy-cost": 100,
     "fleet:battle-cruiser:initial-energy-level": 500,
     "fleet:battle-cruiser:bomb:build-cost": 10,
@@ -14,6 +14,11 @@
         "battle-cruiser": 0.3,
         "capital-ship"  : 1
     },
+    "fleet:ships-max-energy": {
+        "capital-ship": 3000,
+        "battle-cruiser": 500,
+        "energy-carrier": 200
+    }
     "bombs:nominal-energy": 10,
     "bombs:effect-multiplier": 3,
     "scoring:points-for-kill:per-nomenclature": {

@@ -53,7 +53,7 @@ MapPoint: {
 curl http://10.249.16.173:14561/game/v1/game-parameters
 ```
 
-This JSON object contains almost all of the contants/parameters of the game: from the size of the canvas and number of jump points to how much energy various operations cost etc.
+This JSON object contains almost all of the contants / parameters of the game: from the size of the canvas and number of jump points to how much energy various operations cost etc.
 
 ## Game DataTypes
 
@@ -207,7 +207,7 @@ The return value is your initial fleet report.
 curl /game/v1/:username/:userkey/:mapid/capital-ship/create-battle-cruiser
 ```
 
-Creates a battle cruiser and returns the corresponding BattleCruiser object.
+Creates a battle cruiser and returns the corresponding BattleCruiser object. The call fails if your Capital didn't have enough energy to create the ship and fill it with that much energy.
 
 ### Create Energy Carrier
 
@@ -226,6 +226,19 @@ curl /game/v1/:username/:userkey/:mapid/jump/:shipuuid/:targetpointlabel
 ```
 
 The energy expenditure for a jump depends on the distance you want to travel (the energy needed is proportional to the distance), but also the type of the ship. In increasing energy expenditure per ship type you have: carriers, battle cruisers and the Capital Ship (meaning that it is cheaper to move a carrier across a given distance than a battle cruiser). Capital Ships tend to be, by design, a bit expensive to move around.
+
+### Energy transfer
+
+You can transfer energy either 
+
+- From a capital ship to an energy carrier, or
+- From an energy carrier to a battle cruiser.
+
+For the former the call is 
+
+```
+/game/v1/:username/:userkey/:mapid/energy-transfer-type1/:energycarriershipuuid/:energylevel
+```
 
 ### Shooting at things
 

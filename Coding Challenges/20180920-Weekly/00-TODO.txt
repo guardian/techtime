@@ -1,13 +1,17 @@
 
 -> Needed before launch
 
+[] Make sure that all the end points are in the game API, and vice and versa
+[] Implement "fleet:ships-max-energy"
 [] Enforce coding convention #2
-[] Make sure that all the end points are in the game API
 [] Implement /bomb/:battlecruisershipuuid/:targetpointlabel
+    [] implement a userFleet enumerator (to loop over and inflict damages to ship at the bomb location)
+[] Implement Battle Cruiser Scanning
 [] Implement throttling
 [] GameLibrary::ensureGameFolderSetUpForThisHour() is not yet setting the bbc
 [] Test every end point (^_^)
-[] Write 02-Start Playing.md 
+[] Write 02-Start Playing.md
+[] Write the server PID in a file
 [] Release the server as a daemon. 
 
 -> Can be done after launch
