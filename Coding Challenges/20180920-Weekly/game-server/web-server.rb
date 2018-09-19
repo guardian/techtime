@@ -27,6 +27,8 @@ require 'fileutils'
 # FileUtils.rm(path_to_image)
 # FileUtils.rm_rf('dir/to/remove')
 
+require 'time'
+
 # --  --------------------------------------------------
 
 require_relative "library/BombsUtils.rb"
@@ -770,5 +772,74 @@ get '/game/v1/:username/:userkey/:mapid/bomb/:battlecruisershipuuid/:targetpoint
         }
 
     JSON.pretty_generate(attackerDamageReport)
+end
+
+get '/game/v1/:username/:userkey/:mapid/space-probe/:battlecruisershipuuid' do
+
+    username = params["username"]
+    userkey = params["userkey"]
+
+    battleCruiserShipUUID = params["battlecruisershipuuid"]
+
+    currentHour = GameLibrary::hourCode()
+
+    # ------------------------------------------------------
+    # User Credentials and Map Validity Checks
+
+    if !UserKeys::validateUserCredentials(username, userkey) then
+        status 401
+        return "401: Invalid credentials\n"
+    end
+
+    if MapUtils::getCurrentMap()["mapId"] != mapId then
+        status 404
+        return "404: Map not found (mapId is incorrect or outdated)\n"
+    end    
+
+    # ------------------------------------------------------
+    # User Fleet validation
+
+    userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
+
+    if userFleet.nil? then
+        status 404
+        return "404: You do not yet have a fleet for this hour. (You should initiate one.)\n"
+    end
+
+    battleCruiser = UserFleet::getShipPerUUIDOrNull(currentHour, username, battleCruiserShipUUID)
+
+    if battleCruiser.nil? then
+        status 404
+        return "404: Your fleet has no ship with uuid #{battleCruiserShipUUID}.\n"
+    end
+
+    if !battleCruiser["alive"] then
+        status 403
+        return "403: The battle cruiser is dead.\n"
+    end
+
+    # ------------------------------------------------------
+    # At this point we can attempt shooting
+
+    spaceProbeResults = {
+        "unixtime" => Time.new.to_f,
+        "datetime" => Time.now.utc.iso8601,
+        "results"  => []
+    }
+
+    GameLibrary::userFleetsInPlay(currentHour)
+        .each{|otherPlayerUserFleet|
+            UserFleet::userShipsWithinDisk(currentHour, otherPlayerUserFleet["username"], battleCruiser["location"], 300)
+                .each{|ship|
+                    spaceProbeResultItem = {
+                        "location" => ship["location"],
+                        "nomenclature" => ship["nomenclature"],
+                        "username" => otherPlayerUserFleet["username"]
+                    }
+                    spaceProbeResults << spaceProbeResultItem
+                }
+        }
+
+    JSON.pretty_generate(spaceProbeResults)
 end
 
