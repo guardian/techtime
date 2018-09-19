@@ -208,8 +208,8 @@ end
 # ------------------------------------------
 # User Fleet Actions 
 
-get '/game/v1/:username/:userkey/:mapid/capital-ship/init' do
-    username = params["username"]
+get '/game/v1/:userkey/:mapid/capital-ship/init' do
+
     userkey = params["userkey"]
     mapId = params["mapid"]
 
@@ -218,9 +218,11 @@ get '/game/v1/:username/:userkey/:mapid/capital-ship/init' do
     # ------------------------------------------------------
     # User Credentials and Map Validity Checks
 
-    if !UserKeys::validateUserCredentials(username, userkey) then
+    username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
+
+    if !username.nil? then
         status 401
-        return "401: Invalid credentials\n"
+        return "401: Invalid userkey\n"
     end
 
     if MapUtils::getCurrentMap()["mapId"] != mapId then
@@ -250,8 +252,8 @@ get '/game/v1/:username/:userkey/:mapid/capital-ship/init' do
     JSON.generate(userFleet)
 end
 
-get '/game/v1/:username/:userkey/:mapid/capital-ship/top-up/:code' do
-    username = params["username"]
+get '/game/v1/:userkey/:mapid/capital-ship/top-up/:code' do
+
     userkey = params["userkey"]
     mapId = params["mapid"]
     code = params["code"]
@@ -261,9 +263,11 @@ get '/game/v1/:username/:userkey/:mapid/capital-ship/top-up/:code' do
     # ------------------------------------------------------
     # User Credentials and Map Validity Checks
 
-    if !UserKeys::validateUserCredentials(username, userkey) then
+    username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
+
+    if !username.nil? then
         status 401
-        return "401: Invalid credentials\n"
+        return "401: Invalid userkey\n"
     end
 
     if MapUtils::getCurrentMap()["mapId"] != mapId then
@@ -306,8 +310,8 @@ get '/game/v1/:username/:userkey/:mapid/capital-ship/top-up/:code' do
     end
 end
 
-get '/game/v1/:username/:userkey/:mapid/capital-ship/create-battle-cruiser' do
-    username = params["username"]
+get '/game/v1/:userkey/:mapid/capital-ship/create-battle-cruiser' do
+
     userkey = params["userkey"]
     mapId = params["mapid"]
 
@@ -316,9 +320,11 @@ get '/game/v1/:username/:userkey/:mapid/capital-ship/create-battle-cruiser' do
     # ------------------------------------------------------
     # User Credentials and Map Validity Checks
 
-    if !UserKeys::validateUserCredentials(username, userkey) then
+    username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
+
+    if !username.nil? then
         status 401
-        return "401: Invalid credentials\n"
+        return "401: Invalid userkey\n"
     end
 
     if MapUtils::getCurrentMap()["mapId"] != mapId then
@@ -364,8 +370,8 @@ get '/game/v1/:username/:userkey/:mapid/capital-ship/create-battle-cruiser' do
 
 end
 
-get '/game/v1/:username/:userkey/:mapid/capital-ship/create-energy-carrier/:energyamount' do
-    username = params["username"]
+get '/game/v1/:userkey/:mapid/capital-ship/create-energy-carrier/:energyamount' do
+
     userkey = params["userkey"]
     mapId = params["mapid"]
 
@@ -376,9 +382,11 @@ get '/game/v1/:username/:userkey/:mapid/capital-ship/create-energy-carrier/:ener
     # ------------------------------------------------------
     # User Credentials and Map Validity Checks
 
-    if !UserKeys::validateUserCredentials(username, userkey) then
+    username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
+
+    if !username.nil? then
         status 401
-        return "401: Invalid credentials\n"
+        return "401: Invalid userkey\n"
     end
 
     if MapUtils::getCurrentMap()["mapId"] != mapId then
@@ -430,8 +438,8 @@ get '/game/v1/:username/:userkey/:mapid/capital-ship/create-energy-carrier/:ener
     "{}"
 end
 
-get '/game/v1/:username/:userkey/:mapid/jump/:shipuuid/:targetpointlabel' do
-    username = params["username"]
+get '/game/v1/:userkey/:mapid/jump/:shipuuid/:targetpointlabel' do
+
     userkey = params["userkey"]
     mapId = params["mapid"]
 
@@ -443,9 +451,11 @@ get '/game/v1/:username/:userkey/:mapid/jump/:shipuuid/:targetpointlabel' do
     # ------------------------------------------------------
     # User Credentials and Map Validity Checks
 
-    if !UserKeys::validateUserCredentials(username, userkey) then
+    username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
+
+    if !username.nil? then
         status 401
-        return "401: Invalid credentials\n"
+        return "401: Invalid userkey\n"
     end
 
     if MapUtils::getCurrentMap()["mapId"] != mapId then
@@ -521,9 +531,8 @@ get '/game/v1/:username/:userkey/:mapid/jump/:shipuuid/:targetpointlabel' do
 
 end
 
-get '/game/v1/:username/:userkey/:mapid/energy-transfer-type1/:energycarriershipuuid/:energylevel' do
+get '/game/v1/:userkey/:mapid/energy-transfer-type1/:energycarriershipuuid/:energylevel' do
 
-    username = params["username"]
     userkey = params["userkey"]
     mapId = params["mapid"]
 
@@ -535,9 +544,11 @@ get '/game/v1/:username/:userkey/:mapid/energy-transfer-type1/:energycarriership
     # ------------------------------------------------------
     # User Credentials and Map Validity Checks
 
-    if !UserKeys::validateUserCredentials(username, userkey) then
+    username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
+
+    if !username.nil? then
         status 401
-        return "401: Invalid credentials\n"
+        return "401: Invalid userkey\n"
     end
 
     if MapUtils::getCurrentMap()["mapId"] != mapId then
@@ -601,9 +612,8 @@ get '/game/v1/:username/:userkey/:mapid/energy-transfer-type1/:energycarriership
 
 end
 
-get '/game/v1/:username/:userkey/:mapid/energy-transfer-type2/:energycarriershipuuid/:battlecruisershipuuid' do
+get '/game/v1/:userkey/:mapid/energy-transfer-type2/:energycarriershipuuid/:battlecruisershipuuid' do
 
-    username = params["username"]
     userkey = params["userkey"]
     mapId = params["mapid"]
 
@@ -615,9 +625,11 @@ get '/game/v1/:username/:userkey/:mapid/energy-transfer-type2/:energycarriership
     # ------------------------------------------------------
     # User Credentials and Map Validity Checks
 
-    if !UserKeys::validateUserCredentials(username, userkey) then
+    username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
+
+    if !username.nil? then
         status 401
-        return "401: Invalid credentials\n"
+        return "401: Invalid userkey\n"
     end
 
     if MapUtils::getCurrentMap()["mapId"] != mapId then
@@ -686,9 +698,8 @@ get '/game/v1/:username/:userkey/:mapid/energy-transfer-type2/:energycarriership
 
 end
 
-get '/game/v1/:username/:userkey/:mapid/bomb/:battlecruisershipuuid/:targetpointlabel' do
+get '/game/v1/:userkey/:mapid/bomb/:battlecruisershipuuid/:targetpointlabel' do
 
-    username = params["username"]
     userkey = params["userkey"]
 
     battleCruiserShipUUID = params["battlecruisershipuuid"]
@@ -699,9 +710,11 @@ get '/game/v1/:username/:userkey/:mapid/bomb/:battlecruisershipuuid/:targetpoint
     # ------------------------------------------------------
     # User Credentials and Map Validity Checks
 
-    if !UserKeys::validateUserCredentials(username, userkey) then
+    username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
+
+    if !username.nil? then
         status 401
-        return "401: Invalid credentials\n"
+        return "401: Invalid userkey\n"
     end
 
     if MapUtils::getCurrentMap()["mapId"] != mapId then
@@ -774,9 +787,8 @@ get '/game/v1/:username/:userkey/:mapid/bomb/:battlecruisershipuuid/:targetpoint
     JSON.pretty_generate(attackerDamageReport)
 end
 
-get '/game/v1/:username/:userkey/:mapid/space-probe/:battlecruisershipuuid' do
+get '/game/v1/:userkey/:mapid/space-probe/:battlecruisershipuuid' do
 
-    username = params["username"]
     userkey = params["userkey"]
 
     battleCruiserShipUUID = params["battlecruisershipuuid"]
@@ -786,9 +798,11 @@ get '/game/v1/:username/:userkey/:mapid/space-probe/:battlecruisershipuuid' do
     # ------------------------------------------------------
     # User Credentials and Map Validity Checks
 
-    if !UserKeys::validateUserCredentials(username, userkey) then
+    username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
+
+    if !username.nil? then
         status 401
-        return "401: Invalid credentials\n"
+        return "401: Invalid userkey\n"
     end
 
     if MapUtils::getCurrentMap()["mapId"] != mapId then

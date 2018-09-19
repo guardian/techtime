@@ -24,5 +24,13 @@ class UserKeys
         UserKeys::getUserKeysData().any?{|record| record[0]==username and record[1]==userkey }
     end
 
+    # UserKeys::getUsernameFromUserkeyOrNull(userkey) 
+    def self.getUsernameFromUserkeyOrNull(userkey)
+        UserKeys::getUserKeysData().each{|pair|
+            return pair[0] if pair[1]==userkey
+        }
+        nil
+    end
+
 end
 

@@ -190,7 +190,7 @@ For the moment the game only reports bomb wormholes. Note that the target is alw
 ### Capital Ship Initialization
 
 ```
-curl /game/v1/:username/:userkey/:mapid/capital-ship/init
+curl /game/v1/:userkey/:mapid/capital-ship/init
 ```
 
 This can only be done once per game. And in particular, you cannot do it again after your Capital Ship has been destroyed for the current game.
@@ -200,7 +200,7 @@ The return value is your initial fleet report.
 ### Create Battle Cruiser
 
 ```
-curl /game/v1/:username/:userkey/:mapid/capital-ship/create-battle-cruiser
+curl /game/v1/:userkey/:mapid/capital-ship/create-battle-cruiser
 ```
 
 Creates a battle cruiser and returns the corresponding BattleCruiser object. The call fails if your Capital didn't have enough energy to create the ship and fill it with that much energy.
@@ -208,7 +208,7 @@ Creates a battle cruiser and returns the corresponding BattleCruiser object. The
 ### Create Energy Carrier
 
 ```
-curl /game/v1/:username/:userkey/:mapid/capital-ship/create-energy-carrier/:energyamount
+curl /game/v1/:userkey/:mapid/capital-ship/create-energy-carrier/:energyamount
 ```
 
 Creates an energy carrier and returns the corresponding EnergyCarrier object. Note that in this command you need to specify the amount of energy you want the carrier to carry. The call fails if your Capital didn't have enough energy to create the ship and fill it with that much energy.
@@ -218,7 +218,7 @@ Creates an energy carrier and returns the corresponding EnergyCarrier object. No
 You can move your ship from any MapPoint to any other assuming you have enough energy to make the jump. You specify the ship by giving its uuid (the ship must obviously belong to you) and you specify the target point by giving it label.
 
 ```
-curl /game/v1/:username/:userkey/:mapid/jump/:shipuuid/:targetpointlabel
+curl /game/v1/:userkey/:mapid/jump/:shipuuid/:targetpointlabel
 ```
 
 The energy expenditure for a jump depends on the distance you want to travel (the energy needed is proportional to the distance), but also the type of the ship. In increasing energy expenditure per ship type you have: carriers, battle cruisers and the Capital Ship (meaning that it is cheaper to move a carrier across a given distance than a battle cruiser). Capital Ships tend to be, by design, a bit expensive to move around.
@@ -233,7 +233,7 @@ You can transfer energy either
 For the former the call is 
 
 ```
-/game/v1/:username/:userkey/:mapid/energy-transfer-type1/:energycarriershipuuid/:energylevel
+/game/v1/:userkey/:mapid/energy-transfer-type1/:energycarriershipuuid/:energylevel
 ```
 
 **:energylevel** is how much you want to transfer.
@@ -241,7 +241,7 @@ For the former the call is
 For the latter the call is 
 
 ```
-/game/v1/:username/:userkey/:mapid/energy-transfer-type2/:energycarriershipuuid/:battlecruisershipuuid
+/game/v1/:userkey/:mapid/energy-transfer-type2/:energycarriershipuuid/:battlecruisershipuuid
 ```
 
 In this case the entire amount carried by the energy carrier is transferred.
@@ -252,7 +252,7 @@ In this case the entire amount carried by the energy carrier is transferred.
 Only battle cruisers can shoot at things and the action simply consists in instructing a cruiser to send a standard wormhole bomb at a location.
 
 ```
-curl /game/v1/:username/:userkey/:mapid/bomb/:shipuuid/:targetpointlabel
+curl /game/v1/:userkey/:mapid/bomb/:shipuuid/:targetpointlabel
 ```
 
 The answer is a BombReport
@@ -275,7 +275,7 @@ Note that since an energy wormhole bomb is indiscriminate, you can hit your worn
 ### Capital Ship top up
 
 ```
-curl /game/v1/:username/:userkey/:mapid/capital-ship/top-up/:code
+curl /game/v1/:userkey/:mapid/capital-ship/top-up/:code
 ```
 
 The process of mining energy for a Capital Ship top up is simple. It's just a proof of work. You just need to find a code a given hash. 
