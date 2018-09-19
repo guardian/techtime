@@ -305,3 +305,27 @@ When you complete a top-up challenge and commit your top-up code, a new challeng
 
 The top up call return `[true]` when successful, otherwise you get a 403.
 
+## Standard Answers
+
+Answers from the API are either 
+
+**Error Conditions**
+
+```
+{
+    "status"  => HTTP Error Code
+    "message" => String
+}
+```
+
+**200**
+
+```
+{
+    "status" => 200
+    "answer" => ({data relevant, answer} to the request itself)
+    "userFleet" => FleetReport
+}
+```
+
+In particluar you get a full FleetReport at every query.
