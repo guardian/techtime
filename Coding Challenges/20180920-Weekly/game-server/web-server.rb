@@ -130,6 +130,14 @@ class GameLibrary
         UserFleet::commitFleetToDisk(currentHour, username, fleet)
     end
 
+    # GameLibrary::userFleetsInPlay(currentHour)
+    def self.userFleetsInPlay(currentHour)
+        Dir.entries("#{GAME_DATA_FOLDERPATH}/Timeline/#{currentHour}/fleets")
+            .select{|filename| filename[-5,5]==".json" }
+            .map{|filename| "#{GAME_DATA_FOLDERPATH}/Timeline/#{currentHour}/fleets/#{filename}" }
+            .map{|filepath| IO.read(filepath) }
+    end
+
 end
 
 # -- --------------------------------------------------
@@ -446,6 +454,8 @@ get '/game/v1/:username/:userkey/:mapid/jump/:shipuuid/:targetpointlabel' do
     # ------------------------------------------------------
     # Map Validation
 
+    map = MapUtils::getCurrentMap()    
+
     targetMapPoint = MapUtils::getPointForlabelAtMapOrNull(label, map)
     if targetMapPoint.nil? then
         status 404
@@ -675,9 +685,90 @@ get '/game/v1/:username/:userkey/:mapid/energy-transfer-type2/:energycarriership
 end
 
 get '/game/v1/:username/:userkey/:mapid/bomb/:battlecruisershipuuid/:targetpointlabel' do
-    status 404
-    return "404: Not implemented yet.\n"
 
-    # GameLibrary::doUserFleetPointIncreaseForShipDestroyed(currentHour, username, nomenclature)
+    username = params["username"]
+    userkey = params["userkey"]
+
+    battleCruiserShipUUID = params["battlecruisershipuuid"]
+    targetpointlabel = params["targetpointlabel"]
+
+    currentHour = GameLibrary::hourCode()
+
+    # ------------------------------------------------------
+    # User Credentials and Map Validity Checks
+
+    if !UserKeys::validateUserCredentials(username, userkey) then
+        status 401
+        return "401: Invalid credentials\n"
+    end
+
+    if MapUtils::getCurrentMap()["mapId"] != mapId then
+        status 404
+        return "404: Map not found (mapId is incorrect or outdated)\n"
+    end    
+
+    # ------------------------------------------------------
+    # Map Validation
+
+    map = MapUtils::getCurrentMap()
+
+    targetMapPoint = MapUtils::getPointForlabelAtMapOrNull(targetpointlabel, map)
+    if targetMapPoint.nil? then
+        status 404
+        return "404: The specified point doesn't exist\n"
+    end
+
+    # ------------------------------------------------------
+    # User Fleet validation
+
+    userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
+
+    if userFleet.nil? then
+        status 404
+        return "404: You do not yet have a fleet for this hour. (You should initiate one.)\n"
+    end
+
+    battleCruiser = UserFleet::getShipPerUUIDOrNull(currentHour, username, battleCruiserShipUUID)
+
+    if battleCruiser.nil? then
+        status 404
+        return "404: Your fleet has no ship with uuid #{battleCruiserShipUUID}.\n"
+    end
+
+    if !battleCruiser["alive"] then
+        status 403
+        return "403: The battle cruiser is dead.\n"
+    end
+
+    # ------------------------------------------------------
+    # At this point we can attempt shooting
+
+    if battleCruiser["energy-level"] < ( $GAME_PARAMETERS["fleet:battle-cruiser:bomb:build-cost"] + $GAME_PARAMETERS["fleet:battle-cruiser:bomb:nominal-energy"] ) then
+        status 403
+        return "403: Your cruiser doesn't have enough energy to complete the construction of a bomb.\n"        
+    end
+
+    battleCruiser["energy-level"] = battleCruiser["energy-level"] - ( $GAME_PARAMETERS["fleet:battle-cruiser:bomb:build-cost"] + $GAME_PARAMETERS["fleet:battle-cruiser:bomb:nominal-energy"] )
+    userFleet = UserFleet::insertOrUpdateShipAtFleet(userFleet, battleCruiser)
+
+    # Ok, now time to do damage
+
+    distanceToTargetPoint = MapUtils::distanceBetweenTwoMapPoints(battleCruiser["location"], targetMapPoint)
+    bombEffectiveEnergy = BombsUtils::bombEffectiveEnergy($GAME_PARAMETERS["fleet:battle-cruiser:bomb:nominal-energy"], distanceToTargetPoint)
+
+    attackerDamageReport = []
+
+    GameLibrary::userFleetsInPlay(currentHour)
+        .each{|otherPlayerUserFleet|
+            UserFleet::userShipsWithinDisk(currentHour, otherPlayerUserFleet["username"], battleCruiser["location"], 0)
+                .each{|targetShip|
+                    otherPlayerUserFleet, targetShip, damageCausedForAttackerReport = UserFleet::registerShipTakingBombImpact(otherPlayerUserFleet, battleCruiser["location"], username, targetShip)
+                    attackerDamageReport << damageCausedForAttackerReport
+                    otherPlayerUserFleet = UserFleet::insertOrUpdateShipAtFleet(otherPlayerUserFleet, targetShip)
+                }
+            UserFleet::commitFleetToDisk(currentHour, otherPlayerUserFleet["username"], otherPlayerUserFleet)
+        }
+
+    JSON.pretty_generate(attackerDamageReport)
 end
 

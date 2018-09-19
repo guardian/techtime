@@ -178,11 +178,7 @@ FleetReport
 				"nomenclature" : "BattleCruiser"
 				"username"     : ENEMY-USERNAME
 			}
-			"target" : {
-				"location"     : MapPoint
-				"nomenclature" : "BattleCruiser"
-				"ship-uuid"    : YOUR-SHIP-UUID
-			}
+			"target" : Ship # CapitalShip, BattleCruiser or EnergyCarrier
 		}
 	}
 	```

@@ -1,7 +1,6 @@
 
 -> Needed before launch
 
-[] Implement "fleet:ships-max-energy"
 [] Implement /bomb/:battlecruisershipuuid/:targetpointlabel
     [] implement a userFleet enumerator (to loop over and inflict damages to ship at the bomb location)
 [] Implement Battle Cruiser Scanning
@@ -12,11 +11,17 @@
 [] Write the server PID in a file
 [] Modify all the end point answers with the entire fleet report
 [] Release the server as a daemon.
+
+[] Document damageCausedForAttacker in the Game API
+        damageCausedForAttackerReport = {
+            "nomenclature" => targetShip["nomenclature"],
+            "alive" => targetShip["alive"]
+        }
+
 [] Read proof the GAME-API
 
 -> Can be done after launch
 
-[] Enforce coding convention #2
 [] Enforce coding convention #2
 [] Semaphore for all IO actions.
 [] There is too much logic into the route file. 

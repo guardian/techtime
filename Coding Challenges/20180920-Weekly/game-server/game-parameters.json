@@ -19,7 +19,6 @@
         "battle-cruiser": 1000,
         "energy-carrier": 800
     },
-    "bombs:nominal-energy": 10,
     "bombs:effect-multiplier": 3,
     "scoring:points-for-kill:per-nomenclature": {
         "energy-carrier": 20,

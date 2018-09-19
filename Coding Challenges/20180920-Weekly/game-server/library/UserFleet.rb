@@ -135,5 +135,59 @@ class UserFleet
         fleet
     end
 
+    # UserFleet::distanceBetweenTwoMapPoints(point1, point2)
+    def self.distanceBetweenTwoMapPoints(point1, point2)
+        dx = point1["coordinates"][0] - point2["coordinates"][0]
+        dy = point1["coordinates"][1] - point2["coordinates"][1]
+        Math.sqrt( (dx**2) + (dy**2) )
+    end
+
+    # UserFleet::userShipsWithinDisk(currentHour, username, mapPoint, radius) # radius in kilometers
+    def self.userShipsWithinDisk(currentHour, username, mapPoint, radius)
+        userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
+        ships = [ userFleet["ship-inventory"]["capital-ship"] ] + userFleet["ship-inventory"]["battle-cruisers"] + userFleet["ship-inventory"]["energy-carriers"]
+        ships.select{|ship|
+            UserFleet::distanceBetweenTwoMapPoints(ship["location"], mapPoint) <= radius
+        }
+    end 
+
+    # UserFleet::spawnWarningLogItem(attackerMapPoint, attackerUsername, targetShip)
+    def self.spawnWarningLogItem(attackerMapPoint, attackerUsername, targetShip)
+        {
+            "unixtime"        => Time.new.to_f,
+            "event-unique-id" => SecureRandom.uuid,
+            "event-type"      => "WormholeBomb",
+            "event-data"      => {
+                "source" => {
+                    "location"     => attackerMapPoint,
+                    "nomenclature" => "BattleCruiser",
+                    "username"     => attackerUsername
+                },
+                "target" => targetShip
+            }
+        }        
+    end
+
+    # UserFleet::registerShipTakingBombImpact(userFleet, attackerMapPoint, attackerUsername, targetShip)
+    def self.registerShipTakingBombImpact(userFleet, attackerMapPoint, attackerUsername, targetShip)
+        damageCausedForAttackerReport = nil
+        return [userFleet, targetShip, damageCausedForAttackerReport] if !targetShip["alive"] 
+        if targetShip["nomenclature"] == "energy-carrier" then
+            targetShip["energy-value"] = 0
+            targetShip["alive"] = false
+        else
+            targetShip["energy-value"] = targetShip["energy-value"] - bombEffectiveEnergy
+            if targetShip["energy-value"] < 0 then
+                targetShip["alive"] = false
+            end
+        end
+        damageCausedForAttackerReport = {
+            "nomenclature" => targetShip["nomenclature"],
+            "alive" => targetShip["alive"]
+        }
+        userFleet["log-warnings"] << UserFleet::spawnWarningLogItem(attackerMapPoint, attackerUsername, targetShip)
+        [userFleet, targetShip, damageCausedForAttackerReport]
+    end
+
 end
 
