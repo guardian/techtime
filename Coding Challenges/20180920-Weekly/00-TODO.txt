@@ -1,7 +1,6 @@
 
 -> Needed before launch
 
-[] Make sure that all the end points are in the game API, and vice and versa
 [] Implement "fleet:ships-max-energy"
 [] Implement /bomb/:battlecruisershipuuid/:targetpointlabel
     [] implement a userFleet enumerator (to loop over and inflict damages to ship at the bomb location)

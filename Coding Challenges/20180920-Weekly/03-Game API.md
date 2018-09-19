@@ -240,6 +240,17 @@ For the former the call is
 /game/v1/:username/:userkey/:mapid/energy-transfer-type1/:energycarriershipuuid/:energylevel
 ```
 
+**:energylevel** is how much you want to transfer.
+
+For the latter the call is 
+
+```
+/game/v1/:username/:userkey/:mapid/energy-transfer-type2/:energycarriershipuuid/:battlecruisershipuuid
+```
+
+In this case the entire amount carried by the energy carrier is transferred.
+
+
 ### Shooting at things
 
 Only battle cruisers can shoot at things and the action simply consists in instructing a cruiser to send a standard wormhole bomb at a location.
