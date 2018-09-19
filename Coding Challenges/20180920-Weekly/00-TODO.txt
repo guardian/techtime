@@ -1,7 +1,7 @@
 
 -> Needed before launch
 
-[in progress] Design, document and implement the scoring system
+[] Enforce coding convention #2
 [] Make sure that all the end points are in the game API
 [] Implement /bomb/:battlecruisershipuuid/:targetpointlabel
 [] Implement throttling
