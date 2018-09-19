@@ -56,3 +56,8 @@ Regis Kuckaertz;    2018-09-12 18:00:00 +0100; 0.3
 # Week 8 (Travelling Optimization with Energy Management)
 Adam Fisher;        2018-09-13 13:00:00 +0100; 2 ; Reported broken scores when incorrect point label are submitted
 Adam Fisher;        2018-09-14 13:00:00 +0100; 2 ; For reporting the score discrepancy after the release of the new path evaluation logic
+Adam Fisher;        2018-09-19 18:00:00 +0100; 6.498 ; Final week score
+Sophie Lambrakis;   2018-09-19 18:00:00 +0100; 5.647 ; Final week score
+Richard Beddington; 2018-09-19 18:00:00 +0100; 2.159 ; Final week score
+Justin Rowles;      2018-09-19 18:00:00 +0100; 0.266 ; Final week score
+Jonathon Herbert;   2018-09-19 18:00:00 +0100; 0.234 ; Final week score
