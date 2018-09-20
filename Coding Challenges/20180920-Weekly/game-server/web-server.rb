@@ -817,7 +817,7 @@ get '/game/v1/:userkey/:mapid/bomb/:battlecruisershipuuid/:targetpointlabel' do
         .each{|otherPlayerUserFleet|
             UserFleet::userShipsWithinDisk(currentHour, otherPlayerUserFleet["username"], battleCruiser["location"], 0)
                 .each{|targetShip|
-                    otherPlayerUserFleet, targetShip, damageCausedForAttackerReport = UserFleet::registerShipTakingBombImpact(otherPlayerUserFleet, battleCruiser["location"], username, targetShip)
+                    otherPlayerUserFleet, targetShip, damageCausedForAttackerReport = UserFleet::registerShipTakingBombImpact(otherPlayerUserFleet, battleCruiser["location"], username, targetShip, bombEffectiveEnergy)
                     attackerDamageReport << damageCausedForAttackerReport
                     otherPlayerUserFleet = UserFleet::insertOrUpdateShipAtFleet(otherPlayerUserFleet, targetShip)
                 }

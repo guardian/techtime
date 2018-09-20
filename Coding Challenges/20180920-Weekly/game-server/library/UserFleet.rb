@@ -159,16 +159,16 @@ class UserFleet
         }        
     end
 
-    # UserFleet::registerShipTakingBombImpact(userFleet, attackerMapPoint, attackerUsername, targetShip)
-    def self.registerShipTakingBombImpact(userFleet, attackerMapPoint, attackerUsername, targetShip)
+    # UserFleet::registerShipTakingBombImpact(userFleet, attackerMapPoint, attackerUsername, targetShip, bombEffectiveEnergy)
+    def self.registerShipTakingBombImpact(userFleet, attackerMapPoint, attackerUsername, targetShip, bombEffectiveEnergy)
         damageCausedForAttackerReport = nil
         return [userFleet, targetShip, damageCausedForAttackerReport] if !targetShip["alive"] 
         if targetShip["nomenclature"] == "energyCarrier" then
-            targetShip["energy-value"] = 0
+            targetShip["energyLevel"] = 0
             targetShip["alive"] = false
         else
-            targetShip["energy-value"] = targetShip["energy-value"] - bombEffectiveEnergy
-            if targetShip["energy-value"] < 0 then
+            targetShip["energyLevel"] = targetShip["energyLevel"] - bombEffectiveEnergy
+            if targetShip["energyLevel"] < 0 then
                 targetShip["alive"] = false
             end
         end
