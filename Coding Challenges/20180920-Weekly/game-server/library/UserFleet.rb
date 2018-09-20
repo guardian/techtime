@@ -142,8 +142,8 @@ class UserFleet
         }
     end 
 
-    # UserFleet::spawnWarningLogItem(attackerMapPoint, attackerUsername, targetShip)
-    def self.spawnWarningLogItem(attackerMapPoint, attackerUsername, targetShip)
+    # UserFleet::spawnWormholeBombWarningLogItem(attackerMapPoint, attackerUsername, targetShip)
+    def self.spawnWormholeBombWarningLogItem(attackerMapPoint, attackerUsername, targetShip)
         {
             "unixtime"  => Time.new.to_f,
             "eventUUID" => SecureRandom.uuid,
@@ -161,8 +161,8 @@ class UserFleet
 
     # UserFleet::registerShipTakingBombImpact(userFleet, attackerMapPoint, attackerUsername, targetShip, bombEffectiveEnergy)
     def self.registerShipTakingBombImpact(userFleet, attackerMapPoint, attackerUsername, targetShip, bombEffectiveEnergy)
-        damageCausedForAttackerReport = nil
-        return [userFleet, targetShip, damageCausedForAttackerReport] if !targetShip["alive"] 
+        attackerBombDamageReportItem = nil
+        return [userFleet, targetShip, attackerBombDamageReportItem] if !targetShip["alive"] 
         if targetShip["nomenclature"] == "energyCarrier" then
             targetShip["energyLevel"] = 0
             targetShip["alive"] = false
@@ -172,12 +172,13 @@ class UserFleet
                 targetShip["alive"] = false
             end
         end
-        damageCausedForAttackerReport = {
+        attackerBombDamageReportItem = {
+            "username"     => userFleet["username"]
             "nomenclature" => targetShip["nomenclature"],
-            "alive" => targetShip["alive"]
+            "alive"        => targetShip["alive"]
         }
-        userFleet["logWarnings"] << UserFleet::spawnWarningLogItem(attackerMapPoint, attackerUsername, targetShip)
-        [userFleet, targetShip, damageCausedForAttackerReport]
+        userFleet["logWarnings"] << UserFleet::spawnWormholeBombWarningLogItem(attackerMapPoint, attackerUsername, targetShip)
+        [userFleet, targetShip, attackerBombDamageReportItem]
     end
 
     def self.getShipPerUUIDOrNull(currentHour, username, shipuuid)

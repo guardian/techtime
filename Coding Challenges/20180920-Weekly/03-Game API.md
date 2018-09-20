@@ -234,15 +234,12 @@ Only battle cruisers can shoot at things and the action simply consists in instr
 curl /game/v1/:userkey/:mapid/bomb/:shipuuid/:targetpointlabel
 ```
 
-The answer is a BombReport
+The answer is a AttackerBombDamageReport
 
 ```
-BombReport
-{
-	"shipsHit" : Array[BombReportShipDetail]
-}
+AttackerBombDamageReport = Array[AttackerBombDamageReportItem]
 
-BombReportShipDetail
+AttackerBombDamageReportItem
 {
 	"username"     : USERNAME
 	"nomenclature" : SHIP-NOMENCLATURE

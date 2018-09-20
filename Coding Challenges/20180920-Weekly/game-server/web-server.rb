@@ -751,20 +751,20 @@ get '/game/v1/:userkey/:mapid/bomb/:battlecruisershipuuid/:targetpointlabel' do
     distanceToTargetPoint = MapUtils::distanceBetweenTwoMapPoints(battleCruiser["location"], targetMapPoint)
     bombEffectiveEnergy = BombsUtils::bombEffectiveEnergy($GAME_PARAMETERS["fleetBattleCruiserBombNominalEnergy"], distanceToTargetPoint)
 
-    attackerDamageReport = []
+    attackerBombDamageReport = []
 
     GameLibrary::userFleetsForHour(currentHour)
         .each{|otherPlayerUserFleet|
             UserFleet::userShipsWithinDisk(currentHour, otherPlayerUserFleet["username"], battleCruiser["location"], 0)
                 .each{|targetShip|
                     otherPlayerUserFleet, targetShip, damageCausedForAttackerReport = UserFleet::registerShipTakingBombImpact(otherPlayerUserFleet, battleCruiser["location"], username, targetShip, bombEffectiveEnergy)
-                    attackerDamageReport << damageCausedForAttackerReport
+                    attackerBombDamageReport << damageCausedForAttackerReport
                     otherPlayerUserFleet = UserFleet::insertOrUpdateShipAtFleet(otherPlayerUserFleet, targetShip)
                 }
             UserFleet::commitFleetToDisk(currentHour, otherPlayerUserFleet["username"], otherPlayerUserFleet)
         }
 
-    JSON.generate(GameLibrary::make200Answer(attackerDamageReport, currentHour, username))
+    JSON.generate(GameLibrary::make200Answer(attackerBombDamageReport, currentHour, username))
 end
 
 get '/game/v1/:userkey/:mapid/space-probe/:battlecruisershipuuid' do
