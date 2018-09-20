@@ -740,6 +740,7 @@ get '/game/v1/:userkey/:mapid/bomb/:battlecruisershipuuid/:targetpointlabel' do
     content_type 'application/json'
 
     userkey = params["userkey"]
+    mapId = params["mapid"]
 
     battleCruiserShipUUID = params["battlecruisershipuuid"]
     targetpointlabel = params["targetpointlabel"]
@@ -833,6 +834,7 @@ get '/game/v1/:userkey/:mapid/space-probe/:battlecruisershipuuid' do
     content_type 'application/json'
 
     userkey = params["userkey"]
+    mapId = params["mapid"]
 
     battleCruiserShipUUID = params["battlecruisershipuuid"]
 
@@ -890,6 +892,7 @@ get '/game/v1/:userkey/:mapid/space-probe/:battlecruisershipuuid' do
 
     GameLibrary::userFleetsForHour(currentHour)
         .each{|otherPlayerUserFleet|
+            next if otherPlayerUserFleet["username"] == username
             UserFleet::userShipsWithinDisk(currentHour, otherPlayerUserFleet["username"], battleCruiser["location"], 300)
                 .each{|ship|
                     spaceProbeResultItem = {

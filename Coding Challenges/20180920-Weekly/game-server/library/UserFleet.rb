@@ -60,6 +60,7 @@ class UserFleet
             "capitalEnergyTopUpChallenge" => UserFleet::spawnCapitalTopUpChallenge(topUpChallengeDifficulty),
             "gameScore"   => 0,
             "ships"       => [ capitalShip ],
+            "spaceProbeResults" => {},
             "logWarnings" => []
         }
     end
@@ -176,6 +177,12 @@ class UserFleet
         }
         userFleet["logWarnings"] << UserFleet::spawnWarningLogItem(attackerMapPoint, attackerUsername, targetShip)
         [userFleet, targetShip, damageCausedForAttackerReport]
+    end
+
+    def self.getShipPerUUIDOrNull(currentHour, username, shipuuid)
+        userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
+        return nil if userFleet.nil?
+        userFleet["ships"].select{|ship| ship["shipUUID"]==shipuuid }.first
     end
 
 end

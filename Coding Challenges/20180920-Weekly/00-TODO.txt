@@ -3,6 +3,15 @@
 
 [] Test every end point (^_^)
 
+Should be uuid
+        {
+            "nomenclature" => "battleCruiser",
+            "shipUUID"     => SecureRandom.uuid,
+            "location"     => mapPoint,
+            "energyLevel"  => initialEnergyLevel,
+            "alive"        => true,
+        }
+
 [] GameLibrary::ensureGameFolderSetUpForThisHour() is not yet setting the bbc
 
 [] Write 02-Start Playing.md
