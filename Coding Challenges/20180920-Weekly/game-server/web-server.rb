@@ -821,8 +821,8 @@ get '/game/v1/:userkey/:mapid/space-probe/:battlecruisershipuuid' do
                 }
         }
 
-    battleCruiser["spaceProbeResults"] = spaceProbeResults
-    userFleet = UserFleet::insertOrUpdateShipAtFleet(userFleet, battleCruiser)
+    userFleet["spaceProbeResults"][battleCruiser["shipUUID"]] = spaceProbeResults
+
     UserFleet::commitFleetToDisk(currentHour, username, userFleet)
 
     JSON.generate(GameLibrary::make200Answer(spaceProbeResults, currentHour, username))

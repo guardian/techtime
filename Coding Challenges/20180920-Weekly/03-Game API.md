@@ -66,13 +66,11 @@ This is your main ship. It is the one that receives your energy mining codes and
 ```
 CapitalShip 
 {
-	"nomenclature": "capitalShip"
-	"location": {
-		"label": POINT-LABEL
-		"coordinates": [449.3, 932.24]
-	}
-	"energyLevel": FLOAT
-	"alive": Boolean
+	"nomenclature" : "capitalShip"
+    "shipUUID"     : Null
+	"location"     : MapPoint
+	"energyLevel"  : Float
+	"alive"        : Boolean
 }
 ```
 
@@ -87,36 +85,14 @@ Battle Cruisers are your main offensive units. They are the only ships that can 
 BattleCruiser
 {
 	"nomenclature" : "battleCruiser"
-	"shipUUID" : UUID
-	"location" : {
-		"label" : POINT-LABEL
-		"coordinates" : [449.3, 932.24]
-	}
-	"energyLevel" : FLOAT
+	"shipUUID"     : UUID
+	"location"     : MapPoint
+	"energyLevel"  : Float
 	"alive"        : Boolean
-	"spaceProbeResults"  : SpaceProbeResults
 }
 ```
 
 - shipUUID: is a completely unique uuid of this ship. It's a length 8 hexadecimal string. You use it to refer to the ship when sending commands to it. 
-
-- Space probe results are the results of a battle cruiser scanning space and retriving the location of enemy ships. The report is dated, with a timestamp expressed in Unixtime, and the type and location of enemy ships are given. Note that ships probing capabilities only extend to a disc of radius 300 kilometers from the current location of the ship. 
-
-	```
-	SpaceProbeResults
-	{
-		"unixtime" : Unixtime
-		"datetime" : DateTime # same instant as the unixtime, given for user friendliness
-		"results"  : Array[SpaceProbeResultItem]
-	}
-	
-	SpaceProbeResultItem 
-	{
-		"location"     : MapPoint
-		"nomenclature" : ShipNomenclature
-		"username"     : USERNAME # who owns this ship
-	}
-	```
 
 ### Energy Carriers
 
@@ -126,12 +102,9 @@ Energy Carriers are special purpose ships essentially used to transfer energy be
 EnergyCarrier
 {
 	"nomenclature" : "energyCarrier"
-	"shipUUID" : UUID
-	"location" : {
-		"label" : POINT-LABEL
-		"coordinates" : [449.3, 932.24]
-	}
-	"energyLevel" : FLOAT
+	"shipUUID"     : UUID
+	"location"     : MapPoint
+	"energyLevel"  : Float
 	"alive"        : Boolean
 }
 ```
@@ -143,12 +116,13 @@ The fleet report contains all information about your entire fleet
 ```
 FleetReport
 {
-    "username" : YOUR-USERNAME
-    "inPlay" : Boolean
+    "username"          : YOUR-USERNAME
+    "inPlay"            : Boolean
     "capitalEnergyTopUpChallenge" : CapitalShipTopUpChallenge
-    "gameScore" : Float
-    "ships": Array[Ship] # Ship is CapitalShip, BattleCruiser or EnergyCarrier
-    "logWarnings" : Array[WarningLogItem]
+    "gameScore"         : Float
+    "ships"             : Array[Ship] # Ship is CapitalShip, BattleCruiser or EnergyCarrier
+    "spaceProbeResults" : Map[UUID, SpaceProbeResults]
+    "logWarnings"       : Array[WarningLogItem]
 }
 ``` 
 
@@ -157,6 +131,24 @@ FleetReport
 - `capitalEnergyTopUpChallenge` is used for the Capital Ship energy top up. See the section "Capital Ship top up" below for details.
 
 - The score indicates how many points you have accumulated so far. 
+
+- `spaceProbeResults` are the results of a battle cruiser scanning space and retriving the location of enemy ships. The report is dated, with a timestamp expressed in Unixtime, and the type and location of enemy ships are given. Note that ships probing capabilities only extend to a disc of radius 300 kilometers from the current location of the ship. 
+
+    ```
+    SpaceProbeResults
+    {
+        "unixtime" : Unixtime
+        "datetime" : DateTime # same instant as the unixtime, given for user friendliness
+        "results"  : Array[SpaceProbeResultItem]
+    }
+    
+    SpaceProbeResultItem 
+    {
+        "location"     : MapPoint
+        "nomenclature" : ShipNomenclature
+        "username"     : USERNAME # who owns this ship
+    }
+    ```
 
 - The `logWarnings` indicates even that have occured that you might (should) be interested in. Mostly that enemy Battle Cruisers are shooting at you.
 
@@ -181,6 +173,7 @@ FleetReport
 	```
 
 For the moment the game only reports bomb wormholes. Note that the target is always one of your ships, so the report gives you the uuid of that ship, you might want to move it, if it's not destroyed yet, and possibly shoot back if you have Battle Cruisers nearby.
+
 
 ## Game API
 
