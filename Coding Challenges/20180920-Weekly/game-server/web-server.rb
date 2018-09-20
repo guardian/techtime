@@ -145,7 +145,7 @@ class GameLibrary
     def self.make200Answer(answer, currentHour, username)
         {
             "status" => 200,
-            "answer" => data,
+            "answer" => answer,
             "userFleet" => UserFleet::getUserFleetDataOrNull(currentHour, username)
         }
     end
