@@ -34,31 +34,31 @@ class UserFleet
         fleetdata["shipInventory"]["capital"]["alive"]
     end
 
-    # UserFleet::spawnCapitalShipTopUpChallenge(difficulty)
-    def self.spawnCapitalShipTopUpChallenge(difficulty)
+    # UserFleet::spawnCapitalTopUpChallenge(difficulty)
+    def self.spawnCapitalTopUpChallenge(difficulty)
         {
             "input"      => SecureRandom.hex,
             "difficulty" => difficulty
         }
     end
 
-    # UserFleet::spawnCapitalShip(mapPoint, energyLevel, topUpChallengeDifficulty)
-    def self.spawnCapitalShip(mapPoint, energyLevel, topUpChallengeDifficulty)
+    # UserFleet::spawnCapitalShip(mapPoint, energyLevel)
+    def self.spawnCapitalShip(mapPoint, energyLevel)
         {
             "nomenclature" => "capitalShip",
             "location"     => mapPoint,
-            "energyLevel" => energyLevel,
-            "energyTopUpChallenge" => UserFleet::spawnCapitalShipTopUpChallenge(topUpChallengeDifficulty),
+            "energyLevel"  => energyLevel,
             "alive"        => true
         }
     end
 
     # UserFleet::spawnUserFleet(username, mapPoint, capitalShipInitialEnergy, topUpChallengeDifficulty)
     def self.spawnUserFleet(username, mapPoint, capitalShipInitialEnergy, topUpChallengeDifficulty)
-        capitalShip = UserFleet::spawnCapitalShip(mapPoint, capitalShipInitialEnergy, topUpChallengeDifficulty)
+        capitalShip = UserFleet::spawnCapitalShip(mapPoint, capitalShipInitialEnergy)
         {
             "username" => username,
             "inPlay" => true,
+            "capitalEnergyTopUpChallenge" => UserFleet::spawnCapitalTopUpChallenge(topUpChallengeDifficulty),
             "gameScore" => 0,
             "shipInventory" => {
                 "capital" => capitalShip,
@@ -72,8 +72,7 @@ class UserFleet
     # UserFleet::validateTopUpCode(currentHour, username, code)
     def self.validateTopUpCode(currentHour, username, code)
         userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
-        capital = userFleet["shipInventory"]["capital"]
-        challenge = capital["energyTopUpChallenge"]
+        challenge = userFleet["capitalEnergyTopUpChallenge"]
         # {
         #    "input"      => String
         #    "difficulty" => Integer
@@ -86,7 +85,7 @@ class UserFleet
         userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
         currentLevel = userFleet["shipInventory"]["capital"]["energyLevel"]
         userFleet["shipInventory"]["capital"]["energyLevel"] = currentLevel + topUpValue
-        userFleet["shipInventory"]["capital"]["energyTopUpChallenge"] = UserFleet::spawnCapitalShipTopUpChallenge(difficulty)
+        userFleet["capitalEnergyTopUpChallenge"] = UserFleet::spawnCapitalTopUpChallenge(difficulty)
         UserFleet::commitFleetToDisk(currentHour, username, userFleet)
     end
 

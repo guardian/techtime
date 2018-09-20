@@ -66,19 +66,17 @@ This is your main ship. It is the one that receives your energy mining codes and
 ```
 CapitalShip 
 {
-	"nomenclature" : "capitalShip"
-	"location" : {
-		"label" : POINT-LABEL
-		"coordinates" : [449.3, 932.24]
+	"nomenclature": "capitalShip"
+	"location": {
+		"label": POINT-LABEL
+		"coordinates": [449.3, 932.24]
 	}
-	"energyLevel" : FLOAT
-	"energyTopUpChallenge" : CapitalShipTopUpChallenge
-	"alive"        : Boolean
+	"energyLevel": FLOAT
+	"alive": Boolean
 }
 ```
 
 - `location` is the same as a MapPoint.
-- `energyTopUpChallenge` is used for the Capital Ship energy top up. See the section "Capital Ship top up" below for details.
 - `alive` indicates whether your ship is still alive. In this current version of the game the only reason it would not be alive is that it was hit by a bomb after its shield went down.
 
 ### Battle Cruiser
@@ -145,19 +143,22 @@ The fleet report contains all information about your entire fleet
 ```
 FleetReport
 {
-	"username" : YOUR-USERNAME
-	"inPlay" : Boolean
-	"gameScore" : Float
-	"shipInventory" : {
-		"capital" : CapitalShip
-		"battleCruisers" : Array[BattleCruiser]
-		"energyCarriers" : Array[EnergyCarrier]
-	}
-	"logWarnings" : Array[WarningLogItem]
+    "username" : YOUR-USERNAME
+    "inPlay" : Boolean
+    "capitalEnergyTopUpChallenge" : CapitalShipTopUpChallenge
+    "gameScore" : Float
+    "shipInventory" : {
+        "capital" : CapitalShip
+        "battleCruisers" : Array[BattleCruiser]
+        "energyCarriers" : Array[EnergyCarrier]
+    }
+    "logWarnings" : Array[WarningLogItem]
 }
 ``` 
 
 - `inPlay` indicates whether or not you are still in play. The only reason why you would not be in play is that you have lost your capital ship. 
+
+- `capitalEnergyTopUpChallenge` is used for the Capital Ship energy top up. See the section "Capital Ship top up" below for details.
 
 - The score indicates how many points you have accumulated so far. 
 
@@ -301,7 +302,7 @@ cf97896ca2dfb9185cf62f4574cbc067b7b95b20
 
 Therefore you could use "nnaywpahgahl" as your top up code. How much energy is added to your Capital Ship energy level is defined by the game parameters.
 
-When you complete a top-up challenge and commit your top-up code, a new challenge is written into your Capital "energyTopUpChallenge" key, allowing you to start working on a new top up.
+When you complete a top-up challenge and commit your top-up code, a new challenge is written into your fleet's "capitalEnergyTopUpChallenge" key, allowing you to start working on a new top up.
 
 The top up call return `[true]` when successful, otherwise you get a 403.
 
