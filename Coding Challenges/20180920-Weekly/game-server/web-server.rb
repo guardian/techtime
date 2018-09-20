@@ -565,7 +565,7 @@ get '/game/v1/:userkey/:mapid/jump/:shipuuid/:targetpointlabel' do
 
 end
 
-get '/game/v1/:userkey/:mapid/energy-transfer-type1/:energycarriershipuuid/:energylevel' do
+get '/game/v1/:userkey/:mapid/capital-carrier-energy-transfer/:energycarriershipuuid/:energylevel' do
 
     content_type 'application/json'
 
@@ -648,7 +648,7 @@ get '/game/v1/:userkey/:mapid/energy-transfer-type1/:energycarriershipuuid/:ener
 
 end
 
-get '/game/v1/:userkey/:mapid/energy-transfer-type2/:energycarriershipuuid/:battlecruisershipuuid' do
+get '/game/v1/:userkey/:mapid/carrier-cruiser-energy-transfer/:energycarriershipuuid/:battlecruisershipuuid' do
 
     content_type 'application/json'
 
@@ -718,14 +718,12 @@ get '/game/v1/:userkey/:mapid/energy-transfer-type2/:energycarriershipuuid/:batt
         return JSON.generate(GameLibrary::makeErrorAnswer(403, "The energy carrier is empty"))
     end    
 
-    if (battleCruiser["energyLevel"]+energyCarrier["energyLevel"]) > $GAME_PARAMETERS["fleetShipsMaxEnergy"]["battleCruiser"] then
-        return JSON.generate(GameLibrary::makeErrorAnswer(403, "You cannot perform this transfer as it would exceed the battle cruiser capacity"))    
-    end 
+    amountToTransfer = [ energyCarrier["energyLevel"], $GAME_PARAMETERS["fleetShipsMaxEnergy"]["battleCruiser"] - battleCruiser["energyLevel"] ].min
 
     # ------------------------------------------------------
 
-    battleCruiser["energyLevel"] = battleCruiser["energyLevel"] + energyCarrier["energyLevel"]
-    energyCarrier["energyLevel"] = 0
+    battleCruiser["energyLevel"] = battleCruiser["energyLevel"] + amountToTransfer
+    energyCarrier["energyLevel"] = energyCarrier["energyLevel"] - amountToTransfer
 
     userFleet = UserFleet::insertOrUpdateShipAtFleet(userFleet, battleCruiser)
     userFleet = UserFleet::insertOrUpdateShipAtFleet(userFleet, energyCarrier)

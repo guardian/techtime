@@ -224,7 +224,7 @@ You can transfer energy either
 For the former the call is 
 
 ```
-/game/v1/:userkey/:mapid/energy-transfer-type1/:energycarriershipuuid/:energylevel
+/game/v1/:userkey/:mapid/capital-carrier-energy-transfer/:energycarriershipuuid/:energylevel
 ```
 
 **:energylevel** is how much you want to transfer.
@@ -232,7 +232,7 @@ For the former the call is
 For the latter the call is 
 
 ```
-/game/v1/:userkey/:mapid/energy-transfer-type2/:energycarriershipuuid/:battlecruisershipuuid
+/game/v1/:userkey/:mapid/carrier-cruiser-energy-transfer/:energycarriershipuuid/:battlecruisershipuuid
 ```
 
 In this case the entire amount carried by the energy carrier is transferred.
