@@ -1,24 +1,6 @@
 
 -> Needed before launch
 
-
-[] Document damageCausedForAttacker in the Game API
-        damageCausedForAttackerReport = {
-            "nomenclature" => targetShip["nomenclature"],
-            "alive" => targetShip["alive"]
-        }
-[] I am not doing this
-    BombReport
-        {
-            "shipsHit" : Array[BombReportShipDetail]
-        }
-
-        BombReportShipDetail
-        {
-            "username"     : USERNAME
-            "nomenclature" : SHIP-NOMENCLATURE
-            "destroyed"    : Boolean
-        }
 [] Do I take account of "bombsEffectMultiplier" ?
 [] Am I generating this: WarningLogItem ?
 
