@@ -147,11 +147,7 @@ FleetReport
     "inPlay" : Boolean
     "capitalEnergyTopUpChallenge" : CapitalShipTopUpChallenge
     "gameScore" : Float
-    "shipInventory" : {
-        "capital" : CapitalShip
-        "battleCruisers" : Array[BattleCruiser]
-        "energyCarriers" : Array[EnergyCarrier]
-    }
+    "ships": Array[Ship] # Ship is CapitalShip, BattleCruiser or EnergyCarrier
     "logWarnings" : Array[WarningLogItem]
 }
 ``` 

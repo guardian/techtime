@@ -296,14 +296,14 @@ get '/game/v1/:userkey/:mapid/capital-ship/top-up/:code' do
         return JSON.generate(GameLibrary::makeErrorAnswer(404, "You do not yet have a fleet for this hour. (You should initiate one.)"))
     end
 
-    if !userFleet["shipInventory"]["capital"]["alive"] then
+    if !userFleet["ships"][0]["alive"] then
         return JSON.generate(GameLibrary::makeErrorAnswer(403, "Your capital ship for this hour is dead"))
     end
 
     # ------------------------------------------------------    
 
     if UserFleet::validateTopUpCode(currentHour, username, code) then
-        if userFleet["shipInventory"]["capital"]["energyLevel"] + $GAME_PARAMETERS["fleetCapitalShipTopUpEnergyValue"] <= $GAME_PARAMETERS["fleetShipsMaxEnergy"]["capitalShip"] then
+        if userFleet["ships"][0]["energyLevel"] + $GAME_PARAMETERS["fleetCapitalShipTopUpEnergyValue"] <= $GAME_PARAMETERS["fleetShipsMaxEnergy"]["capitalShip"] then
             topUpEnergyValue = $GAME_PARAMETERS["fleetCapitalShipTopUpEnergyValue"]
             difficulty = $GAME_PARAMETERS["fleetCapitalShipTopUpChallengeDifficulty"]
             UserFleet::topUpCapitalShipAndResetTopUpChallenge(currentHour, username, topUpEnergyValue)
@@ -347,7 +347,7 @@ get '/game/v1/:userkey/:mapid/capital-ship/create-battle-cruiser' do
         return JSON.generate(GameLibrary::makeErrorAnswer(404, "You do not yet have a fleet for this hour. (You should initiate one.)"))
     end
 
-    if !userFleet["shipInventory"]["capital"]["alive"] then
+    if !userFleet["ships"][0]["alive"] then
         return JSON.generate(GameLibrary::makeErrorAnswer(403, "Your capital ship for this hour is dead"))
     end
 
@@ -357,17 +357,17 @@ get '/game/v1/:userkey/:mapid/capital-ship/create-battle-cruiser' do
     battleCruiserInitialEnergyLevel = $GAME_PARAMETERS["fleetBattleCruiserInitialEnergyLevel"]
 
     userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
-    capitalShipCanPerformBattleShipCreation = userFleet["shipInventory"]["capital"]["energyLevel"] >= ( battleCruiserBuildEnergyCost + battleCruiserInitialEnergyLevel )
+    capitalShipCanPerformBattleShipCreation = userFleet["ships"][0]["energyLevel"] >= ( battleCruiserBuildEnergyCost + battleCruiserInitialEnergyLevel )
     if capitalShipCanPerformBattleShipCreation then
-        userFleet["shipInventory"]["capital"]["energyLevel"] = userFleet["shipInventory"]["capital"]["energyLevel"] - ( battleCruiserBuildEnergyCost + battleCruiserInitialEnergyLevel )
+        userFleet["ships"][0]["energyLevel"] = userFleet["ships"][0]["energyLevel"] - ( battleCruiserBuildEnergyCost + battleCruiserInitialEnergyLevel )
         mapPoint = MapUtils::getCurrentMap()["points"].sample
         battleCruiser = UserFleet::spawnBattleCruiser(mapPoint, battleCruiserInitialEnergyLevel)
-        userFleet["shipInventory"]["battleCruisers"] << battleCruiser
+        userFleet["ships"] << battleCruiser
         UserFleet::commitFleetToDisk(currentHour, username, userFleet)
         JSON.generate(battleCruiser)
     else
-        if !userFleet["shipInventory"]["capital"]["alive"] then
-            return JSON.generate(GameLibrary::makeErrorAnswer(403, "Your capital ship doesn't have enough energy to complete the construction of a battle cruiser. You have #{userFleet["shipInventory"]["capital"]["energyLevel"]} but you need #{(battleCruiserBuildEnergyCost+battleCruiserInitialEnergyLevel)}"))
+        if !userFleet["ships"][0]["alive"] then
+            return JSON.generate(GameLibrary::makeErrorAnswer(403, "Your capital ship doesn't have enough energy to complete the construction of a battle cruiser. You have #{userFleet["ships"][0]["energyLevel"]} but you need #{(battleCruiserBuildEnergyCost+battleCruiserInitialEnergyLevel)}"))
         end
     end
 
@@ -406,7 +406,7 @@ get '/game/v1/:userkey/:mapid/capital-ship/create-energy-carrier/:energyamount' 
         return JSON.generate(GameLibrary::makeErrorAnswer(404, "You do not yet have a fleet for this hour. (You should initiate one.)"))
     end
 
-    if !userFleet["shipInventory"]["capital"]["alive"] then
+    if !userFleet["ships"][0]["alive"] then
         return JSON.generate(GameLibrary::makeErrorAnswer(403, "Your capital ship for this hour is dead"))
     end
 
@@ -420,16 +420,16 @@ get '/game/v1/:userkey/:mapid/capital-ship/create-energy-carrier/:energyamount' 
     carrierInitialEnergyLevel = energyamount 
 
     userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
-    capitalShipCanPerformCarrierCreation = userFleet["shipInventory"]["capital"]["energyLevel"] >= ( carrierBuildEnergyCost + carrierInitialEnergyLevel )
+    capitalShipCanPerformCarrierCreation = userFleet["ships"][0]["energyLevel"] >= ( carrierBuildEnergyCost + carrierInitialEnergyLevel )
     if capitalShipCanPerformCarrierCreation then
-        userFleet["shipInventory"]["capital"]["energyLevel"] = userFleet["shipInventory"]["capital"]["energyLevel"] - ( carrierBuildEnergyCost + carrierInitialEnergyLevel )
+        userFleet["ships"][0]["energyLevel"] = userFleet["ships"][0]["energyLevel"] - ( carrierBuildEnergyCost + carrierInitialEnergyLevel )
         mapPoint = MapUtils::getCurrentMap()["points"].sample
         energyCarrier = UserFleet::spawnEnergyCarrier(mapPoint, carrierInitialEnergyLevel)
-        userFleet["shipInventory"]["energyCarriers"] << energyCarrier
+        userFleet["ships"]<< energyCarrier
         UserFleet::commitFleetToDisk(currentHour, username, userFleet)
         JSON.generate(energyCarrier)
     else
-        return JSON.generate(GameLibrary::makeErrorAnswer(403, "Your capital ship doesn't have enough energy to complete the construction of an energy carrier carrying #{carrierInitialEnergyLevel}. You have #{userFleet["shipInventory"]["capital"]["energyLevel"]} but you need #{(carrierBuildEnergyCost+carrierInitialEnergyLevel)}"))
+        return JSON.generate(GameLibrary::makeErrorAnswer(403, "Your capital ship doesn't have enough energy to complete the construction of an energy carrier carrying #{carrierInitialEnergyLevel}. You have #{userFleet["ships"][0]["energyLevel"]} but you need #{(carrierBuildEnergyCost+carrierInitialEnergyLevel)}"))
     end
 
     "{}"
@@ -494,7 +494,7 @@ get '/game/v1/:userkey/:mapid/jump/:shipuuid/:targetpointlabel' do
     # in order to be controlled. Therfore we record whether or not the capital is alive.
 
     if ship["nomenclature"] == "energyCarrier" then
-        if !userFleet["shipInventory"]["capital"]["alive"] then
+        if !userFleet["ships"][0]["alive"] then
             return JSON.generate(GameLibrary::makeErrorAnswer(403, "Your capital ship is dead. You cannot jump energy carriers in that case."))
         end 
     end
@@ -556,7 +556,7 @@ get '/game/v1/:userkey/:mapid/energy-transfer-type1/:energycarriershipuuid/:ener
     end
 
     energyCarrier = UserFleet::getShipPerUUIDOrNull(currentHour, username, energyCarrierShipUUID)
-    capital = userFleet["shipInventory"]["capital"]
+    capital = userFleet["ships"][0]
 
     if energyCarrier.nil? then
         return JSON.generate(GameLibrary::makeErrorAnswer(404, "Your fleet has no ship with uuid #{energyCarrierShipUUID}"))
@@ -587,7 +587,7 @@ get '/game/v1/:userkey/:mapid/energy-transfer-type1/:energycarriershipuuid/:ener
     capital["energyLevel"] = capital["energyLevel"] - energyLevel
     energyCarrier["energyLevel"] = energyCarrier["energyLevel"] + energyLevel
 
-    userFleet["shipInventory"]["capital"] = capital
+    userFleet["ships"][0] = capital
     userFleet = UserFleet::insertOrUpdateShipAtFleet(userFleet, energyCarrier)
     UserFleet::commitFleetToDisk(currentHour, username, userFleet)
 

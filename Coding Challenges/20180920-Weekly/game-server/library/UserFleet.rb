@@ -31,7 +31,7 @@ class UserFleet
     def self.trueIfUserFleetIsAlive(currentHour, username)
         fleetdata = UserFleet::getUserFleetDataOrNull(currentHour, username)
         return false if fleetdata.nil?
-        fleetdata["shipInventory"]["capital"]["alive"]
+        fleetdata["ships"][0]["alive"]
     end
 
     # UserFleet::spawnCapitalTopUpChallenge(difficulty)
@@ -60,11 +60,7 @@ class UserFleet
             "inPlay" => true,
             "capitalEnergyTopUpChallenge" => UserFleet::spawnCapitalTopUpChallenge(topUpChallengeDifficulty),
             "gameScore" => 0,
-            "shipInventory" => {
-                "capital" => capitalShip,
-                "battleCruisers" => [],
-                "energyCarriers" => []
-            },
+            "ships" => [ capitalShip ],
             "logWarnings" => []
         }
     end
@@ -83,8 +79,8 @@ class UserFleet
     # UserFleet::topUpCapitalShipAndResetTopUpChallenge(currentHour, username, topUpValue, difficulty)
     def self.topUpCapitalShipAndResetTopUpChallenge(currentHour, username, topUpValue, difficulty)
         userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
-        currentLevel = userFleet["shipInventory"]["capital"]["energyLevel"]
-        userFleet["shipInventory"]["capital"]["energyLevel"] = currentLevel + topUpValue
+        currentLevel = userFleet["ships"][0]["energyLevel"]
+        userFleet["ships"][0]["energyLevel"] = currentLevel + topUpValue
         userFleet["capitalEnergyTopUpChallenge"] = UserFleet::spawnCapitalTopUpChallenge(difficulty)
         UserFleet::commitFleetToDisk(currentHour, username, userFleet)
     end
@@ -123,14 +119,11 @@ class UserFleet
 
     # UserFleet::insertOrUpdateShipAtFleet(fleet, ship)
     def self.insertOrUpdateShipAtFleet(fleet, ship)
-        if ship["nomenclature"] == "battleCruiser" then
-            fleet["shipInventory"]["battleCruisers"] = fleet["shipInventory"]["battleCruisers"].reject{|s| s["shipUUID"]==ship["shipUUID"] }
-            fleet["shipInventory"]["battleCruisers"] << ship
-        end
-        if ship["nomenclature"] == "energyCarrier" then
-            fleet["shipInventory"]["energyCarriers"] = fleet["shipInventory"]["energyCarriers"].reject{|s| s["shipUUID"]==ship["shipUUID"] }
-            fleet["shipInventory"]["energyCarriers"] << ship
-        end
+        fleet["ships"] = fleet["ships"].reject{|s| s["shipUUID"]==ship["shipUUID"] }
+        fleet["ships"] << ship
+        # Now, we need to make sure that capital comes first
+        capitalSingleton, otherShips = fleet["ships"].partition{|s| s["nomenclature"] == "capitalShip" }
+        fleet["ships"] = capitalSingleton + otherShips
         fleet
     end
 
@@ -144,8 +137,7 @@ class UserFleet
     # UserFleet::userShipsWithinDisk(currentHour, username, mapPoint, radius) # radius in kilometers
     def self.userShipsWithinDisk(currentHour, username, mapPoint, radius)
         userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
-        ships = [ userFleet["shipInventory"]["capitalShip"] ] + userFleet["shipInventory"]["battleCruisers"] + userFleet["shipInventory"]["energyCarriers"]
-        ships.select{|ship|
+        userFleet["ships"].select{|ship|
             UserFleet::distanceBetweenTwoMapPoints(ship["location"], mapPoint) <= radius
         }
     end 
