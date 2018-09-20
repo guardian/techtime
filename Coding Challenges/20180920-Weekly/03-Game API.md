@@ -188,6 +188,14 @@ curl /game/v1/:userkey/:mapid/capital-ship/create-battle-cruiser
 
 Creates a battle cruiser and returns the corresponding BattleCruiser object. The call fails if your Capital didn't have enough energy to create the ship and fill it with that much energy.
 
+### Space Probes
+
+Are performed by Battle Cruisers and are used to attempt to detect enemy ships. Note that a standard probe only covers a 300 kilometers radius.
+
+```
+/game/v1/:userkey/:mapid/space-probe/:battlecruisershipuuid
+```
+
 ### Create Energy Carrier
 
 ```

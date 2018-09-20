@@ -1,7 +1,6 @@
 
 -> Needed before launch
 
-[] Implement Battle Cruiser Scanning
 [] Implement throttling
 [] GameLibrary::ensureGameFolderSetUpForThisHour() is not yet setting the bbc
 [] Test every end point (^_^)

@@ -56,10 +56,10 @@ class UserFleet
     def self.spawnUserFleet(username, mapPoint, capitalShipInitialEnergy, topUpChallengeDifficulty)
         capitalShip = UserFleet::spawnCapitalShip(mapPoint, capitalShipInitialEnergy)
         {
-            "username" => username,
+            "username"    => username,
             "capitalEnergyTopUpChallenge" => UserFleet::spawnCapitalTopUpChallenge(topUpChallengeDifficulty),
-            "gameScore" => 0,
-            "ships" => [ capitalShip ],
+            "gameScore"   => 0,
+            "ships"       => [ capitalShip ],
             "logWarnings" => []
         }
     end
@@ -97,11 +97,10 @@ class UserFleet
     def self.spawnBattleCruiser(mapPoint, initialEnergyLevel)
         {
             "nomenclature" => "battleCruiser",
-            "shipUUID"    => SecureRandom.uuid,
+            "shipUUID"     => SecureRandom.uuid,
             "location"     => mapPoint,
-            "energyLevel" => initialEnergyLevel,
+            "energyLevel"  => initialEnergyLevel,
             "alive"        => true,
-            "spaceProbeResults" => []
         }
     end
 
@@ -109,9 +108,9 @@ class UserFleet
     def self.spawnEnergyCarrier(mapPoint, initialEnergyLevel)
         {
             "nomenclature" => "energyCarrier",
-            "shipUUID"    => SecureRandom.uuid,
+            "shipUUID"     => SecureRandom.uuid,
             "location"     => mapPoint,
-            "energyLevel" => initialEnergyLevel,
+            "energyLevel"  => initialEnergyLevel,
             "alive"        => true
         }
     end
@@ -144,10 +143,10 @@ class UserFleet
     # UserFleet::spawnWarningLogItem(attackerMapPoint, attackerUsername, targetShip)
     def self.spawnWarningLogItem(attackerMapPoint, attackerUsername, targetShip)
         {
-            "unixtime"        => Time.new.to_f,
+            "unixtime"  => Time.new.to_f,
             "eventUUID" => SecureRandom.uuid,
-            "eventType"      => "WormholeBomb",
-            "eventData"      => {
+            "eventType" => "WormholeBomb",
+            "eventData" => {
                 "source" => {
                     "location"     => attackerMapPoint,
                     "nomenclature" => "BattleCruiser",
