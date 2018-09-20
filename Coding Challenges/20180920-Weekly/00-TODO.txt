@@ -1,10 +1,4 @@
 
--> Needed before launch
-
-[] Do I take account of "bombsEffectMultiplier" ?
-[] Am I generating this: WarningLogItem ?
-
-
 -> launch checklist
 
 [] make sure that users-keys.txt exists on the server

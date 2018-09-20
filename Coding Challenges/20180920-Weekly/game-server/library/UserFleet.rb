@@ -173,7 +173,7 @@ class UserFleet
             end
         end
         attackerBombDamageReportItem = {
-            "username"     => userFleet["username"]
+            "username"     => userFleet["username"],
             "nomenclature" => targetShip["nomenclature"],
             "alive"        => targetShip["alive"]
         }
