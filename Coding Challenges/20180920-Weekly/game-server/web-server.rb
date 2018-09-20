@@ -565,15 +565,16 @@ get '/game/v1/:userkey/:mapid/jump/:shipuuid/:targetpointlabel' do
 
 end
 
-get '/game/v1/:userkey/:mapid/capital-carrier-energy-transfer/:energycarriershipuuid/:energylevel' do
+get '/game/v1/:userkey/:mapid/energy-transfer/:ship1uuid/:ship2uuid/:amount' do
 
     content_type 'application/json'
 
     userkey = params["userkey"]
     mapId = params["mapid"]
 
-    energyCarrierShipUUID = params["energycarriershipuuid"]
-    energyLevel = params["energylevel"].to_f
+    ship1uuid = params["ship1uuid"]
+    ship2uuid = params["ship2uuid"]
+    amountToTransfer = params["amount"].to_f
 
     currentHour = GameLibrary::hourCode()
 
@@ -602,88 +603,9 @@ get '/game/v1/:userkey/:mapid/capital-carrier-energy-transfer/:energycarriership
     # ------------------------------------------------------
     # User Fleet validation
 
-    userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
-
-    if userFleet.nil? then
-        return JSON.generate(GameLibrary::makeErrorAnswer(404, "You do not yet have a fleet for this hour. (You should initiate one.)"))
+    if ship1uuid==ship2uuid then
+        return JSON.generate(GameLibrary::makeErrorAnswer(403, "You are transferring energy from a ship to itself."))
     end
-
-    energyCarrier = UserFleet::getShipPerUUIDOrNull(currentHour, username, energyCarrierShipUUID)
-    capital = userFleet["ships"][0]
-
-    if energyCarrier.nil? then
-        return JSON.generate(GameLibrary::makeErrorAnswer(404, "Your fleet has no ship with uuid #{energyCarrierShipUUID}"))
-    end
-
-    if !energyCarrier["alive"] then
-        return JSON.generate(GameLibrary::makeErrorAnswer(403, "The energy carrier is dead"))
-    end
-
-    if !capital["alive"] then
-        return JSON.generate(GameLibrary::makeErrorAnswer(403, "Your capital ship is dead"))
-    end
-
-    if capital["location"]["label"] != energyCarrier["location"]["label"] then
-        return JSON.generate(GameLibrary::makeErrorAnswer(403, "You cannot transfer energy between the two ships, they are not at the same map location"))  
-    end
-
-    if capital["energyLevel"] < energyLevel then
-        return JSON.generate(GameLibrary::makeErrorAnswer(403, "Your capital ship doesn't have enough energy for this transfer"))  
-    end    
-
-    if (energyCarrier["energyLevel"]+energyLevel) > $GAME_PARAMETERS["fleetShipsMaxEnergy"]["energyCarrier"] then
-        return JSON.generate(GameLibrary::makeErrorAnswer(403, "You are creating a carrier with too much energy. Upper limit is #{$GAME_PARAMETERS["fleetShipsMaxEnergy"]["energyCarrier"]} units of energy"))         
-    end        
-
-    # ------------------------------------------------------
-
-    capital["energyLevel"] = capital["energyLevel"] - energyLevel
-    energyCarrier["energyLevel"] = energyCarrier["energyLevel"] + energyLevel
-
-    userFleet["ships"][0] = capital
-    userFleet = UserFleet::insertOrUpdateShipAtFleet(userFleet, energyCarrier)
-    UserFleet::commitFleetToDisk(currentHour, username, userFleet)
-
-    JSON.generate(GameLibrary::make200Answer([ capital, energyCarrier ], currentHour, username))
-
-end
-
-get '/game/v1/:userkey/:mapid/carrier-cruiser-energy-transfer/:energycarriershipuuid/:battlecruisershipuuid' do
-
-    content_type 'application/json'
-
-    userkey = params["userkey"]
-    mapId = params["mapid"]
-
-    energyCarrierShipUUID = params["energycarriershipuuid"]
-    battleCruiserShipUUID = params["battlecruisershipuuid"]
-
-    currentHour = GameLibrary::hourCode()
-
-    # ------------------------------------------------------
-    # User Credentials and Map Validity Checks
-
-    username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
-
-    if username.nil? then
-        return JSON.generate(GameLibrary::makeErrorAnswer(401, "Invalid userkey"))
-    end
-
-    if MapUtils::getCurrentMap()["mapId"] != mapId then
-        return JSON.generate(GameLibrary::makeErrorAnswer(404, "Map not found (mapId is incorrect or outdated)"))
-    end
-
-    # ------------------------------------------------------
-    # Throttling
-
-    if !Throttling::userRequestCanProceed(username) then
-        return JSON.generate(GameLibrary::makeErrorAnswer(403, "You are playing too fast. Need to wait #{$GAME_PARAMETERS["serverThrottlingWaitingPeriodInSeconds"]} seconds between requests"))
-    end
-
-    Throttling::updateUserActionTime(username)
-
-    # ------------------------------------------------------
-    # User Fleet validation
 
     userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
 
@@ -691,45 +613,45 @@ get '/game/v1/:userkey/:mapid/carrier-cruiser-energy-transfer/:energycarriership
         return JSON.generate(GameLibrary::makeErrorAnswer(404, "You do not yet have a fleet for this hour. (You should initiate one.)"))
     end
 
-    energyCarrier = UserFleet::getShipPerUUIDOrNull(currentHour, username, energyCarrierShipUUID)
-    battleCruiser = UserFleet::getShipPerUUIDOrNull(currentHour, username, battleCruiserShipUUID)
+    ship1 = UserFleet::getShipPerUUIDOrNull(currentHour, username, ship1uuid)
+    ship2 = UserFleet::getShipPerUUIDOrNull(currentHour, username, ship2uuid)
 
-    if energyCarrier.nil? then
-        return JSON.generate(GameLibrary::makeErrorAnswer(404, "Your fleet has no ship with uuid #{energyCarrierShipUUID}"))
+    if ship1.nil? then
+        return JSON.generate(GameLibrary::makeErrorAnswer(404, "Your fleet has no ship with uuid #{ship1uuid}"))
     end
 
-    if battleCruiser.nil? then
-        return JSON.generate(GameLibrary::makeErrorAnswer(404, "Your fleet has no ship with uuid #{battleCruiserShipUUID}"))
+    if ship2.nil? then
+        return JSON.generate(GameLibrary::makeErrorAnswer(404, "Your fleet has no ship with uuid #{ship2uuid}"))
     end
 
-    if !energyCarrier["alive"] then
-        return JSON.generate(GameLibrary::makeErrorAnswer(403, "The energy carrier is dead"))
+    if !ship1["alive"] then
+        return JSON.generate(GameLibrary::makeErrorAnswer(403, "The source ship, #{ship1uuid}, is dead"))
     end
 
-    if !battleCruiser["alive"] then
-        return JSON.generate(GameLibrary::makeErrorAnswer(403, "The energy carrier is dead"))
+    if !ship2["alive"] then
+        return JSON.generate(GameLibrary::makeErrorAnswer(403, "The target ship, #{ship2uuid}, is dead"))
     end
 
-    if battleCruiser["location"]["label"] != energyCarrier["location"]["label"] then
+    if ship2["location"]["label"] != ship1["location"]["label"] then
         return JSON.generate(GameLibrary::makeErrorAnswer(403, "You cannot transfer energy between the two ships, they are not at the same map location"))
     end
 
-    if energyCarrier["energyLevel"] == 0 then
-        return JSON.generate(GameLibrary::makeErrorAnswer(403, "The energy carrier is empty"))
+    if ship1["energyLevel"] == 0 then
+        return JSON.generate(GameLibrary::makeErrorAnswer(403, "The source ship has no energy to transfer"))
     end    
 
-    amountToTransfer = [ energyCarrier["energyLevel"], $GAME_PARAMETERS["fleetShipsMaxEnergy"]["battleCruiser"] - battleCruiser["energyLevel"] ].min
+    amountToTransfer = [ amountToTransfer, $GAME_PARAMETERS["fleetShipsMaxEnergy"][ship2["nomenclature"]] - ship2["energyLevel"] ].min
 
     # ------------------------------------------------------
 
-    battleCruiser["energyLevel"] = battleCruiser["energyLevel"] + amountToTransfer
-    energyCarrier["energyLevel"] = energyCarrier["energyLevel"] - amountToTransfer
+    ship2["energyLevel"] = ship2["energyLevel"] + amountToTransfer
+    ship1["energyLevel"] = ship1["energyLevel"] - amountToTransfer
 
-    userFleet = UserFleet::insertOrUpdateShipAtFleet(userFleet, battleCruiser)
-    userFleet = UserFleet::insertOrUpdateShipAtFleet(userFleet, energyCarrier)
+    userFleet = UserFleet::insertOrUpdateShipAtFleet(userFleet, ship1)
+    userFleet = UserFleet::insertOrUpdateShipAtFleet(userFleet, ship2)
     UserFleet::commitFleetToDisk(currentHour, username, userFleet)
 
-    JSON.generate(GameLibrary::make200Answer([ energyCarrier, battleCruiser ], currentHour, username))
+    JSON.generate(GameLibrary::make200Answer([ ship1, ship2 ], currentHour, username))
 
 end
 
