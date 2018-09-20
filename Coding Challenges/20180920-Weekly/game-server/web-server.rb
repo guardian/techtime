@@ -280,7 +280,7 @@ get '/game/v1/:userkey/:mapid/capital-ship/init' do
 
     UserFleet::commitFleetToDisk(currentHour, username, userFleet)
 
-    JSON.generate(userFleet)
+    JSON.generate(GameLibrary::make200Answer(nil, currentHour, username))
 end
 
 get '/game/v1/:userkey/:mapid/capital-ship/top-up/:code' do
@@ -325,8 +325,8 @@ get '/game/v1/:userkey/:mapid/capital-ship/top-up/:code' do
         if userFleet["ships"][0]["energyLevel"] + $GAME_PARAMETERS["fleetCapitalShipTopUpEnergyValue"] <= $GAME_PARAMETERS["fleetShipsMaxEnergy"]["capitalShip"] then
             topUpEnergyValue = $GAME_PARAMETERS["fleetCapitalShipTopUpEnergyValue"]
             difficulty = $GAME_PARAMETERS["fleetCapitalShipTopUpChallengeDifficulty"]
-            UserFleet::topUpCapitalShipAndResetTopUpChallenge(currentHour, username, topUpEnergyValue)
-            JSON.generate([true])
+            UserFleet::topUpCapitalShipAndResetTopUpChallenge(currentHour, username, topUpEnergyValue, difficulty)
+            JSON.generate(GameLibrary::make200Answer(nil, currentHour, username))
         else
             JSON.generate(GameLibrary::makeErrorAnswer(403, "Your code is correct, please keep it (!), but you cannot submit it at this time. Your ship has too much energy in reserve."))
         end
