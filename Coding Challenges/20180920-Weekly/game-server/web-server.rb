@@ -94,7 +94,9 @@ class GameLibrary
     # GameLibrary::ensureGameFolderSetUpForThisHour()
     def self.ensureGameFolderSetUpForThisHour()
 
-        folderpath = "#{GAME_DATA_FOLDERPATH}/Timeline/#{GameLibrary::hourCode()}"
+        currentHour = GameLibrary::hourCode()
+
+        folderpath = "#{GAME_DATA_FOLDERPATH}/Timeline/#{currentHour}"
         if !File.exists?(folderpath) then
             FileUtils.mkpath folderpath
         end
@@ -106,7 +108,7 @@ class GameLibrary
         # The Map
         map = {}
         map["mapId"] = SecureRandom.uuid
-        map["timestamp"] = GameLibrary::hourCode()
+        map["timestamp"] = currentHour
         map["points"] = (1..$GAME_PARAMETERS["mapJumpPointsCardinality"]).map{|indx|
             {
                 "label" => SecureRandom.hex(4),
@@ -121,6 +123,22 @@ class GameLibrary
 
         # ---------------------------------------
         # The BBC Fleet
+        # Here we set up the BBC fleet
+
+        username = "The BBC"
+        mapPoint = map["points"].sample
+        capitalShipInitialEnergy = $GAME_PARAMETERS["fleetCapitalShipInitialEnergyLevel"]
+        topUpChallengeDifficulty = $GAME_PARAMETERS["fleetCapitalShipTopUpChallengeDifficulty"]
+        userFleet = UserFleet::spawnUserFleet(username, mapPoint, capitalShipInitialEnergy, topUpChallengeDifficulty)
+        (1..20).each{|index|
+            mapPointX = map["points"].sample
+            initialEnergyLevelX = 100 + rand*100
+            cruiser = UserFleet::spawnBattleCruiser(mapPointX, initialEnergyLevelX)
+            userFleet = UserFleet::insertOrUpdateShipAtFleet(userFleet, cruiser)
+        }
+        UserFleet::commitFleetToDisk(currentHour, username, userFleet)
+
+        # ---------------------------------------
 
         folderpath
 
