@@ -67,7 +67,7 @@ This is your main ship. It is the one that receives your energy mining codes and
 CapitalShip 
 {
 	"nomenclature" : "capitalShip"
-    "shipUUID"     : Null
+    "shipUUID"     : UUID
 	"location"     : MapPoint
 	"energyLevel"  : Float
 	"alive"        : Boolean

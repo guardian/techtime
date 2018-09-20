@@ -46,6 +46,7 @@ class UserFleet
     def self.spawnCapitalShip(mapPoint, energyLevel)
         {
             "nomenclature" => "capitalShip",
+            "shipUUID"     => SecureRandom.uuid,
             "location"     => mapPoint,
             "energyLevel"  => energyLevel,
             "alive"        => true

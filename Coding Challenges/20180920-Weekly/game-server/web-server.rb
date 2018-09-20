@@ -509,7 +509,7 @@ get '/game/v1/:userkey/:mapid/jump/:shipuuid/:targetpointlabel' do
 
     map = MapUtils::getCurrentMap()    
 
-    targetMapPoint = MapUtils::getPointForlabelAtMapOrNull(label, map)
+    targetMapPoint = MapUtils::getPointForlabelAtMapOrNull(targetPointLabel, map)
     if targetMapPoint.nil? then
         return JSON.generate(GameLibrary::makeErrorAnswer(404, "The specified point doesn't exist"))
     end
@@ -524,7 +524,7 @@ get '/game/v1/:userkey/:mapid/jump/:shipuuid/:targetpointlabel' do
     end
 
     # Need to check whether we own a ship of with that uuid, and retrieve it.
-    ship = UserFleet::getShipPerUUIDOrNull(currentHour, username, uuid)
+    ship = UserFleet::getShipPerUUIDOrNull(currentHour, username, shipuuid)
     if ship.nil? then
         return JSON.generate(GameLibrary::makeErrorAnswer(404, "Your fleet has no ship with this uuid"))
     end
@@ -548,7 +548,7 @@ get '/game/v1/:userkey/:mapid/jump/:shipuuid/:targetpointlabel' do
     jec = Navigation::jumpEnergyCost(sourceMapPoint, targetMapPoint, ship["nomenclature"])
 
     # Need to check whether the ship has enough energy left to jump
-    if !ship["energyLevel"] < jec then
+    if ship["energyLevel"] < jec then
         return JSON.generate(GameLibrary::makeErrorAnswer(403, "The ship doesn't have enough energy for this jump. Available: #{ship["energyLevel"]}. Required: #{jec}"))
     end    
 

@@ -10,9 +10,9 @@
     "fleetBattleCruiserBombNominalEnergy": 50,
     "fleetEnergyCarrierBuildEnergyCost": 50,
     "fleetShipNomenclature2JumpCostCoefficient": {
-        "energyCarrier": 0.02,
-        "battleCruiser": 0.3,
-        "capitalShip"  : 1
+        "energyCarrier": 0.01,
+        "battleCruiser": 0.1,
+        "capitalShip"  : 0.5
     },
     "fleetShipsMaxEnergy": {
         "capitalShip": 5000,
