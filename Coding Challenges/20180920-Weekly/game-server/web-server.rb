@@ -138,7 +138,7 @@ class GameLibrary
         Dir.entries("#{GAME_DATA_FOLDERPATH}/Timeline/#{currentHour}/fleets")
             .select{|filename| filename[-5,5]==".json" }
             .map{|filename| "#{GAME_DATA_FOLDERPATH}/Timeline/#{currentHour}/fleets/#{filename}" }
-            .map{|filepath| IO.read(filepath) }
+            .map{|filepath| JSON.parse(IO.read(filepath)) }
     end
 
     # GameLibrary::make200Answer(answer, currentHour, username)
@@ -932,12 +932,12 @@ get '/game/v1/scores' do
                 userFleetsOrdered = GameLibrary::userFleetsForHour(currentHour)
                     .sort{|f1, f2| f1["gameScore"] <=> f2["gameScore"] }
                 score = 0.1/0.7
-                lastlength = nil
+                lastValue = nil
                 [
                     "",
                     File.basename(hoursFolderpath),
                     userFleetsOrdered.map{|userFleet|
-                        currentUserValue = userFleet
+                        currentUserValue = userFleet["gameScore"]
                         if currentUserValue != lastValue then
                             score = score*0.7 
                         end
