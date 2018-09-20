@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <key>Label</key>
+        <string>net.alseyn.pascal.space-battle-game-serverplist</string>
+        <key>EnvironmentVariables</key>
+        <dict>
+            <key>LC_CTYPE</key>
+            <string>en_US.UTF-8</string>
+            <key>COMPUTERLUCILLENAME</key>
+            <string>Lucille19</string>
+        </dict> 
+        <key>ProgramArguments</key>
+        <array>
+            <string>/Users/pascal/.rvm/rubies/ruby-2.4.1/bin/ruby</string>
+            <string>/Galaxy/Works/theguardian/20-X-Misc-Code-Lucille19/techtime/Coding Challenges/20180920-Weekly/game-server/web-server.rb</string>
+            <string>-o</string>
+			<string>0.0.0.0</string>
+        </array>
+		<key>RunAtLoad</key>
+		<true/>
+        <key>KeepAlive</key>
+        <true/> 
+    </dict>
+</plist>
