@@ -216,27 +216,15 @@ The energy expenditure for a jump depends on the distance you want to travel (th
 
 ### Energy transfer
 
-You can transfer energy either 
-
-- From a capital ship to an energy carrier, or
-- From an energy carrier to a battle cruiser.
+You can transfer energy from any ship to any other, the computation will automatically prevent overflow (meaning we respect ships total capacities)
 
 For the former the call is 
 
 ```
-/game/v1/:userkey/:mapid/capital-carrier-energy-transfer/:energycarriershipuuid/:energylevel
+/game/v1/:userkey/:mapid/energy-transfer/:ship1uuid/:ship2uuid/:energylevel
 ```
 
 **:energylevel** is how much you want to transfer.
-
-For the latter the call is 
-
-```
-/game/v1/:userkey/:mapid/carrier-cruiser-energy-transfer/:energycarriershipuuid/:battlecruisershipuuid
-```
-
-In this case the entire amount carried by the energy carrier is transferred.
-
 
 ### Shooting at things
 
