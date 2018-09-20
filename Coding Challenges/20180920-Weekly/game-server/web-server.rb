@@ -408,7 +408,7 @@ get '/game/v1/:userkey/:mapid/capital-ship/create-energy-carrier/:energyamount' 
     userkey = params["userkey"]
     mapId = params["mapid"]
 
-    energyamount = params["energyamount"]
+    energyamount = params["energyamount"].to_f
 
     currentHour = GameLibrary::hourCode()
 
@@ -464,12 +464,10 @@ get '/game/v1/:userkey/:mapid/capital-ship/create-energy-carrier/:energyamount' 
         energyCarrier = UserFleet::spawnEnergyCarrier(mapPoint, carrierInitialEnergyLevel)
         userFleet["ships"]<< energyCarrier
         UserFleet::commitFleetToDisk(currentHour, username, userFleet)
-        JSON.generate(energyCarrier)
+        JSON.generate(GameLibrary::make200Answer(energyCarrier, currentHour, username))
     else
         return JSON.generate(GameLibrary::makeErrorAnswer(403, "Your capital ship doesn't have enough energy to complete the construction of an energy carrier carrying #{carrierInitialEnergyLevel}. You have #{userFleet["ships"][0]["energyLevel"]} but you need #{(carrierBuildEnergyCost+carrierInitialEnergyLevel)}"))
     end
-
-    "{}"
 end
 
 get '/game/v1/:userkey/:mapid/jump/:shipuuid/:targetpointlabel' do
@@ -575,7 +573,7 @@ get '/game/v1/:userkey/:mapid/energy-transfer-type1/:energycarriershipuuid/:ener
     mapId = params["mapid"]
 
     energyCarrierShipUUID = params["energycarriershipuuid"]
-    energyLevel = params["energylevel"]
+    energyLevel = params["energylevel"].to_f
 
     currentHour = GameLibrary::hourCode()
 
