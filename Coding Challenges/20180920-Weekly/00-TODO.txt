@@ -1,10 +1,10 @@
 
 -> Needed before launch
 
-[] Implement throttling
-[] Implement scoring
-[] GameLibrary::ensureGameFolderSetUpForThisHour() is not yet setting the bbc
 [] Test every end point (^_^)
+
+[] GameLibrary::ensureGameFolderSetUpForThisHour() is not yet setting the bbc
+
 [] Write 02-Start Playing.md
 [] Write the server PID in a file
 [] Modify all the end point answers with the entire fleet report
@@ -39,6 +39,12 @@ BombReport
 [] Am I generating this: WarningLogItem ?
 
 [] Read proof the GAME-API
+
+
+-> launch checklist
+
+[] make sure that users-keys.txt exists on the server
+
 
 -> Can be done after launch
 

@@ -80,7 +80,7 @@ class GameLibrary
 
     # GameLibrary::getHoursFolderPaths()
     def self.getHoursFolderPaths()
-        Dir.entries(GAME_DATA_FOLDERPATH)
+        Dir.entries("#{GAME_DATA_FOLDERPATH}/Timeline")
             .select{|filename| filename[0,1]!="." }
             .map{|filename| "#{GAME_DATA_FOLDERPATH}/Timeline/#{filename}" }
     end
@@ -100,7 +100,7 @@ class GameLibrary
         end
 
         mapfilepath = "#{folderpath}/map.json"
-        return if File.exists?(mapfilepath)
+        return folderpath if File.exists?(mapfilepath)
 
         # ---------------------------------------
         # The Map
@@ -133,8 +133,8 @@ class GameLibrary
         UserFleet::commitFleetToDisk(currentHour, username, fleet)
     end
 
-    # GameLibrary::userFleetsInPlay(currentHour)
-    def self.userFleetsInPlay(currentHour)
+    # GameLibrary::userFleetsForHour(currentHour)
+    def self.userFleetsForHour(currentHour)
         Dir.entries("#{GAME_DATA_FOLDERPATH}/Timeline/#{currentHour}/fleets")
             .select{|filename| filename[-5,5]==".json" }
             .map{|filename| "#{GAME_DATA_FOLDERPATH}/Timeline/#{currentHour}/fleets/#{filename}" }
@@ -144,7 +144,7 @@ class GameLibrary
     # GameLibrary::make200Answer(answer, currentHour, username)
     def self.make200Answer(answer, currentHour, username)
         {
-            "status" => 200
+            "status" => 200,
             "answer" => data,
             "userFleet" => UserFleet::getUserFleetDataOrNull(currentHour, username)
         }
@@ -153,7 +153,7 @@ class GameLibrary
     # GameLibrary::makeErrorAnswer(errorcode, errormessage)
     def self.makeErrorAnswer(errorcode, errormessage)
         {
-            "status" => errorcode
+            "status" => errorcode,
             "message" => errormessage
         }
     end
@@ -217,7 +217,7 @@ get '/game/v1/get-userkey/:username' do
     if userKeysData.any?{|record| record[0]==username } then
         return JSON.generate(GameLibrary::makeErrorAnswer(403, "There has already been a userkey issued for this username. If you think this is a mistake or you have forgotten your userkey, please contact Pascal."))
     else
-        userkey = SecureRandom.hex(4)
+        userkey = SecureRandom.hex(8)
         UserKeys::commitUserKey(username, userkey)
         [
             "username: #{username}",
@@ -256,7 +256,7 @@ get '/game/v1/:userkey/:mapid/capital-ship/init' do
 
     username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
 
-    if !username.nil? then
+    if username.nil? then
         return JSON.generate(GameLibrary::makeErrorAnswer(401, "Invalid userkey"))
     end
 
@@ -298,7 +298,7 @@ get '/game/v1/:userkey/:mapid/capital-ship/top-up/:code' do
 
     username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
 
-    if !username.nil? then
+    if username.nil? then
         return JSON.generate(GameLibrary::makeErrorAnswer(401, "Invalid userkey"))
     end
 
@@ -349,7 +349,7 @@ get '/game/v1/:userkey/:mapid/capital-ship/create-battle-cruiser' do
 
     username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
 
-    if !username.nil? then
+    if username.nil? then
         return JSON.generate(GameLibrary::makeErrorAnswer(401, "Invalid userkey"))
     end
 
@@ -417,7 +417,7 @@ get '/game/v1/:userkey/:mapid/capital-ship/create-energy-carrier/:energyamount' 
 
     username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
 
-    if !username.nil? then
+    if username.nil? then
         return JSON.generate(GameLibrary::makeErrorAnswer(401, "Invalid userkey"))
     end
 
@@ -489,7 +489,7 @@ get '/game/v1/:userkey/:mapid/jump/:shipuuid/:targetpointlabel' do
 
     username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
 
-    if !username.nil? then
+    if username.nil? then
         return JSON.generate(GameLibrary::makeErrorAnswer(401, "Invalid userkey"))
     end
 
@@ -584,7 +584,7 @@ get '/game/v1/:userkey/:mapid/energy-transfer-type1/:energycarriershipuuid/:ener
 
     username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
 
-    if !username.nil? then
+    if username.nil? then
         return JSON.generate(GameLibrary::makeErrorAnswer(401, "Invalid userkey"))
     end
 
@@ -667,7 +667,7 @@ get '/game/v1/:userkey/:mapid/energy-transfer-type2/:energycarriershipuuid/:batt
 
     username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
 
-    if !username.nil? then
+    if username.nil? then
         return JSON.generate(GameLibrary::makeErrorAnswer(401, "Invalid userkey"))
     end
 
@@ -753,7 +753,7 @@ get '/game/v1/:userkey/:mapid/bomb/:battlecruisershipuuid/:targetpointlabel' do
 
     username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
 
-    if !username.nil? then
+    if username.nil? then
         return JSON.generate(GameLibrary::makeErrorAnswer(401, "Invalid userkey"))
     end
 
@@ -816,7 +816,7 @@ get '/game/v1/:userkey/:mapid/bomb/:battlecruisershipuuid/:targetpointlabel' do
 
     attackerDamageReport = []
 
-    GameLibrary::userFleetsInPlay(currentHour)
+    GameLibrary::userFleetsForHour(currentHour)
         .each{|otherPlayerUserFleet|
             UserFleet::userShipsWithinDisk(currentHour, otherPlayerUserFleet["username"], battleCruiser["location"], 0)
                 .each{|targetShip|
@@ -845,7 +845,7 @@ get '/game/v1/:userkey/:mapid/space-probe/:battlecruisershipuuid' do
 
     username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
 
-    if !username.nil? then
+    if username.nil? then
         return JSON.generate(GameLibrary::makeErrorAnswer(401, "Invalid userkey"))
     end
 
@@ -890,7 +890,7 @@ get '/game/v1/:userkey/:mapid/space-probe/:battlecruisershipuuid' do
         "results"  => []
     }
 
-    GameLibrary::userFleetsInPlay(currentHour)
+    GameLibrary::userFleetsForHour(currentHour)
         .each{|otherPlayerUserFleet|
             UserFleet::userShipsWithinDisk(currentHour, otherPlayerUserFleet["username"], battleCruiser["location"], 300)
                 .each{|ship|
@@ -910,3 +910,53 @@ get '/game/v1/:userkey/:mapid/space-probe/:battlecruisershipuuid' do
     JSON.generate(GameLibrary::make200Answer(spaceProbeResults, currentHour, username))
 end
 
+get '/game/v1/scores' do
+
+    content_type 'text/plain'
+
+    users = {}
+
+    addScoreToUserLambda = lambda {|users, user, score|
+        if users[user].nil? then
+            users[user] = 0
+        end
+        users[user] = (users[user] + score).round(3)
+        users
+    }
+
+    [
+        GameLibrary::getHoursFolderPaths()
+            .sort
+            .map{|hoursFolderpath|
+                currentHour = File.basename(hoursFolderpath)
+                userFleetsOrdered = GameLibrary::userFleetsForHour(currentHour)
+                    .sort{|f1, f2| f1["gameScore"] <=> f2["gameScore"] }
+                score = 0.1/0.7
+                lastlength = nil
+                [
+                    "",
+                    File.basename(hoursFolderpath),
+                    userFleetsOrdered.map{|userFleet|
+                        currentUserValue = userFleet
+                        if currentUserValue != lastValue then
+                            score = score*0.7 
+                        end
+                        lastValue = currentUserValue
+                        users = addScoreToUserLambda.call(users, userFleet["username"], score)
+                        "#{userFleet["username"].ljust(20)} , game point: #{"%7.3f" % currentUserValue} , leaderboard score increment: #{score.round(3)}"
+                    }.join("\n")
+                ].join("\n")
+            }.join("\n") + "\n",
+        "Summary: ",    
+        users
+            .keys
+            .map{|username| [username, users[username]] }
+            .sort{|p1,p2| p1[1] <=> p2[1] }
+            .reverse
+            .map{|p|
+                username, score = p
+                "   - #{username.ljust(20)} : #{score}"
+            }.join("\n")
+    ].join("\n") + "\n"
+
+end

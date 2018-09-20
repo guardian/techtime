@@ -320,3 +320,11 @@ Answers from the API are either
 ```
 
 In particluar you get a full FleetReport at every query.
+
+## Scores
+
+```
+/game/v1/scores
+```
+
+Text output, results per hour followed by summary.
