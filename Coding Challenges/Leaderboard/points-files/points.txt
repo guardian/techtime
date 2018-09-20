@@ -61,3 +61,5 @@ Sophie Lambrakis;   2018-09-19 18:00:00 +0100; 5.647 ; Final week score
 Richard Beddington; 2018-09-19 18:00:00 +0100; 2.159 ; Final week score
 Justin Rowles;      2018-09-19 18:00:00 +0100; 0.266 ; Final week score
 Jonathon Herbert;   2018-09-19 18:00:00 +0100; 0.234 ; Final week score
+Sophie Lambrakis;   2018-09-19 18:00:00 +0100; 2 ; Code Sharing
+Adam Fisher;        2018-09-19 18:00:00 +0100; 2 ; Code Sharing

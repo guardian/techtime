@@ -1,26 +1,26 @@
-curl http://localhost:14561/game/v1/get-userkey/pascal
+curl http://10.249.16.173:14561/game/v1/get-userkey/alice
 
 username: alice
 userkey : f3216f2afe256f7c
 
-curl http://localhost:14561/game/v1/map
+curl http://10.249.16.173:14561/game/v1/map
 
-curl http://localhost:14561/game/v1/parameters
+curl http://10.249.16.173:14561/game/v1/parameters
 
-curl http://localhost:14561/game/v1/:userkey/:mapid/capital-ship/init
+curl http://10.249.16.173:14561/game/v1/:userkey/:mapid/capital-ship/init
 
-curl http://localhost:14561/game/v1/:userkey/:mapid/capital-ship/top-up/:code
+curl http://10.249.16.173:14561/game/v1/:userkey/:mapid/capital-ship/top-up/:code
 
-curl http://localhost:14561/game/v1/:userkey/:mapid/capital-ship/create-battle-cruiser
+curl http://10.249.16.173:14561/game/v1/:userkey/:mapid/capital-ship/create-battle-cruiser
 
-curl http://localhost:14561/game/v1/:userkey/:mapid/capital-ship/create-energy-carrier/:energyamount
+curl http://10.249.16.173:14561/game/v1/:userkey/:mapid/capital-ship/create-energy-carrier/:energyamount
 
-curl http://localhost:14561/game/v1/:userkey/:mapid/space-probe/b48ea4a4-10ce-492c-9b3e-bc1cc82e0ad6
+curl http://10.249.16.173:14561/game/v1/:userkey/:mapid/space-probe/:battlecruisershipuuid
 
-curl http://localhost:14561/game/v1/:userkey/:mapid/jump/b48ea4a4-10ce-492c-9b3e-bc1cc82e0ad6/8ef34671
+curl http://10.249.16.173:14561/game/v1/:userkey/:mapid/jump/:shipuuid/:targetpointlabel
 
-curl http://localhost:14561/game/v1/:userkey/:mapid/energy-transfer/:ship1uuid/:ship2uuid/:amount
+curl http://10.249.16.173:14561/game/v1/:userkey/:mapid/energy-transfer/:ship1uuid/:ship2uuid/:amount
 
-curl http://localhost:14561/game/v1/:userkey/:mapid/bomb/b48ea4a4-10ce-492c-9b3e-bc1cc82e0ad6/43d0c2a8
+curl http://10.249.16.173:14561/game/v1/:userkey/:mapid/bomb/:battlecruisershipuuid/:targetpointlabel
 
-curl http://localhost:14561/game/v1/scores
+curl http://10.249.16.173:14561/game/v1/scores
