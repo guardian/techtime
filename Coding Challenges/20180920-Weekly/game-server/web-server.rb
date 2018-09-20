@@ -902,7 +902,7 @@ get '/game/v1/:userkey/:mapid/space-probe/:battlecruisershipuuid' do
                 }
         }
 
-    userFleet["spaceProbeResults"][battleCruiser["shipUUID"]] = spaceProbeResults
+    userFleet["spaceProbeResults"][battleCruiser["uuid"]] = spaceProbeResults
 
     UserFleet::commitFleetToDisk(currentHour, username, userFleet)
 

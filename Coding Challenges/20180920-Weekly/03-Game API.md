@@ -67,7 +67,7 @@ This is your main ship. It is the one that receives your energy mining codes and
 CapitalShip 
 {
 	"nomenclature" : "capitalShip"
-    "shipUUID"     : UUID
+    "uuid"         : UUID
 	"location"     : MapPoint
 	"energyLevel"  : Float
 	"alive"        : Boolean
@@ -85,7 +85,7 @@ Battle Cruisers are your main offensive units. They are the only ships that can 
 BattleCruiser
 {
 	"nomenclature" : "battleCruiser"
-	"shipUUID"     : UUID
+	"uuid"         : UUID
 	"location"     : MapPoint
 	"energyLevel"  : Float
 	"alive"        : Boolean
@@ -102,7 +102,7 @@ Energy Carriers are special purpose ships essentially used to transfer energy be
 EnergyCarrier
 {
 	"nomenclature" : "energyCarrier"
-	"shipUUID"     : UUID
+	"uuid"         : UUID
 	"location"     : MapPoint
 	"energyLevel"  : Float
 	"alive"        : Boolean

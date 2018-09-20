@@ -46,7 +46,7 @@ class UserFleet
     def self.spawnCapitalShip(mapPoint, energyLevel)
         {
             "nomenclature" => "capitalShip",
-            "shipUUID"     => SecureRandom.uuid,
+            "uuid"     => SecureRandom.uuid,
             "location"     => mapPoint,
             "energyLevel"  => energyLevel,
             "alive"        => true
@@ -99,7 +99,7 @@ class UserFleet
     def self.spawnBattleCruiser(mapPoint, initialEnergyLevel)
         {
             "nomenclature" => "battleCruiser",
-            "shipUUID"     => SecureRandom.uuid,
+            "uuid"     => SecureRandom.uuid,
             "location"     => mapPoint,
             "energyLevel"  => initialEnergyLevel,
             "alive"        => true,
@@ -110,7 +110,7 @@ class UserFleet
     def self.spawnEnergyCarrier(mapPoint, initialEnergyLevel)
         {
             "nomenclature" => "energyCarrier",
-            "shipUUID"     => SecureRandom.uuid,
+            "uuid"     => SecureRandom.uuid,
             "location"     => mapPoint,
             "energyLevel"  => initialEnergyLevel,
             "alive"        => true
@@ -119,7 +119,7 @@ class UserFleet
 
     # UserFleet::insertOrUpdateShipAtFleet(fleet, ship)
     def self.insertOrUpdateShipAtFleet(fleet, ship)
-        fleet["ships"] = fleet["ships"].reject{|s| s["shipUUID"]==ship["shipUUID"] }
+        fleet["ships"] = fleet["ships"].reject{|s| s["uuid"]==ship["uuid"] }
         fleet["ships"] << ship
         # Now, we need to make sure that capital comes first
         capitalSingleton, otherShips = fleet["ships"].partition{|s| s["nomenclature"] == "capitalShip" }
@@ -183,7 +183,7 @@ class UserFleet
     def self.getShipPerUUIDOrNull(currentHour, username, shipuuid)
         userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
         return nil if userFleet.nil?
-        userFleet["ships"].select{|ship| ship["shipUUID"]==shipuuid }.first
+        userFleet["ships"].select{|ship| ship["uuid"]==shipuuid }.first
     end
 
 end

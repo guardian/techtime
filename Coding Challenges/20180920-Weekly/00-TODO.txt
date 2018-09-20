@@ -1,53 +1,30 @@
 
 -> Needed before launch
 
-[] Test every end point (^_^)
-
-Should be uuid
-        {
-            "nomenclature" => "battleCruiser",
-            "shipUUID"     => SecureRandom.uuid,
-            "location"     => mapPoint,
-            "energyLevel"  => initialEnergyLevel,
-            "alive"        => true,
-        }
-
 [] GameLibrary::ensureGameFolderSetUpForThisHour() is not yet setting the bbc
-
 [] Write 02-Start Playing.md
 [] Write the server PID in a file
-[] Modify all the end point answers with the entire fleet report
-
-[] top up types (1 / 2) seems irrelevant. 
-    You know what it is from the ship types.
-    I see what you're saying, but they are not the same type of operation. In one case you supply a ship uuid and an amount and in the other you supply two ship uuids. Leave it to me  though. I will simplify it before tomorrow.
-
 [] Release the server as a daemon.
-
 [] Document damageCausedForAttacker in the Game API
         damageCausedForAttackerReport = {
             "nomenclature" => targetShip["nomenclature"],
             "alive" => targetShip["alive"]
         }
-
 [] I am not doing this
-BombReport
-    {
-        "shipsHit" : Array[BombReportShipDetail]
-    }
+    BombReport
+        {
+            "shipsHit" : Array[BombReportShipDetail]
+        }
 
-    BombReportShipDetail
-    {
-        "username"     : USERNAME
-        "nomenclature" : SHIP-NOMENCLATURE
-        "destroyed"    : Boolean
-    }
-
+        BombReportShipDetail
+        {
+            "username"     : USERNAME
+            "nomenclature" : SHIP-NOMENCLATURE
+            "destroyed"    : Boolean
+        }
 [] Do I take account of "bombsEffectMultiplier" ?
-
 [] Am I generating this: WarningLogItem ?
-
-[] Read proof the GAME-API
+[] proofRead the GAME-API
 
 
 -> launch checklist
