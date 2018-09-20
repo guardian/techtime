@@ -1,26 +1,26 @@
-curl http://localhost:14561/game/v1/get-userkey/pascal
+curl http://10.249.16.173:14561/game/v1/get-userkey/pascal
 
 username: alice
 userkey : f3216f2afe256f7c
 
-curl http://localhost:14561/game/v1/map
+curl http://10.249.16.173:14561/game/v1/map
 
-curl http://localhost:14561/game/v1/parameters
+curl http://10.249.16.173:14561/game/v1/parameters
 
-curl http://localhost:14561/game/v1/f3216f2afe256f7c/181510b2-7293-4826-af6c-82820fbebdca/capital-ship/init
+curl http://10.249.16.173:14561/game/v1/f3216f2afe256f7c/181510b2-7293-4826-af6c-82820fbebdca/capital-ship/init
 
-curl http://localhost:14561/game/v1/f3216f2afe256f7c/181510b2-7293-4826-af6c-82820fbebdca/capital-ship/top-up/0
+curl http://10.249.16.173:14561/game/v1/f3216f2afe256f7c/181510b2-7293-4826-af6c-82820fbebdca/capital-ship/top-up/0
 
-curl http://localhost:14561/game/v1/f3216f2afe256f7c/181510b2-7293-4826-af6c-82820fbebdca/capital-ship/create-battle-cruiser
+curl http://10.249.16.173:14561/game/v1/f3216f2afe256f7c/181510b2-7293-4826-af6c-82820fbebdca/capital-ship/create-battle-cruiser
 
-curl http://localhost:14561/game/v1/f3216f2afe256f7c/181510b2-7293-4826-af6c-82820fbebdca/capital-ship/create-energy-carrier/13
+curl http://10.249.16.173:14561/game/v1/f3216f2afe256f7c/181510b2-7293-4826-af6c-82820fbebdca/capital-ship/create-energy-carrier/13
 
-curl http://localhost:14561/game/v1/f3216f2afe256f7c/181510b2-7293-4826-af6c-82820fbebdca/space-probe/b48ea4a4-10ce-492c-9b3e-bc1cc82e0ad6
+curl http://10.249.16.173:14561/game/v1/f3216f2afe256f7c/181510b2-7293-4826-af6c-82820fbebdca/space-probe/b48ea4a4-10ce-492c-9b3e-bc1cc82e0ad6
 
-curl http://localhost:14561/game/v1/f3216f2afe256f7c/181510b2-7293-4826-af6c-82820fbebdca/jump/b48ea4a4-10ce-492c-9b3e-bc1cc82e0ad6/8ef34671
+curl http://10.249.16.173:14561/game/v1/f3216f2afe256f7c/181510b2-7293-4826-af6c-82820fbebdca/jump/b48ea4a4-10ce-492c-9b3e-bc1cc82e0ad6/8ef34671
 
-curl http://localhost:14561/game/v1/f3216f2afe256f7c/181510b2-7293-4826-af6c-82820fbebdca/energy-transfer/d0d10546-da33-447b-a36a-4d42a3efd807/62bd4f34-f73a-4ec1-a8d2-d797c96d3252/1
+curl http://10.249.16.173:14561/game/v1/f3216f2afe256f7c/181510b2-7293-4826-af6c-82820fbebdca/energy-transfer/d0d10546-da33-447b-a36a-4d42a3efd807/62bd4f34-f73a-4ec1-a8d2-d797c96d3252/1
 
-curl http://localhost:14561/game/v1/f3216f2afe256f7c/181510b2-7293-4826-af6c-82820fbebdca/bomb/b48ea4a4-10ce-492c-9b3e-bc1cc82e0ad6/43d0c2a8
+curl http://10.249.16.173:14561/game/v1/f3216f2afe256f7c/181510b2-7293-4826-af6c-82820fbebdca/bomb/b48ea4a4-10ce-492c-9b3e-bc1cc82e0ad6/43d0c2a8
 
-curl http://localhost:14561/game/v1/scores
+curl http://10.249.16.173:14561/game/v1/scores
