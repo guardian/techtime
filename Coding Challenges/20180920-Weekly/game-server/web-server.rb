@@ -392,7 +392,7 @@ get '/game/v1/:userkey/:mapid/capital-ship/create-battle-cruiser' do
         battleCruiser = UserFleet::spawnBattleCruiser(mapPoint, battleCruiserInitialEnergyLevel)
         userFleet["ships"] << battleCruiser
         UserFleet::commitFleetToDisk(currentHour, username, userFleet)
-        JSON.generate(battleCruiser)
+        JSON.generate(GameLibrary::make200Answer(battleCruiser, currentHour, username))
     else
         if !userFleet["ships"][0]["alive"] then
             return JSON.generate(GameLibrary::makeErrorAnswer(403, "Your capital ship doesn't have enough energy to complete the construction of a battle cruiser. You have #{userFleet["ships"][0]["energyLevel"]} but you need #{(battleCruiserBuildEnergyCost+battleCruiserInitialEnergyLevel)}"))
