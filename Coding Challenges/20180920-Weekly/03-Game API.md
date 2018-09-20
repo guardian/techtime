@@ -94,6 +94,14 @@ BattleCruiser
 
 - shipUUID: is a completely unique uuid of this ship. It's a length 8 hexadecimal string. You use it to refer to the ship when sending commands to it. 
 
+### Ship
+
+`Ship` is the union type 
+
+```
+CapitalShip | BattleCruiser | EnergyCarrier
+```
+
 ### Energy Carriers
 
 Energy Carriers are special purpose ships essentially used to transfer energy between your Capital Ship and the Battle Cruisers. They are created by capitals
@@ -147,23 +155,27 @@ FleetReport
     }
     ```
 
-- The `logWarnings` indicates even that have occured that you might (should) be interested in. Mostly that enemy Battle Cruisers are shooting at you.
+- The `logWarnings` indicates even that have occured that you might (should) be interested in. Mostly that enemy Battle Cruisers are shooting at you. `logWarnings` is an aray of `WarningLogItem`, the latter is a union type, which version it is is given by the value of `eventType`. In this version of the game there is only one type in this  union: `WarningLogItemWormholeBomb` 
 
 	```
-	WarningLogItem
+	WarningLogItemWormholeBomb
 	{
 		"unixtime"  : Unixtime
 		"eventUUID" : UUID
 		"eventType" : "WormholeBomb"
 		"eventData" : {
-			"source" : {
-				"location"     : MapPoint
-				"nomenclature" : "BattleCruiser"
-				"username"     : ENEMY-USERNAME
-			}
-			"target" : Ship # CapitalShip, BattleCruiser or EnergyCarrier
+			"source" : WarningLogItemWormholeBombEventDataSource
+			"target" : Ship
 		}
 	}
+	
+	WarningLogItemWormholeBombEventDataSource
+	{
+		"location"     : MapPoint
+		"nomenclature" : String # ship nomenclature
+		"username"     : String # enemy username
+	}
+	
 	```
 
 For the moment the game only reports wormholes bomb. Note that the target is always one of your ships, so the report gives you the uuid of that ship, you might want to move it, if it's not destroyed yet, and possibly shoot back if you have Battle Cruisers nearby.
