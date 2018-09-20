@@ -52,6 +52,7 @@ end
 GAME_DATA_FOLDERPATH = "/Galaxy/DataBank/WeeklyCodingChallenges/20180920-Weekly/#{LUCILLE_INSTANCE}"
 GAME_PARAMETERS_FILEPATH = File.dirname(__FILE__) + "/game-parameters.json"
 $GAME_PARAMETERS = JSON.parse(IO.read(GAME_PARAMETERS_FILEPATH))
+$LastUserRequestsTimesForThrottling = {}
 
 # -- --------------------------------------------------
 # nslog
@@ -155,6 +156,24 @@ class GameLibrary
             "status" => errorcode
             "message" => errormessage
         }
+    end
+
+end
+
+class Throttling
+
+    # Throttling::userRequestCanProceed(username)
+    def self.userRequestCanProceed(username)
+        if $LastUserRequestsTimesForThrottling[username].nil? then
+            true
+        else
+            (Time.new.to_f-$LastUserRequestsTimesForThrottling[username]) >= $GAME_PARAMETERS["serverThrottlingWaitingPeriodInSeconds"]
+        end
+    end
+
+    # Throttling::updateUserActionTime(username)
+    def self.updateUserActionTime(username)
+        $LastUserRequestsTimesForThrottling[username] = Time.new.to_f
     end
 
 end
@@ -339,6 +358,15 @@ get '/game/v1/:userkey/:mapid/capital-ship/create-battle-cruiser' do
     end
 
     # ------------------------------------------------------
+    # Throttling
+
+    if !Throttling::userRequestCanProceed(username) then
+        return JSON.generate(GameLibrary::makeErrorAnswer(403, "You are playing too fast. Need to wait #{$GAME_PARAMETERS["serverThrottlingWaitingPeriodInSeconds"]} seconds between requests"))
+    end
+
+    Throttling::updateUserActionTime(username)
+
+    # ------------------------------------------------------
     # User Fleet validation
 
     userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
@@ -396,6 +424,15 @@ get '/game/v1/:userkey/:mapid/capital-ship/create-energy-carrier/:energyamount' 
     if MapUtils::getCurrentMap()["mapId"] != mapId then
         return JSON.generate(GameLibrary::makeErrorAnswer(404, "Map not found (mapId is incorrect or outdated)"))
     end
+
+    # ------------------------------------------------------
+    # Throttling
+
+    if !Throttling::userRequestCanProceed(username) then
+        return JSON.generate(GameLibrary::makeErrorAnswer(403, "You are playing too fast. Need to wait #{$GAME_PARAMETERS["serverThrottlingWaitingPeriodInSeconds"]} seconds between requests"))
+    end
+
+    Throttling::updateUserActionTime(username)
 
     # ------------------------------------------------------
     # User Fleet validation
@@ -459,6 +496,15 @@ get '/game/v1/:userkey/:mapid/jump/:shipuuid/:targetpointlabel' do
     if MapUtils::getCurrentMap()["mapId"] != mapId then
         return JSON.generate(GameLibrary::makeErrorAnswer(404, "Map not found (mapId is incorrect or outdated)"))
     end
+
+    # ------------------------------------------------------
+    # Throttling
+
+    if !Throttling::userRequestCanProceed(username) then
+        return JSON.generate(GameLibrary::makeErrorAnswer(403, "You are playing too fast. Need to wait #{$GAME_PARAMETERS["serverThrottlingWaitingPeriodInSeconds"]} seconds between requests"))
+    end
+
+    Throttling::updateUserActionTime(username)
 
     # ------------------------------------------------------
     # Map Validation
@@ -547,6 +593,15 @@ get '/game/v1/:userkey/:mapid/energy-transfer-type1/:energycarriershipuuid/:ener
     end
 
     # ------------------------------------------------------
+    # Throttling
+
+    if !Throttling::userRequestCanProceed(username) then
+        return JSON.generate(GameLibrary::makeErrorAnswer(403, "You are playing too fast. Need to wait #{$GAME_PARAMETERS["serverThrottlingWaitingPeriodInSeconds"]} seconds between requests"))
+    end
+
+    Throttling::updateUserActionTime(username)
+
+    # ------------------------------------------------------
     # User Fleet validation
 
     userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
@@ -619,6 +674,15 @@ get '/game/v1/:userkey/:mapid/energy-transfer-type2/:energycarriershipuuid/:batt
     if MapUtils::getCurrentMap()["mapId"] != mapId then
         return JSON.generate(GameLibrary::makeErrorAnswer(404, "Map not found (mapId is incorrect or outdated)"))
     end
+
+    # ------------------------------------------------------
+    # Throttling
+
+    if !Throttling::userRequestCanProceed(username) then
+        return JSON.generate(GameLibrary::makeErrorAnswer(403, "You are playing too fast. Need to wait #{$GAME_PARAMETERS["serverThrottlingWaitingPeriodInSeconds"]} seconds between requests"))
+    end
+
+    Throttling::updateUserActionTime(username)
 
     # ------------------------------------------------------
     # User Fleet validation
@@ -696,6 +760,15 @@ get '/game/v1/:userkey/:mapid/bomb/:battlecruisershipuuid/:targetpointlabel' do
     if MapUtils::getCurrentMap()["mapId"] != mapId then
         return JSON.generate(GameLibrary::makeErrorAnswer(404, "Map not found (mapId is incorrect or outdated)"))
     end    
+
+    # ------------------------------------------------------
+    # Throttling
+
+    if !Throttling::userRequestCanProceed(username) then
+        return JSON.generate(GameLibrary::makeErrorAnswer(403, "You are playing too fast. Need to wait #{$GAME_PARAMETERS["serverThrottlingWaitingPeriodInSeconds"]} seconds between requests"))
+    end
+
+    Throttling::updateUserActionTime(username)
 
     # ------------------------------------------------------
     # Map Validation
@@ -779,6 +852,15 @@ get '/game/v1/:userkey/:mapid/space-probe/:battlecruisershipuuid' do
     if MapUtils::getCurrentMap()["mapId"] != mapId then
         return JSON.generate(GameLibrary::makeErrorAnswer(404, "Map not found (mapId is incorrect or outdated)"))
     end    
+
+    # ------------------------------------------------------
+    # Throttling
+
+    if !Throttling::userRequestCanProceed(username) then
+        return JSON.generate(GameLibrary::makeErrorAnswer(403, "You are playing too fast. Need to wait #{$GAME_PARAMETERS["serverThrottlingWaitingPeriodInSeconds"]} seconds between requests"))
+    end
+
+    Throttling::updateUserActionTime(username)
 
     # ------------------------------------------------------
     # User Fleet validation

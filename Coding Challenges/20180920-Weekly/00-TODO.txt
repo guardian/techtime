@@ -2,6 +2,7 @@
 -> Needed before launch
 
 [] Implement throttling
+[] Implement scoring
 [] GameLibrary::ensureGameFolderSetUpForThisHour() is not yet setting the bbc
 [] Test every end point (^_^)
 [] Write 02-Start Playing.md

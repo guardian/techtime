@@ -24,5 +24,6 @@
         "energyCarrier": 20,
         "battleCruiser": 100,
         "capitalShip"  : 1000
-    }
+    },
+    "serverThrottlingWaitingPeriodInSeconds": 0.8
 }
