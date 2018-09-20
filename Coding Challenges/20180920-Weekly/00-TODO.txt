@@ -36,6 +36,7 @@ BombReport
 
 [] Do I take account of "bombsEffectMultiplier" ?
 
+[] Am I generating this: WarningLogItem ?
 
 [] Read proof the GAME-API
 

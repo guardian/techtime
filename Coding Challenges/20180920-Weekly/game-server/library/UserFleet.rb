@@ -57,7 +57,6 @@ class UserFleet
         capitalShip = UserFleet::spawnCapitalShip(mapPoint, capitalShipInitialEnergy)
         {
             "username" => username,
-            "inPlay" => true,
             "capitalEnergyTopUpChallenge" => UserFleet::spawnCapitalTopUpChallenge(topUpChallengeDifficulty),
             "gameScore" => 0,
             "ships" => [ capitalShip ],

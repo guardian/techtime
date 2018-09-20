@@ -117,7 +117,6 @@ The fleet report contains all information about your entire fleet
 FleetReport
 {
     "username"          : YOUR-USERNAME
-    "inPlay"            : Boolean
     "capitalEnergyTopUpChallenge" : CapitalShipTopUpChallenge
     "gameScore"         : Float
     "ships"             : Array[Ship] # Ship is CapitalShip, BattleCruiser or EnergyCarrier
@@ -125,8 +124,6 @@ FleetReport
     "logWarnings"       : Array[WarningLogItem]
 }
 ``` 
-
-- `inPlay` indicates whether or not you are still in play. The only reason why you would not be in play is that you have lost your capital ship. 
 
 - `capitalEnergyTopUpChallenge` is used for the Capital Ship energy top up. See the section "Capital Ship top up" below for details.
 
@@ -153,15 +150,12 @@ FleetReport
 - The `logWarnings` indicates even that have occured that you might (should) be interested in. Mostly that enemy Battle Cruisers are shooting at you.
 
 	```
-	WarningLogItemEventType
-		- "WormholeBomb"
-	
 	WarningLogItem
 	{
-		"unixtime"        : Unixtime
+		"unixtime"  : Unixtime
 		"eventUUID" : UUID
-		"eventType"      : "WormholeBomb"
-		"eventData"      : {
+		"eventType" : "WormholeBomb"
+		"eventData" : {
 			"source" : {
 				"location"     : MapPoint
 				"nomenclature" : "BattleCruiser"
@@ -172,8 +166,7 @@ FleetReport
 	}
 	```
 
-For the moment the game only reports bomb wormholes. Note that the target is always one of your ships, so the report gives you the uuid of that ship, you might want to move it, if it's not destroyed yet, and possibly shoot back if you have Battle Cruisers nearby.
-
+For the moment the game only reports wormholes bomb. Note that the target is always one of your ships, so the report gives you the uuid of that ship, you might want to move it, if it's not destroyed yet, and possibly shoot back if you have Battle Cruisers nearby.
 
 ## Game API
 
