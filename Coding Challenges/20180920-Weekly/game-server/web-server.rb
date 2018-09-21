@@ -196,6 +196,25 @@ class Throttling
 
 end
 
+# --  --------------------------------------------------
+
+set :port, 14561
+#set :public_folder, "path/to/www"
+
+LUCILLE_INSTANCE = ENV["COMPUTERLUCILLENAME"]
+
+if LUCILLE_INSTANCE.nil? then
+    puts "Error: Environment variable 'COMPUTERLUCILLENAME' is not defined."
+    exit
+end
+
+GAME_DATA_FOLDERPATH = "/Galaxy/DataBank/WeeklyCodingChallenges/20180920-Weekly/#{LUCILLE_INSTANCE}"
+GAME_PARAMETERS_FILEPATH = File.dirname(__FILE__) + "/game-parameters.json"
+$GAME_PARAMETERS = JSON.parse(IO.read(GAME_PARAMETERS_FILEPATH))
+$LastUserRequestsTimesForThrottling = {}
+
+# -- --------------------------------------------------
+
 # -- --------------------------------------------------
 # Route
 
