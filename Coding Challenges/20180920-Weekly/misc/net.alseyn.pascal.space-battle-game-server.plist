@@ -14,7 +14,7 @@
         <key>ProgramArguments</key>
         <array>
             <string>/Users/pascal/.rvm/rubies/ruby-2.4.1/bin/ruby</string>
-            <string>/Galaxy/LucilleOS/Space-Battle-Server/game-server/web-server.rb</string>
+            <string>/Galaxy/Applications/Space-Battle-Server/game-server/web-server.rb</string>
             <string>-o</string>
 			<string>0.0.0.0</string>
         </array>
