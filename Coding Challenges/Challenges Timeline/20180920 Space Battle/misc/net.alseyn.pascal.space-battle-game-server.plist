@@ -14,12 +14,12 @@
         <key>ProgramArguments</key>
         <array>
             <string>/Users/pascal/.rvm/rubies/ruby-2.4.1/bin/ruby</string>
-            <string>/Galaxy/Software/Space-Battle-Server/game-server/web-server.rb</string>
+            <string>/Galaxy/Software/Space-Battle-Server/20180920-Space-Battle/game-server/web-server.rb</string>
             <string>-o</string>
-			<string>0.0.0.0</string>
+            <string>0.0.0.0</string>
         </array>
-		<key>RunAtLoad</key>
-		<true/>
+        <key>RunAtLoad</key>
+        <true/>
         <key>KeepAlive</key>
         <true/> 
     </dict>
