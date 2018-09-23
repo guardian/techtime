@@ -225,7 +225,8 @@ $LastUserRequestsTimesForThrottling = {}
 
 # -- --------------------------------------------------
 
-
+$usersFleetsIOActionsMutex = Mutex.new
+$mapInitMutex = Mutex.new
 
 # -- --------------------------------------------------
 # Route

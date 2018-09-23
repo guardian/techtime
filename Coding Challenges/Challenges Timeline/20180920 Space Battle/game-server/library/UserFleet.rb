@@ -24,7 +24,9 @@ class UserFleet
     def self.getUserFleetDataOrNull(currentHour, username)
         fleetFilepath = UserFleet::filepathToUserFleetData(currentHour, username)
         return nil if !File.exists?(fleetFilepath)
-        JSON.parse(IO.read(fleetFilepath))
+        $usersFleetsIOActionsMutex.synchronize {
+            JSON.parse(IO.read(fleetFilepath))
+        }
     end
 
     # UserFleet::getUserFleetDataOrNull(currentHour, username) : Boolean # return false if UserFleet::getUserFleetDataOrNull(currentHour) return Null
@@ -92,7 +94,9 @@ class UserFleet
         if !File.exists?(File.dirname(userFleetFilepath)) then
             FileUtils.mkpath File.dirname(userFleetFilepath) # we do this because the fleet, subfolder of a timeline hours folder is not automatically created
         end 
-        File.open(userFleetFilepath, "w"){|f| f.puts(JSON.pretty_generate(fleet)) }
+        $usersFleetsIOActionsMutex.synchronize {
+            File.open(userFleetFilepath, "w"){|f| f.puts(JSON.pretty_generate(fleet)) }
+        }
     end
 
     # UserFleet::spawnBattleCruiser(mapPoint, initialEnergyLevel)

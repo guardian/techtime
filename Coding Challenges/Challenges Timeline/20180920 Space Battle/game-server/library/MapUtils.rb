@@ -5,7 +5,10 @@ class MapUtils
 
     # MapUtils::getCurrentMap()
     def self.getCurrentMap()
-        folderpath = GameLibrary::ensureGameFolderSetUpForThisHour()
+        folderpath = nil
+        $mapInitMutex.synchronize {
+            folderpath = GameLibrary::ensureGameFolderSetUpForThisHour()
+        }
         GameLibrary::getMapAtHourFolderpath(folderpath)
     end
 
