@@ -25,5 +25,5 @@
         "battleCruiser": 100,
         "capitalShip"  : 1000
     },
-    "serverThrottlingWaitingPeriodInSeconds": 0.8
+    "serverThrottlingPausingPeriodInSeconds": 0.1
 }

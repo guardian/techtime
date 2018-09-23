@@ -199,21 +199,15 @@ class GameLibrary
 end
 
 class Throttling
-
-    # Throttling::userRequestCanProceed(username)
-    def self.userRequestCanProceed(username)
-        if $LastUserRequestsTimesForThrottling[username].nil? then
-            true
-        else
-            (Time.new.to_f-$LastUserRequestsTimesForThrottling[username]) >= $GAME_PARAMETERS["serverThrottlingWaitingPeriodInSeconds"]
+    # Throttling::throttle(userkey)
+    def self.throttle(userkey)
+        if $LastUserRequestsTimesForThrottling[userkey] then
+            if Time.new.to_f < ( $LastUserRequestsTimesForThrottling[userkey] + $GAME_PARAMETERS["serverThrottlingPausingPeriodInSeconds"] ) then
+                sleep 0.1
+            end
         end
+        $LastUserRequestsTimesForThrottling[userkey] = Time.new.to_f
     end
-
-    # Throttling::updateUserActionTime(username)
-    def self.updateUserActionTime(username)
-        $LastUserRequestsTimesForThrottling[username] = Time.new.to_f
-    end
-
 end
 
 # -- --------------------------------------------------
@@ -305,6 +299,11 @@ get '/game/v1/:userkey/:mapid/capital-ship/init' do
     currentHour = GameLibrary::hourCode()
 
     # ------------------------------------------------------
+    # Throttling
+
+    Throttling::throttle(userkey)
+
+    # ------------------------------------------------------
     # User Credentials and Map Validity Checks
 
     username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
@@ -345,6 +344,11 @@ get '/game/v1/:userkey/:mapid/capital-ship/top-up/:code' do
     code = params["code"]
 
     currentHour = GameLibrary::hourCode()
+
+    # ------------------------------------------------------
+    # Throttling
+
+    Throttling::throttle(userkey)
 
     # ------------------------------------------------------
     # User Credentials and Map Validity Checks
@@ -398,6 +402,11 @@ get '/game/v1/:userkey/:mapid/capital-ship/create-battle-cruiser' do
     currentHour = GameLibrary::hourCode()
 
     # ------------------------------------------------------
+    # Throttling
+
+    Throttling::throttle(userkey)
+
+    # ------------------------------------------------------
     # User Credentials and Map Validity Checks
 
     username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
@@ -409,15 +418,6 @@ get '/game/v1/:userkey/:mapid/capital-ship/create-battle-cruiser' do
     if MapUtils::getCurrentMap()["mapId"] != mapId then
         return JSON.generate(GameLibrary::makeErrorAnswer(404, "Map not found (mapId is incorrect or outdated)"))
     end
-
-    # ------------------------------------------------------
-    # Throttling
-
-    if !Throttling::userRequestCanProceed(username) then
-        return JSON.generate(GameLibrary::makeErrorAnswer(403, "You are playing too fast. Need to wait #{$GAME_PARAMETERS["serverThrottlingWaitingPeriodInSeconds"]} seconds between requests"))
-    end
-
-    Throttling::updateUserActionTime(username)
 
     # ------------------------------------------------------
     # User Fleet validation
@@ -466,6 +466,11 @@ get '/game/v1/:userkey/:mapid/capital-ship/create-energy-carrier/:energyamount' 
     currentHour = GameLibrary::hourCode()
 
     # ------------------------------------------------------
+    # Throttling
+
+    Throttling::throttle(userkey)
+
+    # ------------------------------------------------------
     # User Credentials and Map Validity Checks
 
     username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
@@ -477,15 +482,6 @@ get '/game/v1/:userkey/:mapid/capital-ship/create-energy-carrier/:energyamount' 
     if MapUtils::getCurrentMap()["mapId"] != mapId then
         return JSON.generate(GameLibrary::makeErrorAnswer(404, "Map not found (mapId is incorrect or outdated)"))
     end
-
-    # ------------------------------------------------------
-    # Throttling
-
-    if !Throttling::userRequestCanProceed(username) then
-        return JSON.generate(GameLibrary::makeErrorAnswer(403, "You are playing too fast. Need to wait #{$GAME_PARAMETERS["serverThrottlingWaitingPeriodInSeconds"]} seconds between requests"))
-    end
-
-    Throttling::updateUserActionTime(username)
 
     # ------------------------------------------------------
     # User Fleet validation
@@ -536,6 +532,11 @@ get '/game/v1/:userkey/:mapid/jump/:shipuuid/:targetpointlabel' do
     currentHour = GameLibrary::hourCode()
 
     # ------------------------------------------------------
+    # Throttling
+
+    Throttling::throttle(userkey)
+
+    # ------------------------------------------------------
     # User Credentials and Map Validity Checks
 
     username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
@@ -547,15 +548,6 @@ get '/game/v1/:userkey/:mapid/jump/:shipuuid/:targetpointlabel' do
     if MapUtils::getCurrentMap()["mapId"] != mapId then
         return JSON.generate(GameLibrary::makeErrorAnswer(404, "Map not found (mapId is incorrect or outdated)"))
     end
-
-    # ------------------------------------------------------
-    # Throttling
-
-    if !Throttling::userRequestCanProceed(username) then
-        return JSON.generate(GameLibrary::makeErrorAnswer(403, "You are playing too fast. Need to wait #{$GAME_PARAMETERS["serverThrottlingWaitingPeriodInSeconds"]} seconds between requests"))
-    end
-
-    Throttling::updateUserActionTime(username)
 
     # ------------------------------------------------------
     # Map Validation
@@ -632,6 +624,11 @@ get '/game/v1/:userkey/:mapid/energy-transfer/:ship1uuid/:ship2uuid/:amount' do
     currentHour = GameLibrary::hourCode()
 
     # ------------------------------------------------------
+    # Throttling
+
+    Throttling::throttle(userkey)
+
+    # ------------------------------------------------------
     # User Credentials and Map Validity Checks
 
     username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
@@ -643,15 +640,6 @@ get '/game/v1/:userkey/:mapid/energy-transfer/:ship1uuid/:ship2uuid/:amount' do
     if MapUtils::getCurrentMap()["mapId"] != mapId then
         return JSON.generate(GameLibrary::makeErrorAnswer(404, "Map not found (mapId is incorrect or outdated)"))
     end
-
-    # ------------------------------------------------------
-    # Throttling
-
-    if !Throttling::userRequestCanProceed(username) then
-        return JSON.generate(GameLibrary::makeErrorAnswer(403, "You are playing too fast. Need to wait #{$GAME_PARAMETERS["serverThrottlingWaitingPeriodInSeconds"]} seconds between requests"))
-    end
-
-    Throttling::updateUserActionTime(username)
 
     # ------------------------------------------------------
     # User Fleet validation
@@ -721,6 +709,11 @@ get '/game/v1/:userkey/:mapid/bomb/:battlecruisershipuuid/:targetpointlabel' do
     currentHour = GameLibrary::hourCode()
 
     # ------------------------------------------------------
+    # Throttling
+
+    Throttling::throttle(userkey)
+
+    # ------------------------------------------------------
     # User Credentials and Map Validity Checks
 
     username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
@@ -731,16 +724,7 @@ get '/game/v1/:userkey/:mapid/bomb/:battlecruisershipuuid/:targetpointlabel' do
 
     if MapUtils::getCurrentMap()["mapId"] != mapId then
         return JSON.generate(GameLibrary::makeErrorAnswer(404, "Map not found (mapId is incorrect or outdated)"))
-    end    
-
-    # ------------------------------------------------------
-    # Throttling
-
-    if !Throttling::userRequestCanProceed(username) then
-        return JSON.generate(GameLibrary::makeErrorAnswer(403, "You are playing too fast. Need to wait #{$GAME_PARAMETERS["serverThrottlingWaitingPeriodInSeconds"]} seconds between requests"))
     end
-
-    Throttling::updateUserActionTime(username)
 
     # ------------------------------------------------------
     # Map Validation
@@ -814,6 +798,11 @@ get '/game/v1/:userkey/:mapid/space-probe/:battlecruisershipuuid' do
     currentHour = GameLibrary::hourCode()
 
     # ------------------------------------------------------
+    # Throttling
+
+    Throttling::throttle(userkey)
+
+    # ------------------------------------------------------
     # User Credentials and Map Validity Checks
 
     username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
@@ -824,16 +813,7 @@ get '/game/v1/:userkey/:mapid/space-probe/:battlecruisershipuuid' do
 
     if MapUtils::getCurrentMap()["mapId"] != mapId then
         return JSON.generate(GameLibrary::makeErrorAnswer(404, "Map not found (mapId is incorrect or outdated)"))
-    end    
-
-    # ------------------------------------------------------
-    # Throttling
-
-    if !Throttling::userRequestCanProceed(username) then
-        return JSON.generate(GameLibrary::makeErrorAnswer(403, "You are playing too fast. Need to wait #{$GAME_PARAMETERS["serverThrottlingWaitingPeriodInSeconds"]} seconds between requests"))
     end
-
-    Throttling::updateUserActionTime(username)
 
     # ------------------------------------------------------
     # User Fleet validation
