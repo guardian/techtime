@@ -2,7 +2,7 @@
     "mapSize": 1000,
     "mapJumpPointsCardinality": 500,
     "fleetCapitalShipInitialEnergyLevel": 4000,
-    "fleetCapitalShipTopUpChallengeDifficulty": 5,
+    "fleetCapitalShipTopUpChallengeDifficulty": 6,
     "fleetCapitalShipTopUpEnergyValue": 1000,
     "fleetBattleCruiserBuildEnergyCost": 100,
     "fleetBattleCruiserInitialEnergyLevel": 500,
