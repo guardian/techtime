@@ -38,6 +38,7 @@ require 'digest/sha1'
 require_relative "library/BombsUtils.rb"
 require_relative "library/MapUtils.rb"
 require_relative "library/Navigation.rb"
+require_relative "library/ScoringUtils.rb"
 require_relative "library/UserKeys.rb"
 require_relative "library/UserFleet.rb"
 
@@ -168,7 +169,7 @@ class GameLibrary
     def self.doUserFleetPointIncreaseForShipDestroyed(currentHour, username, nomenclature)
         userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
         userFleet = ScoringUtils::userFleetPointIncreaseForShipDestroyed(userFleet, nomenclature)
-        UserFleet::commitFleetToDisk(currentHour, username, fleet)
+        UserFleet::commitFleetToDisk(currentHour, username, userFleet)
     end
 
     # GameLibrary::userFleetsForHour(currentHour)
@@ -742,7 +743,7 @@ get '/game/v1/:userkey/:mapid/bomb/:battlecruisershipuuid/:targetpointlabel' do
     userkey = params["userkey"]
     mapId = params["mapid"]
 
-    battleCruiserShipUUID = params["battlecruisershipuuid"]
+    attackerBattleCruiserShipUUID = params["battlecruisershipuuid"]
     targetpointlabel = params["targetpointlabel"]
 
     currentHour = GameLibrary::hourCode()
@@ -755,9 +756,9 @@ get '/game/v1/:userkey/:mapid/bomb/:battlecruisershipuuid/:targetpointlabel' do
     # ------------------------------------------------------
     # User Credentials and Map Validity Checks
 
-    username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
+    attackerUsername = UserKeys::getUsernameFromUserkeyOrNull(userkey)
 
-    if username.nil? then
+    if attackerUsername.nil? then
         return JSON.generate(GameLibrary::makeErrorAnswer(401, "Invalid userkey"))
     end
 
@@ -778,51 +779,76 @@ get '/game/v1/:userkey/:mapid/bomb/:battlecruisershipuuid/:targetpointlabel' do
     # ------------------------------------------------------
     # User Fleet validation
 
-    userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
+    attackerUserFleet = UserFleet::getUserFleetDataOrNull(currentHour, attackerUsername)
 
-    if userFleet.nil? then
+    if attackerUserFleet.nil? then
         return JSON.generate(GameLibrary::makeErrorAnswer(404, "You do not yet have a fleet for this hour. (You should initiate one.)"))
     end
 
-    battleCruiser = UserFleet::getShipPerUUIDOrNull(currentHour, username, battleCruiserShipUUID)
+    attackerBattleCruiser = UserFleet::getShipPerUUIDOrNull(currentHour, attackerUsername, attackerBattleCruiserShipUUID)
 
-    if battleCruiser.nil? then
-        return JSON.generate(GameLibrary::makeErrorAnswer(404, "Your fleet has no ship with uuid #{battleCruiserShipUUID}"))
+    if attackerBattleCruiser.nil? then
+        return JSON.generate(GameLibrary::makeErrorAnswer(404, "Your fleet has no ship with uuid #{attackerBattleCruiserShipUUID}"))
     end
 
-    if !battleCruiser["alive"] then
+    if !attackerBattleCruiser["alive"] then
         return JSON.generate(GameLibrary::makeErrorAnswer(403, "The battle cruiser is dead"))
     end
 
     # ------------------------------------------------------
     # At this point we can attempt shooting
 
-    if battleCruiser["energyLevel"] < ( $GAME_PARAMETERS["fleetBattleCruiserBombBuildingCost"] + $GAME_PARAMETERS["fleetBattleCruiserBombNominalEnergy"] ) then
+    if attackerBattleCruiser["energyLevel"] < ( $GAME_PARAMETERS["fleetBattleCruiserBombBuildingCost"] + $GAME_PARAMETERS["fleetBattleCruiserBombNominalEnergy"] ) then
         return JSON.generate(GameLibrary::makeErrorAnswer(403, "Your cruiser doesn't have enough energy to complete the construction of a bomb"))   
     end
 
-    battleCruiser["energyLevel"] = battleCruiser["energyLevel"] - ( $GAME_PARAMETERS["fleetBattleCruiserBombBuildingCost"] + $GAME_PARAMETERS["fleetBattleCruiserBombNominalEnergy"] )
-    userFleet = UserFleet::insertOrUpdateShipAtFleet(userFleet, battleCruiser)
+    attackerBattleCruiser["energyLevel"] = attackerBattleCruiser["energyLevel"] - ( $GAME_PARAMETERS["fleetBattleCruiserBombBuildingCost"] + $GAME_PARAMETERS["fleetBattleCruiserBombNominalEnergy"] )
+    attackerUserFleet = UserFleet::insertOrUpdateShipAtFleet(attackerUserFleet, attackerBattleCruiser)
+    UserFleet::commitFleetToDisk(currentHour, attackerUsername, attackerUserFleet)
 
+    # Shooting happened from the point of view of the attacker (attacker user fleet is not yet to disk)
+
+    # ------------------------------------------------------
     # Ok, now time to do damage
 
-    distanceToTargetPoint = MapUtils::distanceBetweenTwoMapPoints(battleCruiser["location"], targetMapPoint)
+    distanceToTargetPoint = MapUtils::distanceBetweenTwoMapPoints(attackerBattleCruiser["location"], targetMapPoint)
     bombEffectiveEnergy = BombsUtils::bombEffectiveEnergy($GAME_PARAMETERS["fleetBattleCruiserBombNominalEnergy"], distanceToTargetPoint)
 
-    attackerBombDamageReport = []
+    attackerAllShipsDamageReport = []
 
     GameLibrary::userFleetsForHour(currentHour)
-        .each{|otherPlayerUserFleet|
-            UserFleet::userShipsWithinDisk(currentHour, otherPlayerUserFleet["username"], battleCruiser["location"], 0)
-                .each{|targetShip|
-                    otherPlayerUserFleet, targetShip, damageCausedForAttackerReport = UserFleet::registerShipTakingBombImpact(otherPlayerUserFleet, battleCruiser["location"], username, targetShip, bombEffectiveEnergy)
-                    attackerBombDamageReport << damageCausedForAttackerReport
-                    otherPlayerUserFleet = UserFleet::insertOrUpdateShipAtFleet(otherPlayerUserFleet, targetShip)
+        .each{|targetPlayerXUserFleet|
+            UserFleet::userShipsWithinDisk(currentHour, targetPlayerXUserFleet["username"], attackerBattleCruiser["location"], 0)
+                .each{|targetShipX|
+                    targetPlayerXUserFleet, targetShipX, damageCausedOnTargetShipXForAttackerPlayerReport = UserFleet::registerShipTakingBombImpact(targetPlayerXUserFleet, attackerBattleCruiser["location"], attackerUsername, targetShipX, bombEffectiveEnergy)
+                    attackerAllShipsDamageReport << damageCausedOnTargetShipXForAttackerPlayerReport
+                    targetPlayerXUserFleet = UserFleet::insertOrUpdateShipAtFleet(targetPlayerXUserFleet, targetShipX)
                 }
-            UserFleet::commitFleetToDisk(currentHour, otherPlayerUserFleet["username"], otherPlayerUserFleet)
+            UserFleet::commitFleetToDisk(currentHour, targetPlayerXUserFleet["username"], targetPlayerXUserFleet)
+            # Target players fleet have been updated. One clean call to UserFleet::commitFleetToDisk after having updated every ship at the bombing location   
         }
 
-    JSON.generate(GameLibrary::make200Answer(attackerBombDamageReport, currentHour, username))
+
+    # ------------------------------------------------------
+    # Now we only need to compute any point increase for the attacker and commit the attacker fleet to disk
+
+    # attackerAllShipsDamageReport contains either nil or this
+    #{
+    #    "username"     => userFleet["username"],
+    #    "nomenclature" => targetShip["nomenclature"],
+    #    "alive"        => targetShip["alive"]
+    #}    
+
+    attackerAllShipsDamageReport = attackerAllShipsDamageReport.compact # better    
+    attackerAllShipsDamageReport
+    .select{|item|
+        !item["alive"]
+    }
+    .each{|item|
+        GameLibrary::doUserFleetPointIncreaseForShipDestroyed(currentHour, attackerUsername, item["nomenclature"])
+    }
+    
+    JSON.generate(GameLibrary::make200Answer(attackerAllShipsDamageReport, currentHour, attackerUsername))
 end
 
 get '/game/v1/:userkey/:mapid/space-probe/:battlecruisershipuuid' do
@@ -924,6 +950,7 @@ get '/game/v1/scores' do
                 currentHour = File.basename(hoursFolderpath)
                 userFleetsOrdered = GameLibrary::userFleetsForHour(currentHour)
                     .sort{|f1, f2| f1["gameScore"] <=> f2["gameScore"] }
+                    .reverse
                 score = 0.1/0.7
                 lastValue = nil
                 [
@@ -936,7 +963,7 @@ get '/game/v1/scores' do
                         end
                         lastValue = currentUserValue
                         users = addScoreToUserLambda.call(users, userFleet["username"], score)
-                        "#{userFleet["username"].ljust(20)} , game point: #{"%7.3f" % currentUserValue} , leaderboard score increment: #{score.round(3)}"
+                        "#{userFleet["username"].ljust(20)} , game score: #{"%10.3f" % currentUserValue} , leaderboard score increment: #{score.round(3)}"
                     }.join("\n")
                 ].join("\n")
             }.join("\n") + "\n",
