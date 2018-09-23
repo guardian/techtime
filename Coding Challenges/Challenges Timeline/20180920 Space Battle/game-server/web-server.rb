@@ -52,6 +52,45 @@ end
 
 # -- --------------------------------------------------
 
+SERVER_FOLDERPATH = File.dirname(__FILE__)
+
+class DeploymentOperator
+    # DeploymentOperator::folderHash(folderpath)
+    def self.folderHash(folderpath)
+        Dir.entries(folderpath)
+            .select{|filename| filename[0,1] != "." }
+            .map{|filename| "#{folderpath}/#{filename}" }
+            .select{|filepath| File.file?(filepath) }
+            .map{|filepath| "#{filepath}:#{Digest::SHA1.file(filepath).hexdigest}" }
+            .join("::")
+    end
+    # DeploymentOperator::codeHash()
+    def self.codeHash()
+        hash1 = DeploymentOperator::folderHash(SERVER_FOLDERPATH)
+        hash2 = DeploymentOperator::folderHash("#{SERVER_FOLDERPATH}/library")
+        Digest::SHA1.hexdigest([hash1, hash2].join())
+    end
+end
+
+$INITIAL_CODE_HASH = DeploymentOperator::codeHash()
+
+=begin
+    The logic here is that the server is keep alive by MacOSX's Launchd, so it is safe to 
+    have it kill itself when the code is updated. Knowing it will (almost instantly) come back to life
+    on the updated code. Hence "deployment".
+=end
+
+Thread.new {
+    loop {
+        sleep 120
+        if $INITIAL_CODE_HASH != DeploymentOperator::codeHash() then
+            exit
+        end 
+    }
+}
+
+# -- --------------------------------------------------
+
 class GameLibrary
 
     # GameLibrary::hourCode()
@@ -177,49 +216,16 @@ class Throttling
 
 end
 
-class DeploymentOperator
-    # DeploymentOperator::folderHash(folderpath)
-    def self.folderHash(folderpath)
-        Dir.entries(folderpath)
-            .select{|filename| filename[0,1] != "." }
-            .map{|filename| "#{folderpath}/#{filename}" }
-            .select{|filepath| File.file?(filepath) }
-            .map{|filepath| "#{filepath}:#{Digest::SHA1.file(filepath).hexdigest}" }
-            .join("::")
-    end
-    # DeploymentOperator::codeHash()
-    def self.codeHash()
-        hash1 = DeploymentOperator::folderHash(SERVER_FOLDERPATH)
-        hash2 = DeploymentOperator::folderHash("#{SERVER_FOLDERPATH}/library")
-        Digest::SHA1.hexdigest([hash1, hash2].join())
-    end
-end
-
 # -- --------------------------------------------------
 
 GAME_DATA_FOLDERPATH = "/Galaxy/DataBank/WeeklyCodingChallenges/20180920-Weekly/#{LUCILLE_INSTANCE}"
 GAME_PARAMETERS_FILEPATH = File.dirname(__FILE__) + "/game-parameters.json"
 $GAME_PARAMETERS = JSON.parse(IO.read(GAME_PARAMETERS_FILEPATH)) # This is the first load, the file is duplicated and (re)read when a new map is created
 $LastUserRequestsTimesForThrottling = {}
-SERVER_FOLDERPATH = File.dirname(__FILE__)
-$INITIAL_CODE_HASH = DeploymentOperator::codeHash()
 
 # -- --------------------------------------------------
 
-=begin
-    The logic here is that the server is keep alive by MacOSX's Launchd, so it is safe to 
-    have it kill itself when the code is updated. Knowing it will (almost instantly) come back to life
-    on the updated code. Hence "deployment".
-=end
 
-Thread.new {
-    loop {
-        sleep 120
-        if $INITIAL_CODE_HASH != DeploymentOperator::codeHash() then
-            exit
-        end 
-    }
-}
 
 # -- --------------------------------------------------
 # Route
