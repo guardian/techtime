@@ -223,6 +223,10 @@ $usersFleetsIOActionsMutex = Mutex.new
 $mapInitMutex = Mutex.new
 
 # -- --------------------------------------------------
+
+File.open("#{GAME_DATA_FOLDERPATH}/server-restart-datetime-log.txt", "a"){|f| f.puts(Time.new.utc.iso8601) }
+
+# -- --------------------------------------------------
 # Route
 
 =begin
