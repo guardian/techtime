@@ -41,6 +41,15 @@ require_relative "library/Navigation.rb"
 require_relative "library/UserKeys.rb"
 require_relative "library/UserFleet.rb"
 
+# --  --------------------------------------------------
+
+LUCILLE_INSTANCE = ENV["COMPUTERLUCILLENAME"]
+
+if LUCILLE_INSTANCE.nil? then
+    puts "Error: Environment variable 'COMPUTERLUCILLENAME' is not defined."
+    exit
+end
+
 # -- --------------------------------------------------
 
 class GameLibrary
@@ -184,15 +193,6 @@ class DeploymentOperator
         hash2 = DeploymentOperator::folderHash("#{SERVER_FOLDERPATH}/library")
         Digest::SHA1.hexdigest([hash1, hash2].join())
     end
-end
-
-# --  --------------------------------------------------
-
-LUCILLE_INSTANCE = ENV["COMPUTERLUCILLENAME"]
-
-if LUCILLE_INSTANCE.nil? then
-    puts "Error: Environment variable 'COMPUTERLUCILLENAME' is not defined."
-    exit
 end
 
 # -- --------------------------------------------------
