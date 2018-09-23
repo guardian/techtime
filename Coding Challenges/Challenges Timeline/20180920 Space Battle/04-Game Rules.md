@@ -16,7 +16,7 @@
 
 1. Bombs have a **nominal power** (the amount of energy packet into them when they are built), but they also have an **effective power** which is the energy they have once they explode. The effective power is computed by a formula that uses the nominal power and _distance to target_ as inputs. The effective power is the energy that is substracted from the ship's energy level and if that energy level become negative, the ship dies.
 
-1. When a new map is created, a special fleet, belonging to user called "TheBBC" is created and put into the game. There is the Capital Ship and a dozen battle cruisers. They are immobile and do not shoot at anything. Use them as target practice, for free points :)
+1. When a new map is created, a special fleet, belonging to user called "The BBC" is created and put into the game. There is the Capital Ship and a dozen battle cruisers. They are immobile and do not shoot at anything. Use them as target practice, for free points :)
 
 1. When your Capital ship is dead, you can still control your Battle Cruisers, but you cannot control the energy carriers (in particular they cannot jump). If you have active energy carriers and active cruisers at the time your Capital dies. You can still move your battle cruisers where the energy carriers and perform energy transfers.
 
