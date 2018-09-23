@@ -14,7 +14,7 @@
 
 1. Energy Carriers die as soon as they are hit by a bomb. When a bomb hit a battle cruiser or a capital ship, those ships are affected proportionaly to the **effective energy** of the bomb.
 
-1. Bombs have a **nominal power** (the amount of energy packet into them when they are built), but they also have an **effective power** which is the energy they have once they explode. The effective power is computer by a formula that uses the nominal power and _distance to target_ as inputs. The effective power is the energy that is substracted from the ship's energy level and if that energy level become negative, the ship dies.
+1. Bombs have a **nominal power** (the amount of energy packet into them when they are built), but they also have an **effective power** which is the energy they have once they explode. The effective power is computed by a formula that uses the nominal power and _distance to target_ as inputs. The effective power is the energy that is substracted from the ship's energy level and if that energy level become negative, the ship dies.
 
 1. When a new map is created, a special fleet, belonging to user called "TheBBC" is created and put into the game. There is the Capital Ship and a dozen battle cruisers. They are immobile and do not shoot at anything. Use them as target practice, for free points :)
 
