@@ -339,6 +339,43 @@ get '/game/v1/:userkey/:mapid/capital-ship/init' do
     JSON.generate(GameLibrary::make200Answer(nil, currentHour, username))
 end
 
+get '/game/v1/:userkey/:mapid/fleet' do
+
+    content_type 'application/json'
+
+    userkey = params["userkey"]
+    mapId = params["mapid"]
+
+    currentHour = GameLibrary::hourCode()
+
+    # ------------------------------------------------------
+    # Throttling
+
+    Throttling::throttle(userkey)
+
+    # ------------------------------------------------------
+    # User Credentials and Map Validity Checks
+
+    username = UserKeys::getUsernameFromUserkeyOrNull(userkey)
+
+    if username.nil? then
+        return JSON.generate(GameLibrary::makeErrorAnswer(401, "Invalid userkey"))
+    end
+
+    if MapUtils::getCurrentMap()["mapId"] != mapId then
+        return JSON.generate(GameLibrary::makeErrorAnswer(404, "Map not found (mapId is incorrect or outdated)"))
+    end
+
+    # ------------------------------------------------------
+    # User Fleet validation
+
+    if UserFleet::getUserFleetDataOrNull(currentHour, username).nil? then
+        return JSON.generate(GameLibrary::makeErrorAnswer(403, "You do not yet have a user fleet for this hour"))
+    end
+
+    JSON.generate(GameLibrary::make200Answer(nil, currentHour, username))
+end
+
 get '/game/v1/:userkey/:mapid/capital-ship/top-up/:code' do
 
     content_type 'application/json'
