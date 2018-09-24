@@ -9,6 +9,37 @@
 curl http://10.249.16.173:14561
 ```
 
+## Server Answers
+
+With the exception of 
+	
+- `/game/v1/map`, and
+- `/game/v1/parameters`
+
+All answers from the API are JSON objects. Either
+
+```
+{
+    "status"    => 200
+    "answer"    => ({data relevant, answer} to the request itself)
+    "userFleet" => FleetReport
+}
+```
+
+or
+
+```
+{
+    "status"  => HTTP Error Code
+    "error"   => String # hexadecimal, length 8
+    "message" => String
+}
+```
+
+Which indicate, respectively, correct call, or a server 4XX kind of error. The server always returns HTTP 200 `application/json` but indicate in the JSON answer itself what the HTTP 4XX error is. This means that the client only needs to manipulate the JSON payload, and not HTTP error codes and JSON. 
+
+The error is an hexadecimal string of length 8. This is what you should be pattern matching against if your code needs to handle error types. Do not match against the messages themselves, are they are not stable.
+
 ### Get your user key
 
 I order to play you need to have a user key. It is issued once and you need to keep it secret. In order to get one, perform the two following steps:
@@ -20,6 +51,11 @@ I order to play you need to have a user key. It is issued once and you need to k
 	```
 	curl http://10.249.16.173:14561/game/v1/get-userkey/<YOUR-USERNAME>
 	```
+
+	Errors:
+		
+		- 403, "b357013e", "Usernames cannot contain a colon (character ':')" 
+		- 403, "bb7822f2", "There has already been a userkey issued for this username. If you think this is a mistake or you have forgotten your userkey, please contact Pascal."
 
 Be careful not to leak your userkey on chat when copy pasting commands.
 
@@ -182,6 +218,15 @@ For the moment the game only reports wormholes bomb. Note that the target is alw
 
 ## Game API
 
+### Generic Errors
+
+The following errors can be returned by any API calls.
+
+- 401, "c26b7c33", "Invalid userkey"
+- 404, "6cd08e91", "Map not found (mapId is incorrect or outdated)"
+- 403, "95a0b4e5", "You do not yet have a fleet for this hour. (You should initiate one.)"
+- 403, "86877586", "Your capital ship for this hour is dead"
+
 ### Capital Ship Initialization and Fleet Reports
 
 ```
@@ -191,6 +236,12 @@ For the moment the game only reports wormholes bomb. Note that the target is alw
 This can only be done once per game. And in particular, you cannot do it again after your Capital Ship has been destroyed for the current game.
 
 The return value is your initial fleet report.
+
+Errors:
+
+- 403, "3b6f4992", "You cannot init a Capital Ship, you already have one for this hour"
+
+### Fleet
 
 At any point you can query your fleet report with
 
@@ -206,6 +257,10 @@ At any point you can query your fleet report with
 
 Creates a battle cruiser and returns the corresponding BattleCruiser object. The call fails if your Capital didn't have enough energy to create the ship and fill it with that much energy.
 
+Errors:
+
+- 403, "36be6a8b", "Your capital ship doesn't have enough energy (...)"
+
 ### Space Probes
 
 Are performed by Battle Cruisers and are used to attempt to detect enemy ships. Note that a standard probe only covers a 300 kilometers radius.
@@ -214,6 +269,11 @@ Are performed by Battle Cruisers and are used to attempt to detect enemy ships. 
 /game/v1/:userkey/:mapid/space-probe/:battlecruisershipuuid
 ```
 
+Errors:
+
+- 404, "a0ce7e39", "Your fleet has no ship with uuid #{battleCruiserShipUUID}"
+- 403, "051366e2", "The probing battle cruiser is dead"
+
 ### Create Energy Carrier
 
 ```
@@ -221,6 +281,11 @@ Are performed by Battle Cruisers and are used to attempt to detect enemy ships. 
 ```
 
 Creates an energy carrier and returns the corresponding EnergyCarrier object. Note that in this command you need to specify the amount of energy you want the carrier to carry. The call fails if your Capital didn't have enough energy to create the ship and fill it with that much energy.
+
+Errors:
+
+- 403, "fc31efd0", "Your capital ship doesn't have enough energy (...)"
+- 403, "b68c3046", "You are creating a carrier with too much energy. (...)"
 
 ### Moving ships around
 
@@ -231,6 +296,13 @@ You can move your ship from any MapPoint to any other assuming you have enough e
 ```
 
 The energy expenditure for a jump depends on the distance you want to travel (the energy needed is proportional to the distance), but also the type of the ship. In increasing energy expenditure per ship type you have: carriers, battle cruisers and the Capital Ship (meaning that it is cheaper to move a carrier across a given distance than a battle cruiser). Capital Ships tend to be, by design, a bit expensive to move around.
+
+Errors:
+
+- 404, "34d25d8a", "The specified point doesn't exist"
+- 403, "f7a8dee2", "The ship is dead"
+- 403, "03717296", "Your capital ship is dead. You cannot jump energy carriers in that case."
+- 403, "c36b1859", "The ship doesn't have enough energy for this jump. ()"
 
 ### Energy transfer
 
@@ -243,6 +315,16 @@ For the former the call is
 ```
 
 **:energylevel** is how much you want to transfer.
+
+Errors:
+
+- 403, "66474ae3", "You are transferring energy from a ship to itself."
+- 404, "7b680a12", "Your fleet has no ship with uuid #{ship1uuid}"
+- 404, "1c5436b9", "Your fleet has no ship with uuid #{ship2uuid}"
+- 403, "391388ae", "The source ship, #{ship1uuid}, is dead"
+- 403, "a9e028ed", "The target ship, #{ship2uuid}, is dead"
+- 403, "a9971906", "You cannot transfer energy between the two ships, they are not at the same map location"
+- 403, "cf1e71c1", "The source ship has no energy to transfer"
 
 ### Shooting at things
 
@@ -265,6 +347,13 @@ AttackerBombDamageReportItem
 }
 ```
 Note that since an energy wormhole bomb is indiscriminate, you can hit your worn ships and the username can be your username. You do not get points for destroying your own fleet. 
+
+Errors:
+
+- 404, "88bb18fd", "The specified point doesn't exist"
+- 404, "1a0ddb98", "Your fleet has no ship with uuid #{attackerBattleCruiserShipUUID}"
+- 403, "bc0bb00f", "Your attacking battle cruiser is dead"
+- 403, "943802d8", "Your attacking battle cruiser doesn't have enough energy to complete the construction of a bomb"
 
 ### Capital Ship top up
 
@@ -297,32 +386,10 @@ Therefore you could use "nnaywpahgahl" as your top up code. How much energy is a
 
 When you complete a top-up challenge and commit your top-up code, a new challenge is written into your fleet's "capitalEnergyTopUpChallenge" key, allowing you to start working on a new top up.
 
-The top up call return `[true]` when successful, otherwise you get a 403.
+Errors:
 
-## Standard Answers
-
-Answers from the API are either 
-
-**Error Conditions**
-
-```
-{
-    "status"  => HTTP Error Code
-    "message" => String
-}
-```
-
-**200**
-
-```
-{
-    "status" => 200
-    "answer" => ({data relevant, answer} to the request itself)
-    "userFleet" => FleetReport
-}
-```
-
-In particluar you get a full FleetReport at every query.
+- 403, "d7713626", "Your code is correct, please keep it (!), but you cannot submit it at this time. Your ship has too much energy in reserve."
+- 403, "d07feb9c", "Your code is not a solution to the challenge"
 
 ## Scores
 
