@@ -52,4 +52,8 @@ Unlike in the first version of the game where players actions were throttled by 
 
 The Capital Ship top up challenge's proof of work is what slows the game down. You should control your energy levels carefully and be sure not to run out of it, otherwise your ships will be vulnerable to attacks until you top up (plus the time it will take you to distribute that energy around).
 
+### Rule 13: Server IP address
+
+The server's IP addresses are given in **02-Game URLs (quick look).txt**. We try to keep them stable. (Otherwise any changes will be communicated on the Weekly Coding Channel chat room.) 
+
 

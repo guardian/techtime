@@ -1,28 +1,37 @@
-curl http://10.249.16.173:14561/game/v1/get-userkey/alice
+curl http://18.202.178.236:14561/game/v1/get-userkey/alice
 
 username: alice
 userkey : f3216f2afe256f7c
 
-curl http://10.249.16.173:14561/game/v1/map
+The two IP addresses at which the game can be found are 
+    - Pascal's iMac in the office (available through VPN): 10.249.16.173 (more or less stable), and
+    - External unrestricted IP: 18.202.178.236 (external server owned by Pascal).
 
-curl http://10.249.16.173:14561/game/v1/parameters
+In this document the examples are given with the external IP.
 
-curl http://10.249.16.173:14561/game/v1/:userkey/:mapid/capital-ship/init
+curl http://18.202.178.236:14561/game/v1/map
 
-curl http://10.249.16.173:14561/game/v1/:userkey/:mapid/fleet
+curl http://18.202.178.236:14561/game/v1/map
 
-curl http://10.249.16.173:14561/game/v1/:userkey/:mapid/capital-ship/top-up/:code
+curl http://18.202.178.236:14561/game/v1/parameters
 
-curl http://10.249.16.173:14561/game/v1/:userkey/:mapid/capital-ship/create-battle-cruiser
+curl http://18.202.178.236:14561/game/v1/:userkey/:mapid/capital-ship/init
 
-curl http://10.249.16.173:14561/game/v1/:userkey/:mapid/capital-ship/create-energy-carrier/:energyamount
+curl http://18.202.178.236:14561/game/v1/:userkey/:mapid/fleet
 
-curl http://10.249.16.173:14561/game/v1/:userkey/:mapid/space-probe/:battlecruisershipuuid
+curl http://18.202.178.236:14561/game/v1/:userkey/:mapid/capital-ship/top-up/:code
 
-curl http://10.249.16.173:14561/game/v1/:userkey/:mapid/jump/:shipuuid/:targetpointlabel
+curl http://18.202.178.236:14561/game/v1/:userkey/:mapid/capital-ship/create-battle-cruiser
 
-curl http://10.249.16.173:14561/game/v1/:userkey/:mapid/energy-transfer/:ship1uuid/:ship2uuid/:amount
+curl http://18.202.178.236:14561/game/v1/:userkey/:mapid/capital-ship/create-energy-carrier/:energyamount
 
-curl http://10.249.16.173:14561/game/v1/:userkey/:mapid/bomb/:battlecruisershipuuid/:targetpointlabel
+curl http://18.202.178.236:14561/game/v1/:userkey/:mapid/space-probe/:battlecruisershipuuid
 
-curl http://10.249.16.173:14561/game/v1/scores
+curl http://18.202.178.236:14561/game/v1/:userkey/:mapid/jump/:shipuuid/:targetpointlabel
+
+curl http://18.202.178.236:14561/game/v1/:userkey/:mapid/energy-transfer/:ship1uuid/:ship2uuid/:amount
+
+curl http://18.202.178.236:14561/game/v1/:userkey/:mapid/bomb/:battlecruisershipuuid/:targetpointlabel
+
+curl http://18.202.178.236:14561/game/v1/scores
+
