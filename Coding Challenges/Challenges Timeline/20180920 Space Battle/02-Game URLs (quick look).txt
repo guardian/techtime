@@ -11,8 +11,6 @@ In this document the examples are given with the external IP.
 
 curl http://54.154.233.255:14561/game/v1/map
 
-curl http://54.154.233.255:14561/game/v1/map
-
 curl http://54.154.233.255:14561/game/v1/parameters
 
 curl http://54.154.233.255:14561/game/v1/:userkey/:mapid/capital-ship/init
