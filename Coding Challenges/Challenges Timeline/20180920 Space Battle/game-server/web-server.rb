@@ -1165,12 +1165,51 @@ end
 get '/challenge-20180927/scores' do
     content_type 'text/plain'
     Challenge20180927::ensureStructure()
-    currentHour = GameLibrary::hourCode()
-    usernames = $STRUCTURE[currentHour]["userSubmissions"].keys
-    usernames.map{|username|
-        item = $STRUCTURE[currentHour]["userSubmissions"][username]
-        "#{item["username"]}: #{item["value"]}"
-    }.join("\n") + "\n"
+
+    users = {}
+
+    addScoreToUserLambda = lambda {|users, user, score|
+        if users[user].nil? then
+            users[user] = 0
+        end
+        users[user] = (users[user] + score).round(3)
+        users
+    }
+
+    [
+        $STRUCTURE.keys
+            .sort
+            .map{|currentHour|
+                usersubmissionitemsordered = $STRUCTURE[currentHour]["userSubmissions"].values
+                    .sort{|us1, us2| us1["value"] <=> us1["value"] }
+                    .reverse
+                score = 0.1/0.7
+                lastValue = nil
+                [
+                    "",
+                    currentHour,
+                    usersubmissionitemsordered.map{|item|
+                        currentUserValue = item["value"]
+                        if currentUserValue != lastValue then
+                            score = score*0.7 
+                        end
+                        lastValue = currentUserValue
+                        users = addScoreToUserLambda.call(users, item["username"], score)
+                        "#{item["username"].ljust(20)} , game score: #{"%10.3f" % currentUserValue} , leaderboard score increment: #{score.round(3)}"
+                    }.join("\n")
+                ].join("\n")
+            }.join("\n") + "\n",
+        "Summary: ",    
+        users
+            .keys
+            .map{|username| [username, users[username]] }
+            .sort{|p1,p2| p1[1] <=> p2[1] }
+            .reverse
+            .map{|p|
+                username, score = p
+                "   - #{username.ljust(20)} : #{score}"
+            }.join("\n")
+    ].join("\n") + "\n"
 
 end
 

@@ -55,7 +55,7 @@ Each map for this challenge will have 100 points (a subset of the points of the 
 When you have valid collection, you can submit it to the server with
 
 ```
-curl http://52.19.203.87:14561/challenge-20180927/submit/<yourname>/<label1>,<radius1>,<label2>,<radius2>,(etc)
+curl http://52.19.203.87:14561/challenge-20180927/submit/<mapid>/<yourname>/<label1>,<radius1>,<label2>,<radius2>,(etc)
 ```
 
 Essentially, giving your collection of disks (each of them is a label together with a radius), you just linearise the collection as a sequence of alternating labels and radii. 
