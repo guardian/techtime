@@ -60,6 +60,8 @@ curl http://52.19.203.87:14561/challenge-20180927/submit/<mapid>/<yourname>/<lab
 
 Essentially, giving your collection of disks (each of them is a label together with a radius), you just linearise the collection as a sequence of alternating labels and radii. 
 
+**Advice**: when playing with it at first, try just one point with a small radius (1 kilometers) and then increase it slight to see how far you can push that one disk. Then try with two disks... This alone will give you a good idea of the problem you are trying to solve. 
+
 The value of `yourname` should be something nice and sweet, like `pascal.honore`.
 
 When the server receives your submission it will perform the following tasks
