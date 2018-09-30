@@ -29,7 +29,7 @@ You are after a collection of maximal value.
 The map for the current hour can be downloaded from here
 
 ```
-http://52.19.203.87:14561/challenge-20180927/map
+curl http://52.19.203.87:14561/challenge-20180927/map
 ```
 
 The map has the following structure
@@ -55,7 +55,7 @@ Each map for this challenge will have 100 points (a subset of the points of the 
 When you have valid collection, you can submit it to the server with
 
 ```
-http://52.19.203.87:14561/challenge-20180927/submit/<yourname>/<label1>,<radius1>,<label2>,<radius2>,(etc)
+curl http://52.19.203.87:14561/challenge-20180927/submit/<yourname>/<label1>,<radius1>,<label2>,<radius2>,(etc)
 ```
 
 Essentially, giving your collection of disks (each of them is a label together with a radius), you just linearise the collection as a sequence of alternating labels and radii. 
@@ -74,5 +74,5 @@ When the server receives your submission it will perform the following tasks
 Scores per hour will be available here
 
 ```
-http://52.19.203.87:14561/challenge-20180927/scores
+curl http://52.19.203.87:14561/challenge-20180927/scores
 ```
