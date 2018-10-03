@@ -85,7 +85,7 @@ Thread.new {
     loop {
         sleep 120
         if $INITIAL_CODE_HASH != DeploymentOperator::codeHash() then
-            exit
+            Kernel.exit
         end 
     }
 }
