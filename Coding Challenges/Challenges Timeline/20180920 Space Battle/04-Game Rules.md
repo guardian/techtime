@@ -56,4 +56,30 @@ The Capital Ship top up challenge's proof of work is what slows the game down. Y
 
 The server's IP addresses are given in **02-Game URLs (quick look).txt**. We try to keep them stable. (Otherwise any changes will be communicated on the Weekly Coding Channel chat room.) 
 
+### Rule 14: game-parameters.json
 
+Some aspects of the game are driven by the file `game-parameters.json`, which is a config file. When a new hour starts a copy of this file is stored together with the map and user data. This file is essentially a key value store and this rule helps clarifying the meaning of some of the keys
+
+- **bombsEffectMultiplier** (current value: **3**). Bombing work as follows: Your battle cruiser makes an energy bomb from its own energy tank, then wormholes that bomb to another location on the map, the bomb explodes and makes damages to ships at the target location. The damage that is applied to target ships manifests itself as a decrease of the target ships' energy reserve. In this sense the bombs are *anti-energy* bombs.
+	- The building of bombs is standardised. It cost **10** energy units to build (this is the value of `fleetBattleCruiserBombBuildingCost`) and then they carry **50** energy units (this is the value of `fleetBattleCruiserBombNominalEnergy`). This value of **50** is referred to as their **nominal energy**. 
+	- After having been transported across space the bomb has lost a bit of energy. The energy it carries after transport is given by the following formula 
+		```
+		nominalEnergy*Math.exp(-distanceToTarget.to_f/300)
+		``` 
+	- The amount of energy it will take from targetted ships is the above value multiplied by **3**, which is the current value of `bombsEffectMultiplier`. 
+	- Example: if you want to hit a ship located 300 kilometers  away, this will cost you `10 + 50 = 60` energy units and the targetted ships will lose `50*Math.exp(-100/300)*3 = 107.47` energy units. The same bombs from 5 kilometers away would cost them `50*Math.exp(-5/300)*3 = 147.52` energy units
+
+- **fleetShipNomenclature2JumpCostCoefficient`** (current value ):
+	
+	```
+	 {
+        "energyCarrier": 0.01,
+        "battleCruiser": 0.1,
+        "capitalShip"  : 0.5
+    }
+	``` 
+	- Depending on the ship the same jump costs differently. Almost nothing for the energy carrier, 10 times more for the battle cruiser, and 5 times the latter for the capital ship. The formula is `(distanceBetweenPoints**1.1)*coefficient`. 
+	- Example: jumping 200 kilometers costs `3.39` energy units to an energy carrier, but will cost `169.86` if the capital ship wanted to make the same jump.
+	
+- **serverThrottlingPausingPeriodInSeconds** (current value: 0.1). The server pause 100 miliseconds before executing your next request if your last request hit it less than 100 milliseconds ago.
+ 	
