@@ -1055,7 +1055,7 @@ class Challenge20180927
             return nil if mapPoint.nil?
             disk = {
                 "point"  => mapPoint,
-                "radius" => radius
+                "radius" => radius.round(12)
             }
             disks << disk
         end
@@ -1083,7 +1083,7 @@ class Challenge20180927
         disks.combination(2).to_a.all?{|pair|
             disk1 = pair[0]
             disk2 = pair[1]
-            MapUtils::distanceBetweenTwoMapPoints(disk1["point"], disk2["point"]) >= disk1["radius"]+disk2["radius"]
+            MapUtils::distanceBetweenTwoMapPoints(disk1["point"], disk2["point"]) >= (disk1["radius"]+disk2["radius"])
         }
     end
 
