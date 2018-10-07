@@ -1013,6 +1013,12 @@ get '/challenge-20180927/scores' do
     content_type 'text/plain'
     Challenge20180927::ensureStructure()
 
+    $STRUCTURE.keys
+        .sort
+        .map{|currentHour|
+            File.open("/Galaxy/DataBank/WeeklyCodingChallenges/20180927-Weekly/Lucille19/structure-#{currentHour}.json", "w"){|f| f.puts(JSON.pretty_generate($STRUCTURE[currentHour])) }
+        }
+
     users = {}
 
     addScoreToUserLambda = lambda {|users, user, score|
