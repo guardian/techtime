@@ -836,7 +836,7 @@ CHALLENGE_DATA_FOLDERPATH = "/Galaxy/DataBank/WeeklyCodingChallenges/20180927-We
 if !File.exists?(CHALLENGE_DATA_FOLDERPATH) then
     FileUtils.mkpath(CHALLENGE_DATA_FOLDERPATH)
 end
-CHALLENGE_DATA_STRUCTURE_FILEPATH = "#{CHALLENGE_DATA_FOLDERPATH}/structure.json"
+
 $STRUCTURE = nil
 
 =begin
@@ -863,30 +863,56 @@ Disk: {
 
 class Challenge20180927
 
+    # Challenge20180927::Challenge20180927::challengeStructureFilepathForHourCode(hourCode)
+    def self.challengeStructureFilepathForHourCode(hourCode)
+        "#{CHALLENGE_DATA_FOLDERPATH}/structure-#{hourCode}.json"
+    end
+
     # Challenge20180927::ensureStructure()
     def self.ensureStructure()
-        if !$STRUCTURE then
-            if File.exists?(CHALLENGE_DATA_STRUCTURE_FILEPATH) then
-                $STRUCTURE = JSON.parse(IO.read(CHALLENGE_DATA_STRUCTURE_FILEPATH))
-            else
-                $STRUCTURE = {}
+        currentHour = GameLibrary::hourCode() 
+        if $STRUCTURE.nil? then
+            $STRUCTURE = {}
+        end
+        if $STRUCTURE.nil? then
+            filepath = Challenge20180927::challengeStructureFilepathForHourCode(currentHour)
+            if File.exists?(filepath) then
+                $STRUCTURE = JSON.parse(IO.read(filepath))
             end
         end
-        currentHour = GameLibrary::hourCode() 
-        if $STRUCTURE[currentHour].nil? then
-            $STRUCTURE[currentHour] = {}
+        if $STRUCTURE.nil? then
+            $STRUCTURE = {}
+            $STRUCTURE = {}
             map = MapUtils::getCurrentMap()
             map["points"] = map["points"].first(100)
-            $STRUCTURE[currentHour]["map"] = map
-            $STRUCTURE[currentHour]["userSubmissions"] = {}
-        end
+            $STRUCTURE["map"] = map
+            $STRUCTURE["userSubmissions"] = {}
+            Challenge20180927::commitStructureToDisk()
+        end        
+
     end
 
     # Challenge20180927::commitStructureToDisk()
     def self.commitStructureToDisk()
+        hourCode = GameLibrary::hourCode()
         return if $STRUCTURE.nil?
-        File.open(CHALLENGE_DATA_STRUCTURE_FILEPATH, "w"){ |f| f.puts(JSON.pretty_generate($STRUCTURE)) }
-        File.open(CHALLENGE_DATA_STRUCTURE_FILEPATH.gsub("structure.json", "structure-#{GameLibrary::hourCode()}.json"), "w"){ |f| f.puts(JSON.pretty_generate($STRUCTURE)) }
+        return if $STRUCTURE[hourCode].nil?
+        filepath = Challenge20180927::challengeStructureFilepathForHourCode(hourCode)
+        File.open(filepath, "w"){ |f| f.puts(JSON.pretty_generate($STRUCTURE[hourCode])) }
+    end
+
+    # Challenge20180927::hourCodesFromTimeline()
+    def self.hourCodesFromTimeline()
+        Dir.entries(CHALLENGE_DATA_FOLDERPATH)
+            .select{|filename| filename[-5, 5]==".json" }
+            .map{|filename| filename[10, 13]}
+    end
+
+    # Challenge20180927::getStructureForGivenHourCodeOrNull(hourCode)
+    def self.getStructureForGivenHourCodeOrNull(hourCode)
+        filepath = Challenge20180927::challengeStructureFilepathForHourCode(hourCode)
+        return nil if !File.exists?(filepath)
+        JSON.parse(IO.read(filepath))
     end
 
     # Challenge20180927::makeDisksOrNull(map, submission)
@@ -943,7 +969,7 @@ end
 
 Thread.new {
     loop {
-        sleep 10
+        sleep 60
         Challenge20180927::commitStructureToDisk()
     }
 }
@@ -952,7 +978,7 @@ get '/challenge-20180927/map' do
     content_type 'application/json'
     Challenge20180927::ensureStructure()
     currentHour = GameLibrary::hourCode()
-    JSON.generate($STRUCTURE[currentHour]["map"])  
+    JSON.generate($STRUCTURE["map"])  
 end
 
 get '/challenge-20180927/submit/:mapid/:username/:submission' do
@@ -962,7 +988,7 @@ get '/challenge-20180927/submit/:mapid/:username/:submission' do
     submission = params["submission"]
     Challenge20180927::ensureStructure()
     currentHour = GameLibrary::hourCode()
-    map = $STRUCTURE[currentHour]["map"]
+    map = $STRUCTURE["map"]
     if mapid != map["mapId"] then
         status 404
         return "Incorrect map identifier \n"
@@ -986,17 +1012,17 @@ get '/challenge-20180927/submit/:mapid/:username/:submission' do
     end
     puts JSON.generate(disks)
     collectionValue = Challenge20180927::collectionValue(disks)
-    if $STRUCTURE[currentHour]["userSubmissions"][username].nil? then
-        $STRUCTURE[currentHour]["userSubmissions"][username] = {
+    if $STRUCTURE["userSubmissions"][username].nil? then
+        $STRUCTURE["userSubmissions"][username] = {
             "username"   => username,
             "submission" => submission,
             "value"      => collectionValue
         }
         JSON.generate(["Well done!"])
     else
-        onRecordCollectionValue = $STRUCTURE[currentHour]["userSubmissions"][username]["value"]
+        onRecordCollectionValue = $STRUCTURE["userSubmissions"][username]["value"]
         if collectionValue > onRecordCollectionValue then
-            $STRUCTURE[currentHour]["userSubmissions"][username] = {
+            $STRUCTURE["userSubmissions"][username] = {
                 "username"   => username,
                 "submission" => submission,
                 "value"      => collectionValue
@@ -1012,15 +1038,7 @@ end
 get '/challenge-20180927/scores' do
     content_type 'text/plain'
     Challenge20180927::ensureStructure()
-
-    $STRUCTURE.keys
-        .sort
-        .map{|currentHour|
-            File.open("/Galaxy/DataBank/WeeklyCodingChallenges/20180927-Weekly/Lucille19/structure-#{currentHour}.json", "w"){|f| f.puts(JSON.pretty_generate($STRUCTURE[currentHour])) }
-        }
-
     users = {}
-
     addScoreToUserLambda = lambda {|users, user, score|
         if users[user].nil? then
             users[user] = 0
@@ -1030,17 +1048,19 @@ get '/challenge-20180927/scores' do
     }
 
     [
-        $STRUCTURE.keys
+        Challenge20180927::hourCodesFromTimeline()
             .sort
-            .map{|currentHour|
-                usersubmissionitemsordered = $STRUCTURE[currentHour]["userSubmissions"].values
-                    .sort{|us1, us2| us1["value"] <=> us1["value"] }
+            .map{|hourCode|
+                puts hourCode
+                structure = Challenge20180927::getStructureForGivenHourCodeOrNull(hourCode)
+                usersubmissionitemsordered = structure["userSubmissions"].values
+                    .sort{|us1, us2| us1["value"] <=> us2["value"] }
                     .reverse
                 score = 0.1/0.7
                 lastValue = nil
                 [
                     "",
-                    currentHour,
+                    hourCode,
                     usersubmissionitemsordered.map{|item|
                         currentUserValue = item["value"]
                         if currentUserValue != lastValue then
