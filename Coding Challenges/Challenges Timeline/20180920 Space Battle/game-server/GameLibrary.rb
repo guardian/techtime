@@ -1,6 +1,16 @@
 
 # encoding: UTF-8
 
+require 'find'
+require 'fileutils'
+# FileUtils.mkpath '/a/b/c'
+# FileUtils.cp(src, dst)
+# FileUtils.mv 'oldname', 'newname'
+# FileUtils.rm(path_to_image)
+# FileUtils.rm_rf('dir/to/remove')
+
+# ----------------------------------------------------------
+
 class GameLibrary
 
     # GameLibrary::hourCode()
@@ -8,11 +18,26 @@ class GameLibrary
         Time.new.strftime("%Y-%m-%d-%H")
     end
 
-    # GameLibrary::getHoursFolderPaths()
-    def self.getHoursFolderPaths()
-        Dir.entries("#{GAME_DATA_FOLDERPATH}/Timeline")
-            .select{|filename| filename[0,1]!="." }
-            .map{|filename| "#{GAME_DATA_FOLDERPATH}/Timeline/#{filename}" }
+    # GameLibrary::makeGameAtHourDataFolderPathForGivenHourcode(hourCode)
+    def self.makeGameAtHourDataFolderPathForGivenHourcode(hourCode)
+        # hourCode exmaple 2018-10-07-11
+        folderpath = "#{GAME_DATA_FOLDERPATH}/Timeline/#{hourCode[0,4]}/#{hourCode[0,7]}/#{hourCode}"
+        if !File.exists?(folderpath) then
+            FileUtils.mkpath folderpath
+        end
+        folderpath
+    end
+
+    # GameLibrary::getGameAtHoursDataFolderPaths()
+    def self.getGameAtHoursDataFolderPaths()
+        folderpaths = []
+        Find.find("#{GAME_DATA_FOLDERPATH}/Timeline") do |path|
+          next if File.file?(path)
+          next if File.basename(path).start_with?(".")
+          next if File.basename(path).size != "2018-10-07-11".size
+          folderpaths << path
+        end
+        folderpaths
     end
 
     # GameLibrary::getMapAtHourFolderpath(folderpath)
@@ -24,12 +49,8 @@ class GameLibrary
     # GameLibrary::ensureGameFolderSetUpForThisHour()
     def self.ensureGameFolderSetUpForThisHour()
 
-        currentHour = GameLibrary::hourCode()
-
-        folderpath = "#{GAME_DATA_FOLDERPATH}/Timeline/#{currentHour}"
-        if !File.exists?(folderpath) then
-            FileUtils.mkpath folderpath
-        end
+        hourCode = GameLibrary::hourCode()
+        folderpath = GameLibrary::makeGameAtHourDataFolderPathForGivenHourcode(hourCode)
 
         mapfilepath = "#{folderpath}/map.json"
         return folderpath if File.exists?(mapfilepath)
@@ -38,7 +59,7 @@ class GameLibrary
         # The Map
         map = {}
         map["mapId"] = SecureRandom.uuid
-        map["timestamp"] = currentHour
+        map["timestamp"] = hourCode
         map["points"] = (1..$GAME_PARAMETERS["mapJumpPointsCardinality"]).map{|indx|
             {
                 "label" => SecureRandom.hex(4),
@@ -66,7 +87,7 @@ class GameLibrary
             cruiser = UserFleet::spawnBattleCruiser(mapPointX, initialEnergyLevelX)
             userFleet = UserFleet::insertOrUpdateShipAtFleet(userFleet, cruiser)
         }
-        UserFleet::commitFleetToDisk(currentHour, username, userFleet)
+        UserFleet::commitFleetToDisk(hourCode, username, userFleet)
 
         # ---------------------------------------
 
@@ -74,27 +95,28 @@ class GameLibrary
 
     end
 
-    # GameLibrary::doUserFleetPointIncreaseForShipDestroyed(currentHour, username, nomenclature)
-    def self.doUserFleetPointIncreaseForShipDestroyed(currentHour, username, nomenclature)
-        userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
+    # GameLibrary::doUserFleetPointIncreaseForShipDestroyed(hourCode, username, nomenclature)
+    def self.doUserFleetPointIncreaseForShipDestroyed(hourCode, username, nomenclature)
+        userFleet = UserFleet::getUserFleetDataOrNull(hourCode, username)
         userFleet = ScoringUtils::userFleetPointIncreaseForShipDestroyed(userFleet, nomenclature)
-        UserFleet::commitFleetToDisk(currentHour, username, userFleet)
+        UserFleet::commitFleetToDisk(hourCode, username, userFleet)
     end
 
-    # GameLibrary::userFleetsForHour(currentHour)
-    def self.userFleetsForHour(currentHour)
-        Dir.entries("#{GAME_DATA_FOLDERPATH}/Timeline/#{currentHour}/fleets")
+    # GameLibrary::userFleetsForHour(hourCode)
+    def self.userFleetsForHour(hourCode)
+        gameAtHourDataFolderPath = GameLibrary::makeGameAtHourDataFolderPathForGivenHourcode(hourCode)
+        Dir.entries("#{gameAtHourDataFolderPath}/fleets")
             .select{|filename| filename[-5,5]==".json" }
-            .map{|filename| "#{GAME_DATA_FOLDERPATH}/Timeline/#{currentHour}/fleets/#{filename}" }
+            .map{|filename| "#{gameAtHourDataFolderPath}/fleets/#{filename}" }
             .map{|filepath| JSON.parse(IO.read(filepath)) }
     end
 
-    # GameLibrary::make200Answer(answer, currentHour, username)
-    def self.make200Answer(answer, currentHour, username)
+    # GameLibrary::make200Answer(answer, hourCode, username)
+    def self.make200Answer(answer, hourCode, username)
         {
             "status" => 200,
             "answer" => answer,
-            "userFleet" => UserFleet::getUserFleetDataOrNull(currentHour, username)
+            "userFleet" => UserFleet::getUserFleetDataOrNull(hourCode, username)
         }
     end
 

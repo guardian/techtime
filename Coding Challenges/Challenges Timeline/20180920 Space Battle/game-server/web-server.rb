@@ -73,7 +73,7 @@ $mapInitMutex = Mutex.new
 
 # -- --------------------------------------------------
 
-File.open("#{GAME_DATA_FOLDERPATH}/server-last-restart-datetime.txt", "w"){|f| f.puts(Time.new.utc.iso8601) }
+File.open("#{GAME_DATA_FOLDERPATH}/server-last-restart-datetime.txt", "w"){|f| f.print(Time.new.utc.iso8601) }
 
 # -- --------------------------------------------------
 # Route
@@ -792,7 +792,7 @@ get '/game/v1/scores' do
     }
 
     [
-        GameLibrary::getHoursFolderPaths()
+        GameLibrary::getGameAtHoursDataFolderPaths()
             .sort
             .map{|hoursFolderpath|
                 currentHour = File.basename(hoursFolderpath)

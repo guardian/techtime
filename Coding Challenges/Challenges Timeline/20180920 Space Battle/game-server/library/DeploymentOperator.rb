@@ -31,7 +31,7 @@ Thread.new {
     loop {
         sleep 60
         if $INITIAL_CODE_HASH != DeploymentOperator::codeHash() then
-            Kernel.exit
+            # TODO: Maybe one day find what to put here. Nothing I tried worked, the thing just can't be killed from inside a thread.
         end 
     }
 }

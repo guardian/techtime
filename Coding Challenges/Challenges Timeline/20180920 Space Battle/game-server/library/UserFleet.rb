@@ -14,24 +14,25 @@ require 'digest/sha1'
 
 class UserFleet
 
-    # UserFleet::filepathToUserFleetData(currentHour, username)
-    def self.filepathToUserFleetData(currentHour, username)
+    # UserFleet::filepathToUserFleetData(hourCode, username)
+    def self.filepathToUserFleetData(hourCode, username)
+        gameAtHourDataFolderPath = GameLibrary::makeGameAtHourDataFolderPathForGivenHourcode(hourCode)
         filecode = Digest::SHA1.hexdigest(username)[0,8]
-        "#{GAME_DATA_FOLDERPATH}/Timeline/#{currentHour}/fleets/#{filecode}.json"
+        "#{gameAtHourDataFolderPath}/fleets/#{filecode}.json"
     end
 
-    # UserFleet::getUserFleetDataOrNull(currentHour, username)
-    def self.getUserFleetDataOrNull(currentHour, username)
-        fleetFilepath = UserFleet::filepathToUserFleetData(currentHour, username)
+    # UserFleet::getUserFleetDataOrNull(hourCode, username)
+    def self.getUserFleetDataOrNull(hourCode, username)
+        fleetFilepath = UserFleet::filepathToUserFleetData(hourCode, username)
         return nil if !File.exists?(fleetFilepath)
         $usersFleetsIOActionsMutex.synchronize {
             JSON.parse(IO.read(fleetFilepath))
         }
     end
 
-    # UserFleet::getUserFleetDataOrNull(currentHour, username) : Boolean # return false if UserFleet::getUserFleetDataOrNull(currentHour) return Null
-    def self.trueIfUserFleetIsAlive(currentHour, username)
-        fleetdata = UserFleet::getUserFleetDataOrNull(currentHour, username)
+    # UserFleet::getUserFleetDataOrNull(hourCode, username) : Boolean # return false if UserFleet::getUserFleetDataOrNull(hourCode) return Null
+    def self.trueIfUserFleetIsAlive(hourCode, username)
+        fleetdata = UserFleet::getUserFleetDataOrNull(hourCode, username)
         return false if fleetdata.nil?
         fleetdata["ships"][0]["alive"]
     end
@@ -68,9 +69,9 @@ class UserFleet
         }
     end
 
-    # UserFleet::validateTopUpCode(currentHour, username, code)
-    def self.validateTopUpCode(currentHour, username, code)
-        userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
+    # UserFleet::validateTopUpCode(hourCode, username, code)
+    def self.validateTopUpCode(hourCode, username, code)
+        userFleet = UserFleet::getUserFleetDataOrNull(hourCode, username)
         challenge = userFleet["capitalEnergyTopUpChallenge"]
         # {
         #    "input"      => String
@@ -79,18 +80,18 @@ class UserFleet
         Digest::SHA1.hexdigest("#{challenge["input"]}#{code}")[-challenge["difficulty"], challenge["difficulty"]] == ("0"*challenge["difficulty"])
     end
 
-    # UserFleet::topUpCapitalShipAndResetTopUpChallenge(currentHour, username, topUpValue, difficulty)
-    def self.topUpCapitalShipAndResetTopUpChallenge(currentHour, username, topUpValue, difficulty)
-        userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
+    # UserFleet::topUpCapitalShipAndResetTopUpChallenge(hourCode, username, topUpValue, difficulty)
+    def self.topUpCapitalShipAndResetTopUpChallenge(hourCode, username, topUpValue, difficulty)
+        userFleet = UserFleet::getUserFleetDataOrNull(hourCode, username)
         currentLevel = userFleet["ships"][0]["energyLevel"]
         userFleet["ships"][0]["energyLevel"] = currentLevel + topUpValue
         userFleet["capitalEnergyTopUpChallenge"] = UserFleet::spawnCapitalTopUpChallenge(difficulty)
-        UserFleet::commitFleetToDisk(currentHour, username, userFleet)
+        UserFleet::commitFleetToDisk(hourCode, username, userFleet)
     end
 
-    # UserFleet::commitFleetToDisk(currentHour, username, fleet)
-    def self.commitFleetToDisk(currentHour, username, fleet)
-        userFleetFilepath = UserFleet::filepathToUserFleetData(currentHour, username)
+    # UserFleet::commitFleetToDisk(hourCode, username, fleet)
+    def self.commitFleetToDisk(hourCode, username, fleet)
+        userFleetFilepath = UserFleet::filepathToUserFleetData(hourCode, username)
         if !File.exists?(File.dirname(userFleetFilepath)) then
             FileUtils.mkpath File.dirname(userFleetFilepath) # we do this because the fleet, subfolder of a timeline hours folder is not automatically created
         end 
@@ -138,9 +139,9 @@ class UserFleet
         Math.sqrt( (dx**2) + (dy**2) )
     end
 
-    # UserFleet::userShipsWithinDisk(currentHour, username, mapPoint, radius) # radius in kilometers
-    def self.userShipsWithinDisk(currentHour, username, mapPoint, radius)
-        userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
+    # UserFleet::userShipsWithinDisk(hourCode, username, mapPoint, radius) # radius in kilometers
+    def self.userShipsWithinDisk(hourCode, username, mapPoint, radius)
+        userFleet = UserFleet::getUserFleetDataOrNull(hourCode, username)
         userFleet["ships"].select{|ship|
             UserFleet::distanceBetweenTwoMapPoints(ship["location"], mapPoint) <= radius
         }
@@ -185,8 +186,8 @@ class UserFleet
         [userFleet, targetShip, attackerBombDamageReportItem]
     end
 
-    def self.getShipPerUUIDOrNull(currentHour, username, shipuuid)
-        userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
+    def self.getShipPerUUIDOrNull(hourCode, username, shipuuid)
+        userFleet = UserFleet::getUserFleetDataOrNull(hourCode, username)
         return nil if userFleet.nil?
         userFleet["ships"].select{|ship| ship["uuid"]==shipuuid }.first
     end
