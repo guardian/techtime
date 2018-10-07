@@ -1,0 +1,13 @@
+#!/usr/bin/ruby
+
+# encoding: utf-8
+
+require 'json'
+
+data = JSON.parse(IO.read('/Users/pascal/Desktop/structure.json'))
+hourCodes = data.keys
+puts hourCodes
+hourCodes.each{|hourCode|
+    filepath = "/Galaxy/DataBank/WeeklyCodingChallenges/20180927-Weekly/Lucille18/structure-#{hourCode}.json"
+    File.open(filepath, "w"){|f| f.puts(JSON.pretty_generate(data[hourCode])) }
+}
