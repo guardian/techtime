@@ -863,42 +863,49 @@ Disk: {
 
 class Challenge20180927
 
-    # Challenge20180927::Challenge20180927::challengeStructureFilepathForHourCode(hourCode)
+    # Challenge20180927::challengeStructureFilepathForHourCode(hourCode)
     def self.challengeStructureFilepathForHourCode(hourCode)
         "#{CHALLENGE_DATA_FOLDERPATH}/structure-#{hourCode}.json"
     end
 
+    # Challenge20180927::issueNewStructure()
+    def self.issueNewStructure()
+        $STRUCTURE = {}
+        map = MapUtils::getCurrentMap()
+        map["points"] = map["points"].first(100)
+        $STRUCTURE["map"] = map
+        $STRUCTURE["userSubmissions"] = {}
+        Challenge20180927::commitStructureToDisk() 
+    end
+
     # Challenge20180927::ensureStructure()
     def self.ensureStructure()
-        currentHour = GameLibrary::hourCode() 
         if $STRUCTURE.nil? then
-            $STRUCTURE = {}
-        end
-        if $STRUCTURE.nil? then
+            currentHour = GameLibrary::hourCode()
             filepath = Challenge20180927::challengeStructureFilepathForHourCode(currentHour)
             if File.exists?(filepath) then
-                $STRUCTURE = JSON.parse(IO.read(filepath))
+                structure = JSON.parse(IO.read(filepath))
+                if structure["map"]["timestamp"] == currentHour then
+                    $STRUCTURE = structure
+                    return
+                end
+            else
+                Challenge20180927::issueNewStructure()
+                return                
             end
         end
-        if $STRUCTURE.nil? then
-            $STRUCTURE = {}
-            $STRUCTURE = {}
-            map = MapUtils::getCurrentMap()
-            map["points"] = map["points"].first(100)
-            $STRUCTURE["map"] = map
-            $STRUCTURE["userSubmissions"] = {}
-            Challenge20180927::commitStructureToDisk()
-        end        
-
+        if $STRUCTURE and ( $STRUCTURE["map"]["timestamp"] == GameLibrary::hourCode() ) then
+            return
+        end
+        Challenge20180927::issueNewStructure()
     end
 
     # Challenge20180927::commitStructureToDisk()
     def self.commitStructureToDisk()
         hourCode = GameLibrary::hourCode()
         return if $STRUCTURE.nil?
-        return if $STRUCTURE[hourCode].nil?
         filepath = Challenge20180927::challengeStructureFilepathForHourCode(hourCode)
-        File.open(filepath, "w"){ |f| f.puts(JSON.pretty_generate($STRUCTURE[hourCode])) }
+        File.open(filepath, "w"){ |f| f.puts(JSON.pretty_generate($STRUCTURE)) }
     end
 
     # Challenge20180927::hourCodesFromTimeline()
@@ -910,9 +917,14 @@ class Challenge20180927
 
     # Challenge20180927::getStructureForGivenHourCodeOrNull(hourCode)
     def self.getStructureForGivenHourCodeOrNull(hourCode)
-        filepath = Challenge20180927::challengeStructureFilepathForHourCode(hourCode)
-        return nil if !File.exists?(filepath)
-        JSON.parse(IO.read(filepath))
+        if hourCode == $STRUCTURE["map"]["timestamp"] then
+            $STRUCTURE
+        else
+            filepath = Challenge20180927::challengeStructureFilepathForHourCode(hourCode)
+            return nil if !File.exists?(filepath)
+            JSON.parse(IO.read(filepath))
+        end
+
     end
 
     # Challenge20180927::makeDisksOrNull(map, submission)
@@ -977,7 +989,6 @@ Thread.new {
 get '/challenge-20180927/map' do
     content_type 'application/json'
     Challenge20180927::ensureStructure()
-    currentHour = GameLibrary::hourCode()
     JSON.generate($STRUCTURE["map"])  
 end
 
