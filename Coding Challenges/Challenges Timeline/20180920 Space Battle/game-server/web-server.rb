@@ -41,6 +41,7 @@ require_relative "library/Navigation.rb"
 require_relative "library/ScoringUtils.rb"
 require_relative "library/UserKeys.rb"
 require_relative "library/UserFleet.rb"
+require_relative "library/Throttling.rb"
 
 # --  --------------------------------------------------
 
@@ -55,169 +56,15 @@ end
 
 SERVER_FOLDERPATH = File.dirname(__FILE__)
 
-class DeploymentOperator
-    # DeploymentOperator::folderHash(folderpath)
-    def self.folderHash(folderpath)
-        Dir.entries(folderpath)
-            .select{|filename| filename[0,1] != "." }
-            .map{|filename| "#{folderpath}/#{filename}" }
-            .select{|filepath| File.file?(filepath) }
-            .map{|filepath| "#{filepath}:#{Digest::SHA1.file(filepath).hexdigest}" }
-            .join("::")
-    end
-    # DeploymentOperator::codeHash()
-    def self.codeHash()
-        hash1 = DeploymentOperator::folderHash(SERVER_FOLDERPATH)
-        hash2 = DeploymentOperator::folderHash("#{SERVER_FOLDERPATH}/library")
-        Digest::SHA1.hexdigest([hash1, hash2].join())
-    end
-end
-
-$INITIAL_CODE_HASH = DeploymentOperator::codeHash()
-
-=begin
-    The logic here is that the server is keep alive by MacOSX's Launchd, so it is safe to 
-    have it kill itself when the code is updated. Knowing it will (almost instantly) come back to life
-    on the updated code. Hence "deployment".
-=end
-
-Thread.new {
-    loop {
-        sleep 120
-        if $INITIAL_CODE_HASH != DeploymentOperator::codeHash() then
-            Kernel.exit
-        end 
-    }
-}
-
 # -- --------------------------------------------------
 
-class GameLibrary
-
-    # GameLibrary::hourCode()
-    def self.hourCode()
-        Time.new.strftime("%Y-%m-%d-%H")
-    end
-
-    # GameLibrary::getHoursFolderPaths()
-    def self.getHoursFolderPaths()
-        Dir.entries("#{GAME_DATA_FOLDERPATH}/Timeline")
-            .select{|filename| filename[0,1]!="." }
-            .map{|filename| "#{GAME_DATA_FOLDERPATH}/Timeline/#{filename}" }
-    end
-
-    # GameLibrary::getMapAtHourFolderpath(folderpath)
-    def self.getMapAtHourFolderpath(folderpath)
-        mapfilepath = "#{folderpath}/map.json"
-        JSON.parse(IO.read(mapfilepath))
-    end
-
-    # GameLibrary::ensureGameFolderSetUpForThisHour()
-    def self.ensureGameFolderSetUpForThisHour()
-
-        currentHour = GameLibrary::hourCode()
-
-        folderpath = "#{GAME_DATA_FOLDERPATH}/Timeline/#{currentHour}"
-        if !File.exists?(folderpath) then
-            FileUtils.mkpath folderpath
-        end
-
-        mapfilepath = "#{folderpath}/map.json"
-        return folderpath if File.exists?(mapfilepath)
-
-        # ---------------------------------------
-        # The Map
-        map = {}
-        map["mapId"] = SecureRandom.uuid
-        map["timestamp"] = currentHour
-        map["points"] = (1..$GAME_PARAMETERS["mapJumpPointsCardinality"]).map{|indx|
-            {
-                "label" => SecureRandom.hex(4),
-                "coordinates" => [ rand * $GAME_PARAMETERS["mapSize"], rand * $GAME_PARAMETERS["mapSize"] ].map{|c| c.round(2) }
-            }
-        }
-        File.open(mapfilepath, "w"){ |f| f.puts(JSON.pretty_generate(map)) }
-
-        # ---------------------------------------
-        # Game Parameters
-        FileUtils.cp(GAME_PARAMETERS_FILEPATH, "#{folderpath}/game-parameters.json")
-
-        # ---------------------------------------
-        # The BBC Fleet
-        # Here we set up the BBC fleet
-
-        username = "The BBC"
-        mapPoint = map["points"].sample
-        capitalShipInitialEnergy = $GAME_PARAMETERS["fleetCapitalShipInitialEnergyLevel"]
-        topUpChallengeDifficulty = $GAME_PARAMETERS["fleetCapitalShipTopUpChallengeDifficulty"]
-        userFleet = UserFleet::spawnUserFleet(username, mapPoint, capitalShipInitialEnergy, topUpChallengeDifficulty)
-        (1..20).each{|index|
-            mapPointX = map["points"].sample
-            initialEnergyLevelX = 100 + rand*100
-            cruiser = UserFleet::spawnBattleCruiser(mapPointX, initialEnergyLevelX)
-            userFleet = UserFleet::insertOrUpdateShipAtFleet(userFleet, cruiser)
-        }
-        UserFleet::commitFleetToDisk(currentHour, username, userFleet)
-
-        # ---------------------------------------
-
-        folderpath
-
-    end
-
-    # GameLibrary::doUserFleetPointIncreaseForShipDestroyed(currentHour, username, nomenclature)
-    def self.doUserFleetPointIncreaseForShipDestroyed(currentHour, username, nomenclature)
-        userFleet = UserFleet::getUserFleetDataOrNull(currentHour, username)
-        userFleet = ScoringUtils::userFleetPointIncreaseForShipDestroyed(userFleet, nomenclature)
-        UserFleet::commitFleetToDisk(currentHour, username, userFleet)
-    end
-
-    # GameLibrary::userFleetsForHour(currentHour)
-    def self.userFleetsForHour(currentHour)
-        Dir.entries("#{GAME_DATA_FOLDERPATH}/Timeline/#{currentHour}/fleets")
-            .select{|filename| filename[-5,5]==".json" }
-            .map{|filename| "#{GAME_DATA_FOLDERPATH}/Timeline/#{currentHour}/fleets/#{filename}" }
-            .map{|filepath| JSON.parse(IO.read(filepath)) }
-    end
-
-    # GameLibrary::make200Answer(answer, currentHour, username)
-    def self.make200Answer(answer, currentHour, username)
-        {
-            "status" => 200,
-            "answer" => answer,
-            "userFleet" => UserFleet::getUserFleetDataOrNull(currentHour, username)
-        }
-    end
-
-    # GameLibrary::makeErrorAnswer(httpstatus, errorcode, errormessage)
-    def self.makeErrorAnswer(httpstatus, errorcode, errormessage)
-        {
-            "status"   => httpstatus,
-            "error"    => errorcode,
-            "message"  => errormessage
-        }
-    end
-
-end
-
-class Throttling
-    # Throttling::throttle(userkey)
-    def self.throttle(userkey)
-        if $LastUserRequestsTimesForThrottling[userkey] then
-            if Time.new.to_f < ( $LastUserRequestsTimesForThrottling[userkey] + $GAME_PARAMETERS["serverThrottlingPausingPeriodInSeconds"] ) then
-                sleep 0.1
-            end
-        end
-        $LastUserRequestsTimesForThrottling[userkey] = Time.new.to_f
-    end
-end
+require_relative "GameLibrary.rb"
 
 # -- --------------------------------------------------
 
 GAME_DATA_FOLDERPATH = "/Galaxy/DataBank/WeeklyCodingChallenges/20180920-Weekly/#{LUCILLE_INSTANCE}"
 GAME_PARAMETERS_FILEPATH = File.dirname(__FILE__) + "/game-parameters.json"
 $GAME_PARAMETERS = JSON.parse(IO.read(GAME_PARAMETERS_FILEPATH)) # This is the first load, the file is duplicated and (re)read when a new map is created
-$LastUserRequestsTimesForThrottling = {}
 
 # -- --------------------------------------------------
 
@@ -226,7 +73,7 @@ $mapInitMutex = Mutex.new
 
 # -- --------------------------------------------------
 
-File.open("#{GAME_DATA_FOLDERPATH}/server-restart-datetime-log.txt", "a"){|f| f.puts(Time.new.utc.iso8601) }
+File.open("#{GAME_DATA_FOLDERPATH}/server-last-restart-datetime.txt", "w"){|f| f.puts(Time.new.utc.iso8601) }
 
 # -- --------------------------------------------------
 # Route
