@@ -1,0 +1,710 @@
+{
+  "map": {
+    "mapId": "65f47a4c-1e7a-4424-aaf9-5e6b0c0fb6b3",
+    "timestamp": "2018-10-09-10",
+    "points": [
+      {
+        "label": "80ba7722",
+        "coordinates": [
+          248.99,
+          916.0
+        ]
+      },
+      {
+        "label": "efbff925",
+        "coordinates": [
+          933.06,
+          141.55
+        ]
+      },
+      {
+        "label": "6879e0a4",
+        "coordinates": [
+          242.32,
+          179.2
+        ]
+      },
+      {
+        "label": "cf22cefa",
+        "coordinates": [
+          418.45,
+          925.86
+        ]
+      },
+      {
+        "label": "3b0f8029",
+        "coordinates": [
+          758.6,
+          387.66
+        ]
+      },
+      {
+        "label": "72f6cb23",
+        "coordinates": [
+          973.03,
+          551.95
+        ]
+      },
+      {
+        "label": "3fa55a5b",
+        "coordinates": [
+          470.05,
+          678.68
+        ]
+      },
+      {
+        "label": "b031067a",
+        "coordinates": [
+          969.16,
+          5.94
+        ]
+      },
+      {
+        "label": "a036723c",
+        "coordinates": [
+          205.21,
+          551.99
+        ]
+      },
+      {
+        "label": "03a017f7",
+        "coordinates": [
+          621.34,
+          69.95
+        ]
+      },
+      {
+        "label": "e3f92005",
+        "coordinates": [
+          842.43,
+          89.99
+        ]
+      },
+      {
+        "label": "40edee45",
+        "coordinates": [
+          563.01,
+          745.64
+        ]
+      },
+      {
+        "label": "6b8bf552",
+        "coordinates": [
+          607.18,
+          241.23
+        ]
+      },
+      {
+        "label": "387b1656",
+        "coordinates": [
+          784.16,
+          649.84
+        ]
+      },
+      {
+        "label": "0d54885a",
+        "coordinates": [
+          515.9,
+          628.92
+        ]
+      },
+      {
+        "label": "3a0374e0",
+        "coordinates": [
+          2.18,
+          382.75
+        ]
+      },
+      {
+        "label": "80110825",
+        "coordinates": [
+          190.96,
+          289.3
+        ]
+      },
+      {
+        "label": "992b11df",
+        "coordinates": [
+          743.16,
+          963.07
+        ]
+      },
+      {
+        "label": "55ffa2bf",
+        "coordinates": [
+          947.63,
+          46.48
+        ]
+      },
+      {
+        "label": "e6dde637",
+        "coordinates": [
+          237.74,
+          80.38
+        ]
+      },
+      {
+        "label": "a0935940",
+        "coordinates": [
+          641.41,
+          235.13
+        ]
+      },
+      {
+        "label": "94a4650f",
+        "coordinates": [
+          233.0,
+          747.39
+        ]
+      },
+      {
+        "label": "fee976ff",
+        "coordinates": [
+          798.91,
+          669.28
+        ]
+      },
+      {
+        "label": "0deac6ef",
+        "coordinates": [
+          226.91,
+          145.73
+        ]
+      },
+      {
+        "label": "d98ec0dc",
+        "coordinates": [
+          235.73,
+          141.03
+        ]
+      },
+      {
+        "label": "e465feb5",
+        "coordinates": [
+          350.02,
+          135.65
+        ]
+      },
+      {
+        "label": "48231e7b",
+        "coordinates": [
+          316.83,
+          296.36
+        ]
+      },
+      {
+        "label": "4ef78d8d",
+        "coordinates": [
+          62.15,
+          259.12
+        ]
+      },
+      {
+        "label": "3ebc7429",
+        "coordinates": [
+          709.63,
+          304.86
+        ]
+      },
+      {
+        "label": "d2a8f4a1",
+        "coordinates": [
+          926.56,
+          225.04
+        ]
+      },
+      {
+        "label": "50e07954",
+        "coordinates": [
+          359.01,
+          183.73
+        ]
+      },
+      {
+        "label": "8c50560b",
+        "coordinates": [
+          761.12,
+          563.05
+        ]
+      },
+      {
+        "label": "779379ed",
+        "coordinates": [
+          943.24,
+          42.48
+        ]
+      },
+      {
+        "label": "f5be86b8",
+        "coordinates": [
+          128.39,
+          265.4
+        ]
+      },
+      {
+        "label": "bffa8a45",
+        "coordinates": [
+          880.35,
+          15.16
+        ]
+      },
+      {
+        "label": "6c339c42",
+        "coordinates": [
+          241.93,
+          386.3
+        ]
+      },
+      {
+        "label": "56779196",
+        "coordinates": [
+          233.51,
+          117.4
+        ]
+      },
+      {
+        "label": "7ac98a82",
+        "coordinates": [
+          459.47,
+          814.18
+        ]
+      },
+      {
+        "label": "4b1696a6",
+        "coordinates": [
+          935.63,
+          162.4
+        ]
+      },
+      {
+        "label": "7f3e0aee",
+        "coordinates": [
+          830.21,
+          282.3
+        ]
+      },
+      {
+        "label": "569fc706",
+        "coordinates": [
+          328.95,
+          503.07
+        ]
+      },
+      {
+        "label": "a13467f6",
+        "coordinates": [
+          724.15,
+          738.26
+        ]
+      },
+      {
+        "label": "f73fbc3e",
+        "coordinates": [
+          244.62,
+          294.15
+        ]
+      },
+      {
+        "label": "219e9a4d",
+        "coordinates": [
+          731.53,
+          476.76
+        ]
+      },
+      {
+        "label": "96157a6c",
+        "coordinates": [
+          877.77,
+          471.93
+        ]
+      },
+      {
+        "label": "35ed9be4",
+        "coordinates": [
+          193.52,
+          499.99
+        ]
+      },
+      {
+        "label": "04941d4a",
+        "coordinates": [
+          342.74,
+          988.6
+        ]
+      },
+      {
+        "label": "5e49b2c9",
+        "coordinates": [
+          24.02,
+          866.69
+        ]
+      },
+      {
+        "label": "cdb13c82",
+        "coordinates": [
+          348.54,
+          320.06
+        ]
+      },
+      {
+        "label": "125951b2",
+        "coordinates": [
+          756.83,
+          337.43
+        ]
+      },
+      {
+        "label": "ab128122",
+        "coordinates": [
+          72.38,
+          147.02
+        ]
+      },
+      {
+        "label": "e4bec7e6",
+        "coordinates": [
+          58.37,
+          845.02
+        ]
+      },
+      {
+        "label": "e281b485",
+        "coordinates": [
+          484.29,
+          24.12
+        ]
+      },
+      {
+        "label": "f6740f8e",
+        "coordinates": [
+          871.74,
+          334.56
+        ]
+      },
+      {
+        "label": "cf0b3692",
+        "coordinates": [
+          251.43,
+          756.23
+        ]
+      },
+      {
+        "label": "0b7f53de",
+        "coordinates": [
+          742.42,
+          676.06
+        ]
+      },
+      {
+        "label": "c009f1b6",
+        "coordinates": [
+          354.79,
+          665.74
+        ]
+      },
+      {
+        "label": "c5f21407",
+        "coordinates": [
+          764.36,
+          556.95
+        ]
+      },
+      {
+        "label": "46fe9945",
+        "coordinates": [
+          427.08,
+          19.63
+        ]
+      },
+      {
+        "label": "c134ca3f",
+        "coordinates": [
+          293.06,
+          633.44
+        ]
+      },
+      {
+        "label": "343fe766",
+        "coordinates": [
+          185.1,
+          408.12
+        ]
+      },
+      {
+        "label": "e0627081",
+        "coordinates": [
+          946.44,
+          101.73
+        ]
+      },
+      {
+        "label": "68fa4cec",
+        "coordinates": [
+          920.29,
+          473.64
+        ]
+      },
+      {
+        "label": "ec99fd08",
+        "coordinates": [
+          448.06,
+          812.6
+        ]
+      },
+      {
+        "label": "ed230c03",
+        "coordinates": [
+          162.03,
+          79.75
+        ]
+      },
+      {
+        "label": "62236519",
+        "coordinates": [
+          761.74,
+          386.98
+        ]
+      },
+      {
+        "label": "d65c5e8a",
+        "coordinates": [
+          816.02,
+          330.48
+        ]
+      },
+      {
+        "label": "c5436d3f",
+        "coordinates": [
+          92.61,
+          866.33
+        ]
+      },
+      {
+        "label": "b44407f6",
+        "coordinates": [
+          808.5,
+          921.99
+        ]
+      },
+      {
+        "label": "06387328",
+        "coordinates": [
+          27.81,
+          978.83
+        ]
+      },
+      {
+        "label": "b6efd84d",
+        "coordinates": [
+          814.72,
+          204.92
+        ]
+      },
+      {
+        "label": "c225a9e1",
+        "coordinates": [
+          875.6,
+          306.2
+        ]
+      },
+      {
+        "label": "764d77ae",
+        "coordinates": [
+          404.01,
+          718.13
+        ]
+      },
+      {
+        "label": "8fa01910",
+        "coordinates": [
+          501.68,
+          317.05
+        ]
+      },
+      {
+        "label": "14ae1bf8",
+        "coordinates": [
+          469.21,
+          600.8
+        ]
+      },
+      {
+        "label": "60cdb5f1",
+        "coordinates": [
+          699.44,
+          573.86
+        ]
+      },
+      {
+        "label": "16832b5d",
+        "coordinates": [
+          20.89,
+          85.04
+        ]
+      },
+      {
+        "label": "3c154975",
+        "coordinates": [
+          799.38,
+          569.45
+        ]
+      },
+      {
+        "label": "bfb1e62c",
+        "coordinates": [
+          959.95,
+          337.86
+        ]
+      },
+      {
+        "label": "4bb93efb",
+        "coordinates": [
+          139.81,
+          846.79
+        ]
+      },
+      {
+        "label": "02ebda06",
+        "coordinates": [
+          42.33,
+          708.17
+        ]
+      },
+      {
+        "label": "f10a625e",
+        "coordinates": [
+          104.59,
+          216.78
+        ]
+      },
+      {
+        "label": "8ec20f01",
+        "coordinates": [
+          867.75,
+          283.19
+        ]
+      },
+      {
+        "label": "3ff8629d",
+        "coordinates": [
+          661.53,
+          377.1
+        ]
+      },
+      {
+        "label": "fb4213f3",
+        "coordinates": [
+          725.35,
+          562.74
+        ]
+      },
+      {
+        "label": "e0d855d8",
+        "coordinates": [
+          184.28,
+          503.01
+        ]
+      },
+      {
+        "label": "f97a2150",
+        "coordinates": [
+          620.78,
+          872.89
+        ]
+      },
+      {
+        "label": "f4959780",
+        "coordinates": [
+          171.9,
+          417.8
+        ]
+      },
+      {
+        "label": "8f79cd13",
+        "coordinates": [
+          415.36,
+          326.95
+        ]
+      },
+      {
+        "label": "2216f6de",
+        "coordinates": [
+          64.67,
+          659.24
+        ]
+      },
+      {
+        "label": "928b598d",
+        "coordinates": [
+          996.75,
+          704.53
+        ]
+      },
+      {
+        "label": "7153dc0d",
+        "coordinates": [
+          635.06,
+          416.77
+        ]
+      },
+      {
+        "label": "7d7b02ad",
+        "coordinates": [
+          319.85,
+          740.31
+        ]
+      },
+      {
+        "label": "4b84eab9",
+        "coordinates": [
+          500.18,
+          548.04
+        ]
+      },
+      {
+        "label": "725bc690",
+        "coordinates": [
+          647.77,
+          991.43
+        ]
+      },
+      {
+        "label": "b8372d52",
+        "coordinates": [
+          897.56,
+          577.87
+        ]
+      },
+      {
+        "label": "6d71c1fd",
+        "coordinates": [
+          475.39,
+          595.99
+        ]
+      },
+      {
+        "label": "5076390d",
+        "coordinates": [
+          672.91,
+          857.82
+        ]
+      },
+      {
+        "label": "4dee077d",
+        "coordinates": [
+          515.56,
+          805.05
+        ]
+      },
+      {
+        "label": "016b7b2d",
+        "coordinates": [
+          398.22,
+          80.22
+        ]
+      }
+    ]
+  },
+  "userSubmissions": {
+  }
+}
