@@ -927,6 +927,11 @@ class Challenge20180927
 
     end
 
+    # Challenge20180927::adjustRadiusDown(radius)
+    def self.adjustRadiusDown(radius)
+        (radius*(10**12)).to_i.to_f/(10**12)
+    end
+
     # Challenge20180927::makeDisksOrNull(map, submission)
     def self.makeDisksOrNull(map, submission)
         disks  = []
@@ -940,7 +945,7 @@ class Challenge20180927
             return nil if mapPoint.nil?
             disk = {
                 "point"  => mapPoint,
-                "radius" => radius.round(12)
+                "radius" => Challenge20180927::adjustRadiusDown(radius)
             }
             disks << disk
         end
