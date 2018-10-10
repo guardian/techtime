@@ -729,6 +729,7 @@ get '/game/v1/:userkey/:mapid/space-probe/:battlecruisershipuuid' do
     spaceProbeResults = {
         "unixtime" => Time.new.to_f,
         "datetime" => Time.now.utc.iso8601,
+        "location" => battleCruiser["location"],
         "results"  => []
     }
 

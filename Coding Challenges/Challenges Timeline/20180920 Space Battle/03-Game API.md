@@ -160,13 +160,14 @@ FleetReport
 
 - The score indicates how many points you have accumulated so far. 
 
-- `spaceProbeResults` are the results of a battle cruiser scanning space and retriving the location of enemy ships. The report is dated, with a timestamp expressed in Unixtime, and the type and location of enemy ships are given. Note that ships probing capabilities only extend to a disc of radius 300 kilometers from the current location of the ship. 
+- `spaceProbeResults` are the results of a battle cruiser scanning space and retriving the location of enemy ships. The report is dated, with a timestamp expressed in Unixtime, and the type and location of enemy ships are given. Note that ships probing capabilities only extend to a disc of radius 300 kilometers from the current location of the ship. The `location` is the location from which the scan was performed (the center of the scan disc).
 
     ```
     SpaceProbeResults
     {
         "unixtime" : Unixtime
         "datetime" : DateTime # same instant as the unixtime, given for user friendliness
+        "location" : MapPoint
         "results"  : Array[SpaceProbeResultItem]
     }
     
