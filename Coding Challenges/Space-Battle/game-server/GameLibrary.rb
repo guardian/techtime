@@ -21,7 +21,7 @@ class GameLibrary
     # GameLibrary::makeGameAtHourDataFolderPathForGivenHourcode(hourCode)
     def self.makeGameAtHourDataFolderPathForGivenHourcode(hourCode)
         # hourCode exmaple 2018-10-07-11
-        folderpath = "#{GAME_DATA_FOLDERPATH}/Timeline/#{hourCode[0,4]}/#{hourCode[0,7]}/#{hourCode}"
+        folderpath = "#{GAME_DATA_FOLDERPATH}/Timeline/#{hourCode[0,4]}/#{hourCode[0,7]}//#{hourCode[0,10]}/#{hourCode}"
         if !File.exists?(folderpath) then
             FileUtils.mkpath folderpath
         end
