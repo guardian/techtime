@@ -1,3 +1,6 @@
+Challenge is now closed. It ran from Thursday October 4th 2018 to Wednesday October 10th 2018.
+
+
 ## Non Overlapping Disks
 
 The challenge this week is an instance of a very general class of optimization problems usually known as **packing problems**. This is the kind of problem that most companies shipping products  needs to solve to save space (and therefore money).
