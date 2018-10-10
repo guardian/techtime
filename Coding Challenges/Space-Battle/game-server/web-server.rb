@@ -754,7 +754,28 @@ get '/game/v1/:userkey/:mapid/space-probe/:battlecruisershipuuid' do
     JSON.generate(GameLibrary::make200Answer(spaceProbeResults, currentHour, username))
 end
 
-get '/game/v1/scores' do
+get '/game/v1/scores/?:hourcode1?/?:hourcode2?' do
+
+    hourCode1 = params["hourcode1"]
+    hourCode2 = params["hourcode2"]
+
+    if hourCode1.nil? then
+        hourCode1 = GameLibrary::hourCode()
+    end
+
+    if hourCode2.nil? then
+        hourCode2 = GameLibrary::hourCode()
+    end
+
+    if hourCode1 and !(/^\d\d\d\d-\d\d-\d\d-\d\d$/.match(hourCode1)) then
+        status 404
+        return "Incorrect hour code (1)"
+    end 
+
+    if hourCode2 and !(/^\d\d\d\d-\d\d-\d\d-\d\d$/.match(hourCode2)) then
+        status 404
+        return "Incorrect hour code (2)"
+    end 
 
     content_type 'text/plain'
 
@@ -769,7 +790,7 @@ get '/game/v1/scores' do
     }
 
     [
-        GameLibrary::getGameAtHoursDataFolderPaths()
+        GameLibrary::getGameAtHoursDataFolderPathsBetweenHourCodes(hourCode1, hourCode2)
             .sort
             .map{|hoursFolderpath|
                 currentHour = File.basename(hoursFolderpath)

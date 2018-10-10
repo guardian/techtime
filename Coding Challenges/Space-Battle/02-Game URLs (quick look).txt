@@ -30,4 +30,5 @@ curl http://127.0.0.1:14561/game/v1/:userkey/:mapid/energy-transfer/:ship1uuid/:
 curl http://127.0.0.1:14561/game/v1/:userkey/:mapid/bomb/:battlecruisershipuuid/:targetpointlabel
 
 curl http://127.0.0.1:14561/game/v1/scores
+curl http://127.0.0.1:14561/game/v1/scores/:hourcode1/:hourcode2
 

@@ -40,6 +40,20 @@ class GameLibrary
         folderpaths
     end
 
+    # GameLibrary::getGameAtHoursDataFolderPathsBetweenHourCodes(hourCode1, hourCode2)
+    def self.getGameAtHoursDataFolderPathsBetweenHourCodes(hourCode1, hourCode2)
+        folderpaths = []
+        Find.find("#{GAME_DATA_FOLDERPATH}/Timeline") do |path|
+          next if File.file?(path)
+          next if File.basename(path).start_with?(".")
+          next if File.basename(path).size != "2018-10-07-11".size
+          next if File.basename(path) < hourCode1
+          next if File.basename(path) > hourCode2
+          folderpaths << path
+        end
+        folderpaths
+    end
+
     # GameLibrary::getMapAtHourFolderpath(folderpath)
     def self.getMapAtHourFolderpath(folderpath)
         mapfilepath = "#{folderpath}/map.json"

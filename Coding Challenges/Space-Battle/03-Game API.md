@@ -381,8 +381,20 @@ Errors:
 
 ## Scores
 
+To get the scores, call
+
+```
+/game/v1/scores/:hourcode1/:hourcode2
+```
+
+`hourcode1` and `hourcode2` are timestamps in the form `YYYY-MM-DD-HH`. You specify the datetime range you want the scoring to run for.
+
+If you call 
+
 ```
 /game/v1/scores
 ```
+
+Then you get the scores for the current hour.
 
 Text output, results per hour followed by summary.
