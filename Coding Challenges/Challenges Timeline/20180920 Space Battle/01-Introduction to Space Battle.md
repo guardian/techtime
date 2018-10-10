@@ -22,11 +22,9 @@ We carry on to this game the same scheduling that has shown to be great for prev
 
 Some of us already play as part of work. The Thursday Board Games meeting is an example of that. 
 
-Weekly coding challenges have been my best invention yet at the Guardian, and there is nothing like seeing people who take part being so delighted about them. You can spend a bit of your lunch times (or evenings if you are hard core like some of us), thinking about the challenges and come up with innovative solutions. They put the fun back in software engineering in a way we don't always experience during day job activities. 
-
-Unlike previous challenges where the few lines of code you wrote were challenge specific and obsolete at the end of the challenge weeks, work you will put here, either as a player or somebody contributing to the game design or its code will last indefinitely :) 
+Note that unlike previous challenges where the few lines of code you wrote were challenge specific and obsolete at the end of the challenge weeks, work you will put here, either as a player or somebody contributing to the game design or its code will last indefinitely :) 
 
 
 ## How do I join (or just keep an eye on it) ?
 
-Meet us at the Hangout Chat "Weekly Coding Challenge" channel.
+Meet us at the Hangout Chat "Weekly Coding Challenge" channel (Limited to Guardian staff).
