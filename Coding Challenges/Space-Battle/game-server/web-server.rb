@@ -62,7 +62,7 @@ require_relative "GameLibrary.rb"
 
 # -- --------------------------------------------------
 
-GAME_DATA_FOLDERPATH = "/Galaxy/DataBank/WeeklyCodingChallenges/20180920-Weekly/#{LUCILLE_INSTANCE}"
+GAME_DATA_FOLDERPATH = "/Galaxy/DataBank/Space-Battle-Server/#{LUCILLE_INSTANCE}"
 GAME_PARAMETERS_FILEPATH = File.dirname(__FILE__) + "/game-parameters.json"
 $GAME_PARAMETERS = JSON.parse(IO.read(GAME_PARAMETERS_FILEPATH)) # This is the first load, the file is duplicated and (re)read when a new map is created
 
