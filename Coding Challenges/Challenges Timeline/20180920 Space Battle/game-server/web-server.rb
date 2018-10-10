@@ -103,30 +103,6 @@ get '/' do
 end
 
 # ------------------------------------------
-# Some admin
-
-get '/game/v1/get-userkey/:username' do
-    content_type 'text/plain'
-    username = params["username"]
-
-    if username.include?(":") then
-        return JSON.generate(GameLibrary::makeErrorAnswer(403, "b357013e", "Usernames cannot contain a colon (character ':')"))
-    end
-
-    userKeysData = UserKeys::getUserKeysData()
-    if userKeysData.any?{|record| record[0]==username } then
-        return JSON.generate(GameLibrary::makeErrorAnswer(403, "bb7822f2", "There has already been a userkey issued for this username. If you think this is a mistake or you have forgotten your userkey, please contact Pascal."))
-    else
-        userkey = SecureRandom.hex(8)
-        UserKeys::commitUserKey(username, userkey)
-        [
-            "username: #{username}",
-            "userkey : #{userkey}"
-        ].join("\n") + "\n"
-    end
-end
-
-# ------------------------------------------
 # Map and Game Parameters
 
 get '/game/v1/map' do

@@ -42,22 +42,9 @@ The error is an hexadecimal string of length 8. This is what you should be patte
 
 ### Get your user key
 
-I order to play you need to have a user key. It is issued once and you need to keep it secret. In order to get one, perform the two following steps:
+A user key used to be available using self service end point, but due to greater exposure you should now request your key directly from Pascal. 
 
-1. Choose your username. I recommend something like `pascal.honore`. Note that your username cannot have a colon (`:`).
-
-1. Call 
-	
-	```
-	curl http://10.249.16.173:14561/game/v1/get-userkey/<YOUR-USERNAME>
-	```
-
-	Errors:
-		
-		- 403, "b357013e", "Usernames cannot contain a colon (character ':')" 
-		- 403, "bb7822f2", "There has already been a userkey issued for this username. If you think this is a mistake or you have forgotten your userkey, please contact Pascal."
-
-Be careful not to leak your userkey on chat when copy pasting commands.
+Be careful not to leak your userkey on chat if you copy paste urls.
 
 ### Get the current map
 

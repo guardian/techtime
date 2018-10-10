@@ -1,14 +1,11 @@
 
 The two IP addresses at which the game can be found are 
-    - Pascal's iMac in the office (available through VPN): 10.249.16.173 (more or less stable), and
-    - External unrestricted IP: 52.19.203.87 (external server owned by Pascal, stable).
 
-In this document the examples below are given with localhost. Replace "127.0.0.1" by the relevant IP.
+    - Pascal's iMac in the office (available through VPN): 10.249.16.173 (stable, 100% uptime), and
+    - External unrestricted IP: 52.19.203.87 (external server, occasional loss of connectivity).
 
-curl http://127.0.0.1:14561/game/v1/get-userkey/alice
-
-username: alice
-userkey : f3216f2afe256f7c
+All the current end points are described below. 
+The examples are given with localhost. Replace "127.0.0.1" by the relevant IP.
 
 curl http://127.0.0.1:14561/game/v1/map
 

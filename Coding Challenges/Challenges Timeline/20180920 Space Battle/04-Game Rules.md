@@ -16,7 +16,7 @@ Maps have **500** possible jump points, randomly positioned on the game canvas.
 
 ### Rule 4
 
-As a player you must get a `userkey`. There is one user key per username. Getting that key is your first step when starting to play. User keys prevent cheating by impersonating other players. Keep that key secret. See **Game API.md** for details.
+As a player you must get a `userkey`. There is one userkey per username. Getting that key is your first step when starting to play. User keys prevent cheating by impersonating other players. Keep that key secret. To get your userkey, talk to Pascal.
 
 ### Rule 5
 
