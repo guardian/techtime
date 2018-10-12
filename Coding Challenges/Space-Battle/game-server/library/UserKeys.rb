@@ -9,7 +9,7 @@ class UserKeys
         userKeysData = IO.read(userkeysFilepath)
                             .lines.map{|line| line.strip }
                             .select{|line| line.size>0 }
-                            .map{|line| line.split(":") }
+                            .map{|line| line.split(":").map{|t| t.strip } }
         userKeysData
     end
 
