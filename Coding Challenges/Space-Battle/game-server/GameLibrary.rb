@@ -21,7 +21,7 @@ class GameLibrary
     # GameLibrary::makeGameAtHourDataFolderPathForGivenHourcode(hourCode)
     def self.makeGameAtHourDataFolderPathForGivenHourcode(hourCode)
         # hourCode exmaple 2018-10-07-11
-        folderpath = "#{GAME_DATA_FOLDERPATH}/Timeline/#{hourCode[0,4]}/#{hourCode[0,7]}//#{hourCode[0,10]}/#{hourCode}"
+        folderpath = "#{GAME_INSTANCE_DATA_FOLDERPATH}/Timeline/#{hourCode[0,4]}/#{hourCode[0,7]}//#{hourCode[0,10]}/#{hourCode}"
         if !File.exists?(folderpath) then
             FileUtils.mkpath folderpath
         end
@@ -31,7 +31,7 @@ class GameLibrary
     # GameLibrary::getGameAtHoursDataFolderPaths()
     def self.getGameAtHoursDataFolderPaths()
         folderpaths = []
-        Find.find("#{GAME_DATA_FOLDERPATH}/Timeline") do |path|
+        Find.find("#{GAME_INSTANCE_DATA_FOLDERPATH}/Timeline") do |path|
           next if File.file?(path)
           next if File.basename(path).start_with?(".")
           next if File.basename(path).size != "2018-10-07-11".size
@@ -43,7 +43,7 @@ class GameLibrary
     # GameLibrary::getGameAtHoursDataFolderPathsBetweenHourCodes(hourCode1, hourCode2)
     def self.getGameAtHoursDataFolderPathsBetweenHourCodes(hourCode1, hourCode2)
         folderpaths = []
-        Find.find("#{GAME_DATA_FOLDERPATH}/Timeline") do |path|
+        Find.find("#{GAME_INSTANCE_DATA_FOLDERPATH}/Timeline") do |path|
           next if File.file?(path)
           next if File.basename(path).start_with?(".")
           next if File.basename(path).size != "2018-10-07-11".size

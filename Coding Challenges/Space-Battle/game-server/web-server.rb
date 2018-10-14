@@ -43,6 +43,8 @@ require_relative "library/UserKeys.rb"
 require_relative "library/UserFleet.rb"
 require_relative "library/Throttling.rb"
 
+require_relative "GameLibrary.rb"
+
 # --  --------------------------------------------------
 
 LUCILLE_INSTANCE = ENV["COMPUTERLUCILLENAME"]
@@ -52,28 +54,18 @@ if LUCILLE_INSTANCE.nil? then
     exit
 end
 
-# -- --------------------------------------------------
-
 SERVER_FOLDERPATH = File.dirname(__FILE__)
 
-# -- --------------------------------------------------
-
-require_relative "GameLibrary.rb"
-
-# -- --------------------------------------------------
-
-GAME_DATA_FOLDERPATH = "/Galaxy/DataBank/Space-Battle-Server/#{LUCILLE_INSTANCE}"
+GAME_INSTANCE_DATA_FOLDERPATH = "/Galaxy/DataBank/Space-Battle-Server/#{LUCILLE_INSTANCE}"
 GAME_PARAMETERS_FILEPATH = File.dirname(__FILE__) + "/game-parameters.json"
 $GAME_PARAMETERS = JSON.parse(IO.read(GAME_PARAMETERS_FILEPATH)) # This is the first load, the file is duplicated and (re)read when a new map is created
-
-# -- --------------------------------------------------
 
 $usersFleetsIOActionsMutex = Mutex.new
 $mapInitMutex = Mutex.new
 
-# -- --------------------------------------------------
+SERVER_LAST_RESTART_DATETIME = Time.new.utc.iso8601
 
-File.open("#{GAME_DATA_FOLDERPATH}/server-last-restart-datetime.txt", "w"){|f| f.print(Time.new.utc.iso8601) }
+File.open("#{GAME_INSTANCE_DATA_FOLDERPATH}/server-last-restart-datetime.txt", "w"){|f| f.print(SERVER_LAST_RESTART_DATETIME) }
 
 # -- --------------------------------------------------
 # Route
@@ -100,6 +92,14 @@ get '/' do
         "Space Battle. Game Server. Running at #{LUCILLE_INSTANCE}",
         "See https://github.com/guardian/techtime/tree/master/Coding%20Challenges/20180920-Weekly for details."
     ].join("\n") + "\n"
+end
+
+# ------------------------------------------
+# Server
+
+get '/server/last-restart-datetime' do
+    content_type 'text/plain'
+    SERVER_LAST_RESTART_DATETIME + "\n"
 end
 
 # ------------------------------------------
