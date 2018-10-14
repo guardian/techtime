@@ -29,6 +29,7 @@ Meet us at the Hangout Chat "Weekly Coding Challenge" channel (Limited to Guardi
 
 - **04-Game Rules**: More details about the game.
 
+The API and game rules can evolve (in backwards compatible ways) due to user requests, so don't hesitate to keep in touch with a request or an idea.
 
 ## Acknowledgements
 
