@@ -14,8 +14,8 @@ We carry on to this game the same scheduling that has shown to be great for prev
 
 The two IP addresses at which the game can be found are: 
 
-1. Pascal's iMac in the office (available through VPN): **10.249.16.173** (stable, 100% uptime), and 
-2. External unrestricted IP: **52.19.203.87** (external server, occasional loss of connectivity).
+1. Pascal's iMac in the office (available through VPN): **10.249.16.20**, and 
+2. External unrestricted IP: **52.19.203.87**.
 
 ## How do I join (or just keep an eye on it) ?
 
