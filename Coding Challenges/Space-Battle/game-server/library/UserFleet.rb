@@ -65,7 +65,8 @@ class UserFleet
             "gameScore"   => 0,
             "ships"       => [ capitalShip ],
             "spaceProbeResults" => {},
-            "logWarnings" => []
+            "logWarnings" => [],
+            "mapExploration" => []
         }
     end
 

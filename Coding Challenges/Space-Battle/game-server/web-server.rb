@@ -315,7 +315,6 @@ get '/game/v1/:userkey/:mapid/capital-ship/create-battle-cruiser' do
     else
         return JSON.generate(GameLibrary::makeErrorAnswer(403, "36be6a8b", "Your capital ship doesn't have enough energy to complete the construction of a battle cruiser. You have #{userFleet["ships"][0]["energyLevel"]} but you need #{(battleCruiserBuildEnergyCost+battleCruiserInitialEnergyLevel)}"))
     end
-
 end
 
 get '/game/v1/:userkey/:mapid/capital-ship/create-energy-carrier/:energyamount' do
@@ -468,10 +467,21 @@ get '/game/v1/:userkey/:mapid/jump/:shipuuid/:targetpointlabel' do
     ship["energyLevel"] = ship["energyLevel"] - jec
 
     userFleet = UserFleet::insertOrUpdateShipAtFleet(userFleet, ship)
+
+    shipNomenclatureToPointIncrease = {
+        "energyCarrier" => 1,
+        "battleCruiser" => 10,
+        "capitalShip"   => 50
+    }
+
+    if !userFleet["mapExploration"].include?(targetMapPoint["label"]) then
+        userFleet["mapExploration"] << targetMapPoint["label"]
+        userFleet["gameScore"] = userFleet["gameScore"] + shipNomenclatureToPointIncrease[ship["nomenclature"]]
+    end
+
     UserFleet::commitFleetToDisk(currentHour, username, userFleet)
 
     JSON.generate(GameLibrary::make200Answer(nil, currentHour, username))
-
 end
 
 get '/game/v1/:userkey/:mapid/energy-transfer/:ship1uuid/:ship2uuid/:amount' do
@@ -557,7 +567,6 @@ get '/game/v1/:userkey/:mapid/energy-transfer/:ship1uuid/:ship2uuid/:amount' do
     UserFleet::commitFleetToDisk(currentHour, username, userFleet)
 
     JSON.generate(GameLibrary::make200Answer([ ship1, ship2 ], currentHour, username))
-
 end
 
 get '/game/v1/:userkey/:mapid/bomb/:battlecruisershipuuid/:targetpointlabel' do
@@ -824,6 +833,5 @@ get '/game/v1/scores/?:hourcode1?/?:hourcode2?' do
                 "   - #{username.ljust(20)} : #{score}"
             }.join("\n")
     ].join("\n") + "\n"
-
 end
 
