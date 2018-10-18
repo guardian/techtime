@@ -44,7 +44,14 @@ When your Capital ship is dead, you can still control your Battle Cruisers, but 
 
 ### Rule 11
 
-The scoring is simple. Everytime you destroy a ship, your score is increased by a amount determined by the ship type. The relative ranking of players (for the Guardian leaderboard is the same as it's been the last few weeks before this game: best player gets 0.1 point per hour, second player 70% of that, etc..)
+The scoring is simple. Your score is increased either
+
+- when you destroy a ship. The increment depends on the type of the ship you've destroyed, or 
+- when you move one of your ships. The increment depends on the type of the ship you moved.
+
+The relative ranking of players (for the Guardian leaderboard) is the same as it's been the last few weeks before this game: best player gets 0.1 point per hour, second player 70% of that, etc..
+
+With `7*24=168` hours in a week, you can make up to **16.8** points per week.
 
 ### Rule 12
 

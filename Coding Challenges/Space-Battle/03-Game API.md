@@ -151,6 +151,7 @@ FleetReport
     "capitalEnergyTopUpChallenge" : CapitalShipTopUpChallenge
     "gameScore"         : Float
     "ships"             : Array[Ship] # Ship is CapitalShip, BattleCruiser or EnergyCarrier
+    "mapExploration"    : Array[MapPointLabel]
     "spaceProbeResults" : Map[UUID, SpaceProbeResults]
     "logWarnings"       : Array[WarningLogItem]
 }
@@ -159,6 +160,8 @@ FleetReport
 - `capitalEnergyTopUpChallenge` is used for the Capital Ship energy top up. See the section "Capital Ship top up" below for details.
 
 - The score indicates how many points you have accumulated so far. 
+
+- `mapExploration` records the map point labels that your ships have visited (was introduced as part of the expansion of game scoring to encourage exploration). 
 
 - `spaceProbeResults` are the results of a battle cruiser scanning space and retriving the location of enemy ships. The report is dated, with a timestamp expressed in Unixtime, and the type and location of enemy ships are given. Note that ships probing capabilities only extend to a disc of radius 300 kilometers from the current location of the ship. The `location` is the location from which the scan was performed (the center of the scan disc).
 
