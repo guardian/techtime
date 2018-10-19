@@ -12,7 +12,7 @@ The increment is driven by the following map
 }
 ```
 
-The map and scoring logic will remain, but the values of the above map are only valid for this wee (more pernament values will be given from next week).
+The map and scoring logic will remain, but the values of the above map are only valid for this week (more permanent values will be given from next week).
 
 In order to make your first points, you just need to
 
