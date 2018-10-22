@@ -1,28 +1,28 @@
 
-All the current end points are described below.  The examples are given with localhost. Replace "127.0.0.1" by the relevant IP.
+All game end-points are described below
 
-curl http://127.0.0.1:14561/game/v1/map
+curl http://52.19.203.87:14561/game/v1/map
 
-curl http://127.0.0.1:14561/game/v1/parameters
+curl http://52.19.203.87:14561/game/v1/parameters
 
-curl http://127.0.0.1:14561/game/v1/:userkey/:mapid/capital-ship/init
+curl http://52.19.203.87:14561/game/v1/:userkey/:mapid/capital-ship/init
 
-curl http://127.0.0.1:14561/game/v1/:userkey/:mapid/fleet
+curl http://52.19.203.87:14561/game/v1/:userkey/:mapid/fleet
 
-curl http://127.0.0.1:14561/game/v1/:userkey/:mapid/capital-ship/top-up/:code
+curl http://52.19.203.87:14561/game/v1/:userkey/:mapid/capital-ship/top-up/:code
 
-curl http://127.0.0.1:14561/game/v1/:userkey/:mapid/capital-ship/create-battle-cruiser
+curl http://52.19.203.87:14561/game/v1/:userkey/:mapid/capital-ship/create-battle-cruiser
 
-curl http://127.0.0.1:14561/game/v1/:userkey/:mapid/capital-ship/create-energy-carrier/:energyamount
+curl http://52.19.203.87:14561/game/v1/:userkey/:mapid/capital-ship/create-energy-carrier/:energyamount
 
-curl http://127.0.0.1:14561/game/v1/:userkey/:mapid/space-probe/:battlecruisershipuuid
+curl http://52.19.203.87:14561/game/v1/:userkey/:mapid/space-probe/:battlecruisershipuuid
 
-curl http://127.0.0.1:14561/game/v1/:userkey/:mapid/jump/:shipuuid/:targetpointlabel
+curl http://52.19.203.87:14561/game/v1/:userkey/:mapid/jump/:shipuuid/:targetpointlabel
 
-curl http://127.0.0.1:14561/game/v1/:userkey/:mapid/energy-transfer/:ship1uuid/:ship2uuid/:amount
+curl http://52.19.203.87:14561/game/v1/:userkey/:mapid/energy-transfer/:ship1uuid/:ship2uuid/:amount
 
-curl http://127.0.0.1:14561/game/v1/:userkey/:mapid/bomb/:battlecruisershipuuid/:targetpointlabel
+curl http://52.19.203.87:14561/game/v1/:userkey/:mapid/bomb/:battlecruisershipuuid/:targetpointlabel
 
-curl http://127.0.0.1:14561/game/v1/scores
-curl http://127.0.0.1:14561/game/v1/scores/:hourcode1/:hourcode2
+curl http://52.19.203.87:14561/game/v1/scores
+curl http://52.19.203.87:14561/game/v1/scores/:hourcode1/:hourcode2
 
