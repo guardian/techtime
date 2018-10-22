@@ -19,7 +19,7 @@ The two IP addresses at which the game can be found are:
 
 ## How do I join (or just keep an eye on it) ?
 
-Meet us at the Hangout Chat "Weekly Coding Challenge" channel (Limited to Guardian staff).
+Meet us at the Hangouts Chat "Weekly Coding Challenge" channel (Limited to Guardian staff).
 
 ## Game manuals
 
