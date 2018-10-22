@@ -14,9 +14,9 @@ For Guardian staff: the points you make each hour are accumulated throughout the
 
 ## How do I join (or just keep an eye on it) ?
 
-For Guardian staff: join us at the Hangouts Chat "Weekly Coding Challenge" channel.
+For Guardian staff: join us at the Hangouts Chat "Weekly Coding Challenge" channel. For external players: just drop Pascal a line (github handle: **shtukas**).
 
-For external players: just drop Pascal a line (github handle: **shtukas**).
+Players need a userkey that is given away upon request (there isn't a self service userkey end point for the moment).
 
 ## Where can I find the server ?
 
