@@ -12,18 +12,38 @@ We carry on with this game the same scheduling that has shown to be great for pr
 
 For Guardian staff: the points you make each hour are accumulated throughout the week and added to the leaderboard every Wednesday evening.
 
-## How do I join (or just keep an eye on it) ?
+## Playing
+
+### How do I join (or just keep an eye on it) ?
 
 For Guardian staff: join us at the Hangouts Chat "Weekly Coding Challenge" channel. For external players: just drop Pascal a line (github handle: **shtukas**).
 
 Players need a userkey that is given away upon request (there isn't a self service userkey end point for the moment).
 
-## Where can I find the server ?
+### Where can I find the server ?
 
 The two IP addresses at which the game can be found are: 
 
 1. Pascal's iMac in the office (available through VPN): **10.249.16.20**, and 
 2. External IP: **52.19.203.87**.
+
+### What should I do first ?
+
+First you can just test that the server is up and running by calling the current map (you do not need a userkey for that)
+
+```
+curl http://52.19.203.87:14561/game/v1/map
+```
+
+Then, assuming you have a userkey, look up the **mapId** in the answer of the previous call, and you can already **init** your fleet
+
+```
+curl http://52.19.203.87:14561/game/v1/:userkey/:mapid/capital-ship/init
+```
+
+Replace `:userkey` and `:mapid` by the correct values in the previous URL. A new map, and in fact an entire new game, starts at the top of each hour (with a new **mapId**). 
+
+Everything else you need to know to play can be found in the game manuals.
 
 ## Game manuals
 
