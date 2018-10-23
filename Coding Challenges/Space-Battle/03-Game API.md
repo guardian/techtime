@@ -73,7 +73,7 @@ MapPoint: {
 ### Game parameters
 
 ```
-curl http://10.249.16.173:14561/game/v1/game-parameters
+curl http://10.249.16.173:14561/game/v1/parameters
 ```
 
 This JSON object contains almost all of the contants / parameters of the game: from the size of the canvas and number of jump points to how much energy various operations cost etc.
