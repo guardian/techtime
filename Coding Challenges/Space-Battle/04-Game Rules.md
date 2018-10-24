@@ -32,7 +32,7 @@ Energy Carriers die as soon as they are hit by a bomb. When a bomb hit a battle 
 
 ### Rule 8
 
-Bombs have a **nominal power** (the amount of energy packet into them when they are built), but they also have an **effective power** which is the energy they have once they explode. The effective power is computed by a formula that uses the nominal power and _distance to target_ as inputs. The effective power is the energy that is substracted from the ship's energy level and if that energy level become negative, the ship dies.
+Bombs have a **nominal power** (the amount of energy packet into them when they are built), but they also have an **effective power** which is the energy they have once they explode. The effective power is computed by a formula that uses the nominal power and _distance to target_ as inputs. The effective power is the energy that is substracted from the ship's energy level and if that energy level becomes negative, the ship dies.
 
 ### Rule 9
 
@@ -68,7 +68,7 @@ The server's IP addresses are given in **02-Game URLs (quick look).txt**. We try
 Some aspects of the game are driven by the file `game-parameters.json`, which is a config file. When a new hour starts a copy of this file is stored together with the map and user data. This file is essentially a key value store and this rule helps clarifying the meaning of some of the keys
 
 - **bombsEffectMultiplier** (current value: **3**). Bombing work as follows: Your battle cruiser makes an energy bomb from its own energy tank, then wormholes that bomb to another location on the map, the bomb explodes and makes damages to ships at the target location. The damage that is applied to target ships manifests itself as a decrease of the target ships' energy reserve. In this sense the bombs are *anti-energy* bombs.
-	- The building of bombs is standardised. It cost **10** energy units to build (this is the value of `fleetBattleCruiserBombBuildingCost`) and then they carry **50** energy units (this is the value of `fleetBattleCruiserBombNominalEnergy`). This value of **50** is referred to as their **nominal energy**. 
+	- The building of bombs is standardised. It costs **10** energy units to build (this is the value of `fleetBattleCruiserBombBuildingCost`) and then they carry **50** energy units (this is the value of `fleetBattleCruiserBombNominalEnergy`). This value of **50** is referred to as their **nominal energy**. 
 	- After having been transported across space the bomb has lost a bit of energy. The energy it carries after transport is given by the following formula 
 		```
 		nominalEnergy*Math.exp(-distanceToTarget.to_f/300)
