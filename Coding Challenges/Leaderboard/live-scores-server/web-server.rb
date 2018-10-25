@@ -14,12 +14,15 @@ require 'securerandom'
 
 require 'json'
 
-require_relative "../leaderboard-core.rb"
+require_relative "../LeaderboardLibrary.rb"
 
 # --  --------------------------------------------------
 
 set :port, 13999
 #set :public_folder, "path/to/www"
+
+POINTS_ROOT_FOLDERPATH = "#{File.dirname(__FILE__)}/../points-files"
+HALF_YEAR_IN_DAYS = 182.62
 
 # -- --------------------------------------------------
 # Route
@@ -38,7 +41,7 @@ end
 
 get '/leaderboard' do
     content_type 'text/plain'
-    pointsToLeaderboard(getPoints())
+    LeaderboardLibrary::pointsToLeaderboard(LeaderboardLibrary::getPoints(POINTS_ROOT_FOLDERPATH), HALF_YEAR_IN_DAYS)
         .map{|p| "#{p["name"].ljust(20)}: #{"%9.6f" % p["score"]}" }
         .join("\n") + "\n"
 end
