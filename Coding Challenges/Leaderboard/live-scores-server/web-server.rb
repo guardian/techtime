@@ -33,20 +33,12 @@ end
 
 get '/' do
     content_type 'text/plain'
-    [
-        "/leaderboard : for the live leader board",
-        "/points      : for the points file" 
-    ].join("\n")+"\n"
+    "/leaderboard : for the live leaderboard\n"
 end
 
 get '/leaderboard' do
     content_type 'text/plain'
-    LeaderboardLibrary::pointsToLeaderboard(LeaderboardLibrary::getPoints(POINTS_ROOT_FOLDERPATH), HALF_YEAR_IN_DAYS)
+    LeaderboardLibrary::getStructureNX2010(POINTS_ROOT_FOLDERPATH, HALF_YEAR_IN_DAYS)
         .map{|p| "#{p["name"].ljust(20)}: #{"%9.6f" % p["score"]}" }
         .join("\n") + "\n"
-end
-
-get '/points' do
-    content_type 'text/plain'
-    IO.read("#{File.dirname(__FILE__)}/../points2.txt")
 end

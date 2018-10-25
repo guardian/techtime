@@ -4,6 +4,27 @@ require 'json'
 require 'date'
 require 'find'
 
+=begin
+
+The root folderpath is meant to be a fs location under which every text file (suffix: .txt) is 
+going to be interpreted as a points file
+
+Points files contains enries of the form
+
+```
+Luke Skywalker; 2018-06-29 17:30:00 +0100; 1
+```
+
+Lines starting with # are ignored.
+
+StructureNX2010 = Array[UserScore]
+UserScore = Object {
+    "name"  : String, 
+    "score" : Double
+}
+
+=end
+
 class LeaderboardLibrary
 
     # LeaderboardLibrary::timeSinceDateTimeInHalfYears(currentTime, pointdatetime, daysToExpMinusOne)
@@ -42,8 +63,8 @@ class LeaderboardLibrary
         }.flatten
     end
 
-    # LeaderboardLibrary::pointsToLeaderboard(points, daysToExpMinusOne)
-    def self.pointsToLeaderboard(points, daysToExpMinusOne) # Array[{"name" => name, "score" => score}]
+    # LeaderboardLibrary::pointsToLeaderboard(points, daysToExpMinusOne) # Array[{"name" => name, "score" => score}]
+    def self.pointsToLeaderboard(points, daysToExpMinusOne)
         currentTime = Time.new
         names = points.map{|point| point["name"] }.uniq
         names
@@ -59,6 +80,11 @@ class LeaderboardLibrary
             }.reverse
     end
 
+    # LeaderboardLibrary::getStructureNX2010(rootfolderpath, daysToExpMinusOne) # Array[{"name" => name, "score" => score}]
+    def self.getStructureNX2010(rootfolderpath, daysToExpMinusOne)
+        points = LeaderboardLibrary::getPoints(rootfolderpath)
+        LeaderboardLibrary::pointsToLeaderboard(points, daysToExpMinusOne)
+    end
 end
 
     
