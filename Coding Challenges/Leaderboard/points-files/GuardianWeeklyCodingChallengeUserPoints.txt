@@ -67,3 +67,8 @@ Adam Fisher;        2018-09-19 18:00:00 +0100; 2 ; Code Sharing
 # Week 10 ( Space Battle X001 Non Overlapping Disks )
 Adam Fisher;        2018-10-09 11:00:00 +0100; 4.8 ; For breaking Adam's bot for two whole days (0.1*24*2 points)
 Adam Fisher;        2018-10-10 17:00:00 +0100; 10.4 ; Challenge points
+
+# 20181025 PNG Store
+Sam Desborough;     2018-10-30 14:00:00 +0100; 10 
+Sam Desborough;     2018-10-30 14:00:00 +0100; 2 # Learning Groups presentation 
+
