@@ -5,7 +5,6 @@ import (
 	"hash/crc32"
 	"io"
 	"io/ioutil"
-	"math"
 	"os"
 )
 
@@ -101,11 +100,10 @@ func chunk(data io.Reader) ([]*dataChunk, error) {
 			return nil, err
 		}
 
-		length := math.Min(float64(n), float64(maxChunkLength))
-		data := chunkData[:int(length)]
+		data := chunkData
 		chunks = append(chunks, &dataChunk{
 			Type:   dataChunkType,
-			Length: uint32(length),
+			Length: uint32(n),
 			Data:   data,
 		})
 
