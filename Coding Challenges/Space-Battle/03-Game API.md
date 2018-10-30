@@ -322,7 +322,7 @@ Errors:
 Only battle cruisers can shoot at things and the action simply consists in instructing a cruiser to send a standard wormhole bomb at a location.
 
 ```
-/game/v1/:userkey/:mapid/bomb/:shipuuid/:targetpointlabel
+/game/v1/:userkey/:mapid/bomb/:battlecruiseruuid/:targetpointlabel
 ```
 
 The answer is a AttackerBombDamageReport
@@ -334,7 +334,7 @@ AttackerBombDamageReportItem
 {
 	"username"     : USERNAME
 	"nomenclature" : SHIP-NOMENCLATURE
-	"destroyed"    : Boolean
+	"alive"    : Boolean
 }
 ```
 Note that since an energy wormhole bomb is indiscriminate, you can hit your worn ships and the username can be your username. You do not get points for destroying your own fleet. 
