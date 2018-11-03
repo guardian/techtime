@@ -1,13 +1,90 @@
 # encoding: UTF-8
 
-require_relative "LeaderboardLibrary.rb"
+require 'json'
+require 'date'
+require 'find'
 
-POINTS_ROOT_FOLDERPATH = "#{File.dirname(__FILE__)}/points-files"
-HALF_YEAR_IN_DAYS = 182.62
+=begin
 
-LeaderboardLibrary::getStructureNX2010(POINTS_ROOT_FOLDERPATH, HALF_YEAR_IN_DAYS)
-.each{|p|
-    name = p["name"]
-    score = p["score"]
-    puts "#{name.ljust(20)}: #{"%9.6f" % score}"
+The root folderpath is meant to be a fs location under which every text file (suffix: .txt) is 
+going to be interpreted as a points file
+
+Points files contains enries of the form
+
+```
+Luke Skywalker; 2018-06-29 17:30:00 +0100; 1
+```
+
+Lines starting with # are ignored.
+
+StructureNX2010 = Array[UserScore]
+UserScore = Object {
+    "name"  : String, 
+    "score" : Double
 }
+
+=end
+
+class Leaderboard
+
+    # Leaderboard::timeSinceDateTimeInHalfYears(currentTime, pointdatetime, daysToExpMinusOne)
+    def self.timeSinceDateTimeInHalfYears(currentTime, pointdatetime, daysToExpMinusOne)
+        (currentTime.to_f - DateTime.parse(pointdatetime).to_time.to_i).to_f/( 86400 * daysToExpMinusOne )
+    end
+
+    # Leaderboard::pointToScore(currentTime, point, daysToExpMinusOne)
+    def self.pointToScore(currentTime, point, daysToExpMinusOne)
+        point["value"] * Math.exp(-Leaderboard::timeSinceDateTimeInHalfYears(currentTime, point["time"], daysToExpMinusOne))
+    end    
+
+    # Leaderboard::pointsFilepaths(rootfolderpath)
+    def self.pointsFilepaths(rootfolderpath)
+        files = []
+        Find.find(rootfolderpath) do |path|
+            next if path[-4,4] != ".txt"
+            files << path
+        end
+        files
+    end
+
+    # Leaderboard::getPoints(rootfolderpath)
+    def self.getPoints(rootfolderpath) # Array[{name: String, time: Datetime, score: Float}]
+        Leaderboard::pointsFilepaths(rootfolderpath).map{|filepath|
+            IO.read(filepath)
+                .lines
+                .map{|line| line.strip }
+                .select{|line| line.size>0 }
+                .select{|line| !line.start_with?("#") }
+                .map{|line| Hash[["name", "time", "value"].zip(line.split(";").map{|i| i.strip})] }
+                .map{|item| 
+                    item["value"] = item["value"].to_f 
+                    item
+                }
+        }.flatten
+    end
+
+    # Leaderboard::pointsToLeaderboard(points, daysToExpMinusOne) # Array[{"name" => name, "score" => score}]
+    def self.pointsToLeaderboard(points, daysToExpMinusOne)
+        currentTime = Time.new
+        names = points.map{|point| point["name"] }.uniq
+        names
+            .map{|name|
+                score = points
+                    .select{|point| point["name"]==name }
+                    .map{|point| Leaderboard::pointToScore(currentTime, point, daysToExpMinusOne) }
+                    .inject(0, :+)
+                {"name" => name, "score" => score}
+            }
+            .sort{|p1, p2|
+                p1["score"]<=>p2["score"]
+            }.reverse
+    end
+
+    # Leaderboard::getStructureNX2010(rootfolderpath, daysToExpMinusOne) # Array[{"name" => name, "score" => score}]
+    def self.getStructureNX2010(rootfolderpath, daysToExpMinusOne)
+        points = Leaderboard::getPoints(rootfolderpath)
+        Leaderboard::pointsToLeaderboard(points, daysToExpMinusOne)
+    end
+end
+
+    

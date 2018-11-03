@@ -14,7 +14,7 @@ require 'securerandom'
 
 require 'json'
 
-require_relative "../LeaderboardLibrary.rb"
+require_relative "../Leaderboard.rb"
 
 # --  --------------------------------------------------
 
@@ -38,7 +38,7 @@ end
 
 get '/leaderboard' do
     content_type 'text/plain'
-    LeaderboardLibrary::getStructureNX2010(POINTS_ROOT_FOLDERPATH, HALF_YEAR_IN_DAYS)
+    Leaderboard::getStructureNX2010(POINTS_ROOT_FOLDERPATH, HALF_YEAR_IN_DAYS)
         .map{|p| "#{p["name"].ljust(20)}: #{"%9.6f" % p["score"]}" }
         .join("\n") + "\n"
 end
