@@ -14,6 +14,7 @@ require 'securerandom'
 
 require 'json'
 
+require_relative "../PointFilesReader.rb"
 require_relative "../Leaderboard.rb"
 
 # --  --------------------------------------------------
@@ -38,7 +39,9 @@ end
 
 get '/leaderboard' do
     content_type 'text/plain'
-    Leaderboard::getStructureNX2010(POINTS_ROOT_FOLDERPATH, HALF_YEAR_IN_DAYS)
+    points = PointFilesReader::getDTYLeaderboardPoints(POINTS_ROOT_FOLDERPATH)
+    userscores = Leaderboard::convertDTYLeaderboardPointsToDTYLeaderboardFinalUserScores(points, HALF_YEAR_IN_DAYS)
+    userscores
         .map{|p| "#{p["name"].ljust(20)}: #{"%9.6f" % p["score"]}" }
         .join("\n") + "\n"
 end

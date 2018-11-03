@@ -6,22 +6,16 @@ require 'find'
 
 =begin
 
-The root folderpath is meant to be a fs location under which every text file (suffix: .txt) is 
-going to be interpreted as a points file
+Datatypes:
 
-Points files contains enries of the form
+    DTYLeaderboardPoints: Array[{name: String, time: Datetime, score: Float}]
 
-```
-Luke Skywalker; 2018-06-29 17:30:00 +0100; 1
-```
+    DTYLeaderboardUserScore = {
+        "name"  : String, 
+        "score" : Double
+    }
 
-Lines starting with # are ignored.
-
-StructureNX2010 = Array[UserScore]
-UserScore = Object {
-    "name"  : String, 
-    "score" : Double
-}
+    DTYLeaderboardFinalUserScores = Array[DTYLeaderboardUserScore]
 
 =end
 
@@ -35,41 +29,15 @@ class Leaderboard
     # Leaderboard::pointToScore(currentTime, point, daysToExpMinusOne)
     def self.pointToScore(currentTime, point, daysToExpMinusOne)
         point["value"] * Math.exp(-Leaderboard::timeSinceDateTimeInHalfYears(currentTime, point["time"], daysToExpMinusOne))
-    end    
-
-    # Leaderboard::pointsFilepaths(rootfolderpath)
-    def self.pointsFilepaths(rootfolderpath)
-        files = []
-        Find.find(rootfolderpath) do |path|
-            next if path[-4,4] != ".txt"
-            files << path
-        end
-        files
     end
 
-    # Leaderboard::getPoints(rootfolderpath)
-    def self.getPoints(rootfolderpath) # Array[{name: String, time: Datetime, score: Float}]
-        Leaderboard::pointsFilepaths(rootfolderpath).map{|filepath|
-            IO.read(filepath)
-                .lines
-                .map{|line| line.strip }
-                .select{|line| line.size>0 }
-                .select{|line| !line.start_with?("#") }
-                .map{|line| Hash[["name", "time", "value"].zip(line.split(";").map{|i| i.strip})] }
-                .map{|item| 
-                    item["value"] = item["value"].to_f 
-                    item
-                }
-        }.flatten
-    end
-
-    # Leaderboard::pointsToLeaderboard(points, daysToExpMinusOne) # Array[{"name" => name, "score" => score}]
-    def self.pointsToLeaderboard(points, daysToExpMinusOne)
+    # Leaderboard::convertDTYLeaderboardPointsToDTYLeaderboardFinalUserScores(dtyLeaderboardPoints: DTYLeaderboardPoints, daysToExpMinusOne) # DTYLeaderboardFinalUserScores
+    def self.convertDTYLeaderboardPointsToDTYLeaderboardFinalUserScores(dtyLeaderboardPoints, daysToExpMinusOne)
         currentTime = Time.new
-        names = points.map{|point| point["name"] }.uniq
+        names = dtyLeaderboardPoints.map{|point| point["name"] }.uniq
         names
             .map{|name|
-                score = points
+                score = dtyLeaderboardPoints
                     .select{|point| point["name"]==name }
                     .map{|point| Leaderboard::pointToScore(currentTime, point, daysToExpMinusOne) }
                     .inject(0, :+)
@@ -80,11 +48,6 @@ class Leaderboard
             }.reverse
     end
 
-    # Leaderboard::getStructureNX2010(rootfolderpath, daysToExpMinusOne) # Array[{"name" => name, "score" => score}]
-    def self.getStructureNX2010(rootfolderpath, daysToExpMinusOne)
-        points = Leaderboard::getPoints(rootfolderpath)
-        Leaderboard::pointsToLeaderboard(points, daysToExpMinusOne)
-    end
 end
 
     
