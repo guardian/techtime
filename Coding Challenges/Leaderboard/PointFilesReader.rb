@@ -41,9 +41,10 @@ class PointFilesReader
                 .map{|line| line.strip }
                 .select{|line| line.size>0 }
                 .select{|line| !line.start_with?("#") }
-                .map{|line| Hash[["name", "time", "value"].zip(line.split(";").map{|i| i.strip})] }
+                .map{|line| Hash[["name", "datetime", "value"].zip(line.split(";").map{|i| i.strip})] }
                 .map{|item| 
                     item["value"] = item["value"].to_f 
+                    item["unixtime"] = DateTime.parse(item["datetime"]).to_time.to_i
                     item
                 }
         }.flatten

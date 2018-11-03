@@ -8,7 +8,9 @@ require 'find'
 
 Datatypes:
 
-    DTYLeaderboardPoints: Array[{name: String, time: Datetime, score: Float}]
+    DTYLeaderboardPoint: {name: String, unixtme: Integer, score: Float}
+
+    DTYLeaderboardPoints: Array[DTYLeaderboardPoint]
 
     DTYLeaderboardUserScore = {
         "name"  : String, 
@@ -21,14 +23,14 @@ Datatypes:
 
 class Leaderboard
 
-    # Leaderboard::timeSinceDateTimeInHalfYears(currentTime, pointdatetime, daysToExpMinusOne)
-    def self.timeSinceDateTimeInHalfYears(currentTime, pointdatetime, daysToExpMinusOne)
-        (currentTime.to_f - DateTime.parse(pointdatetime).to_time.to_i).to_f/( 86400 * daysToExpMinusOne )
+    # Leaderboard::timeSinceDateTimeInHalfYears(currentTime, unixtime, daysToExpMinusOne)
+    def self.timeSinceDateTimeInHalfYears(currentTime, unixtime, daysToExpMinusOne)
+        (currentTime.to_f - unixtime).to_f/( 86400 * daysToExpMinusOne )
     end
 
     # Leaderboard::pointToScore(currentTime, point, daysToExpMinusOne)
     def self.pointToScore(currentTime, point, daysToExpMinusOne)
-        point["value"] * Math.exp(-Leaderboard::timeSinceDateTimeInHalfYears(currentTime, point["time"], daysToExpMinusOne))
+        point["value"] * Math.exp(-Leaderboard::timeSinceDateTimeInHalfYears(currentTime, point["unixtime"], daysToExpMinusOne))
     end
 
     # Leaderboard::convertDTYLeaderboardPointsToDTYLeaderboardFinalUserScores(dtyLeaderboardPoints: DTYLeaderboardPoints, daysToExpMinusOne) # DTYLeaderboardFinalUserScores
