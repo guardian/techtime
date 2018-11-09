@@ -8,7 +8,7 @@ require 'find'
 
 Datatypes:
 
-    DTYLeaderboardPoint: {name: String, unixtme: Integer, score: Float}
+    DTYLeaderboardPoint: {name: String, unixtime: Integer, value: Float}
 
     DTYLeaderboardPoints: Array[DTYLeaderboardPoint]
 

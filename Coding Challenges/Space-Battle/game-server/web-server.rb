@@ -36,6 +36,7 @@ require 'digest/sha1'
 # --  --------------------------------------------------
 
 require_relative "library/BombsUtils.rb"
+require_relative "library/Leaderboard.rb"
 require_relative "library/MapUtils.rb"
 require_relative "library/Navigation.rb"
 require_relative "library/ScoringUtils.rb"
@@ -835,3 +836,11 @@ get '/game/v1/scores/?:hourcode1?/?:hourcode2?' do
     ].join("\n") + "\n"
 end
 
+get '/game/v1/leaderboard' do
+    content_type 'text/plain'
+    points = [{ "name" => "Pascal", "unixtime" => 1541791506, "value" => 1}]
+    userscores = Leaderboard::convertDTYLeaderboardPointsToDTYLeaderboardFinalUserScores(points, 30) # epx(-1) after 30 days
+    userscores
+        .map{|p| "#{p["name"].ljust(20)}: #{"%9.6f" % p["score"]}" }
+        .join("\n") + "\n"
+end
