@@ -72,3 +72,10 @@ Adam Fisher;        2018-10-10 17:00:00 +0100; 10.4 ; Challenge points
 Sam Desborough;     2018-10-30 14:00:00 +0100; 10 
 Sam Desborough;     2018-10-30 14:00:00 +0100; 2 # Learning Groups presentation 
 
+# 20181108 Gravitational Slingshot
+Sam Desborough;     2018-11-19 17:00:00 +0100; 10
+Adam Fisher;        2018-11-19 17:00:00 +0100; 10
+Richard Beddington; 2018-11-19 17:00:00 +0100; 10
+Alex Ware;          2018-11-19 17:00:00 +0100; 10
+Richard Beddington; 2018-11-19 17:00:00 +0100; 3 # Bonus: Outstanding contribution
+
