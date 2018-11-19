@@ -1,0 +1,31 @@
+body, html {
+  margin: 0;
+  padding: 0;
+}
+
+#starfield {
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse, rgb(15, 28, 51), rgb(24, 1, 22), rgb(0, 0, 0));
+}
+
+.star {
+  width: 1px;
+  height: 1px;
+  display: block;
+  position: absolute;
+}
+
+#planet {
+  z-index: 1;
+  border-radius: 50%;
+  display: block;
+  position: absolute;
+  background: radial-gradient(circle at 0 0, rgb(206, 134, 0), rgb(0, 0, 0) 75%);
+}
+
+#satellite {
+  z-index: 2;
+  position: absolute;
+  left: -32px;
+}
