@@ -61,5 +61,5 @@ We don't really have a roadmap for the moment, but the API and game rules can ev
 
 The game is the result of two things that were brought together:
 
-- [Challenge 20180913](https://github.com/guardian/techtime/tree/master/Coding%20Challenges/Challenges%20Timeline/20180913%20Travelling%20Optimization%20on%20Map%20of%20Energy%20Points) (Travelling Optimization on Map of Energy Points, see Challenges Timeline for details), and 
+- [Challenge 20180913](https://github.com/guardian/techtime/tree/master/Coding%20Challenges/Challenges%20Timeline/20180913%20Travelling%20Optimization%20on%20Map%20of%20Energy%20Points) (Travelling Optimization on Map of Energy Points), and 
 - Pascal's love for [Eve Online](https://en.wikipedia.org/wiki/Eve_Online).
