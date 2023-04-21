@@ -47,11 +47,11 @@ Everything else you need to know to play can be found in the game manuals.
 
 ## Game manuals
 
-- [02-Game URLs](02-Game-URLs.txt): quick look up of all the end points.
+- [Game-URLs](Game-URLs.txt): quick look up of all the end points.
 
-- [03-Game API](03-Game-API.md): Read this if you intend to play. It contains everything you need to drive your fleet, either manually from the command line or through a programmatic client (written in the language of your choice since the interface is just HTTP).
+- [Game-API](Game-API.md): Read this if you intend to play. It contains everything you need to drive your fleet, either manually from the command line or through a programmatic client (written in the language of your choice since the interface is just HTTP).
 
-- [04-Game Rules](04-Game-Rules.md): More details about the game.
+- [Game-Rules](Game-Rules.md): More details about the game.
 
 ## Roadmap
 
