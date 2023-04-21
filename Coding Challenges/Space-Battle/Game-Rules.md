@@ -76,7 +76,7 @@ Some aspects of the game are driven by the file `game-parameters.json`, which is
     - The amount of energy it will take from targetted ships is the above value multiplied by **3**, which is the current value of `bombsEffectMultiplier`. 
     - Example: if you want to hit a ship located 300 kilometers  away, this will cost you `10 + 50 = 60` energy units and the targetted ships will lose `50*Math.exp(-100/300)*3 = 107.47` energy units. The same bombs from 5 kilometers away would cost them `50*Math.exp(-5/300)*3 = 147.52` energy units
 
-- **fleetShipNomenclature2JumpCostCoefficient`** (current value ):
+- **fleetShipNomenclature2JumpCostCoefficient** (current value ):
 	
     ```
     {
