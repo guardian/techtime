@@ -89,11 +89,11 @@ This is your main ship. It is the one that receives your energy mining codes and
 ```
 CapitalShip 
 {
-	"nomenclature" : "capitalShip"
+    "nomenclature" : "capitalShip"
     "uuid"         : UUID
-	"location"     : MapPoint
-	"energyLevel"  : Float
-	"alive"        : Boolean
+    "location"     : MapPoint
+    "energyLevel"  : Float
+    "alive"        : Boolean
 }
 ```
 
@@ -107,11 +107,11 @@ Battle Cruisers are your main offensive units. They are the only ships that can 
 ```
 BattleCruiser
 {
-	"nomenclature" : "battleCruiser"
-	"uuid"         : UUID
-	"location"     : MapPoint
-	"energyLevel"  : Float
-	"alive"        : Boolean
+    "nomenclature" : "battleCruiser"
+    "uuid"         : UUID
+    "location"     : MapPoint
+    "energyLevel"  : Float
+    "alive"        : Boolean
 }
 ```
 
@@ -132,11 +132,11 @@ Energy Carriers are special purpose ships essentially used to transfer energy be
 ```
 EnergyCarrier
 {
-	"nomenclature" : "energyCarrier"
-	"uuid"         : UUID
-	"location"     : MapPoint
-	"energyLevel"  : Float
-	"alive"        : Boolean
+    "nomenclature" : "energyCarrier"
+    "uuid"         : UUID
+    "location"     : MapPoint
+    "energyLevel"  : Float
+    "alive"        : Boolean
 }
 ```
 
@@ -184,26 +184,26 @@ FleetReport
 
 - The `logWarnings` indicates even that have occured that you might (should) be interested in. Mostly that enemy Battle Cruisers are shooting at you. `logWarnings` is an aray of `WarningLogItem`, the latter is a union type, which version it is is given by the value of `eventType`. In this version of the game there is only one type in this  union: `WarningLogItemWormholeBomb` 
 
-	```
-	WarningLogItemWormholeBomb
-	{
-		"unixtime"  : Unixtime
-		"eventUUID" : UUID
-		"eventType" : "WormholeBomb"
-		"eventData" : {
-			"source" : WarningLogItemWormholeBombEventDataSource
-			"target" : Ship
-		}
-	}
-	
-	WarningLogItemWormholeBombEventDataSource
-	{
-		"location"     : MapPoint
-		"nomenclature" : String # ship nomenclature
-		"username"     : String # enemy username
-	}
-	
-	```
+```
+WarningLogItemWormholeBomb
+{
+    "unixtime"  : Unixtime
+    "eventUUID" : UUID
+    "eventType" : "WormholeBomb"
+    "eventData" : {
+        "source" : WarningLogItemWormholeBombEventDataSource
+        "target" : Ship
+    }
+}
+
+WarningLogItemWormholeBombEventDataSource
+{
+    "location"     : MapPoint
+    "nomenclature" : String # ship nomenclature
+    "username"     : String # enemy username
+}
+
+```
 
 For the moment the game only reports wormholes bomb. Note that the target is always one of your ships, so the report gives you the uuid of that ship, you might want to move it, if it's not destroyed yet, and possibly shoot back if you have Battle Cruisers nearby.
 
@@ -332,9 +332,9 @@ AttackerBombDamageReport = Array[AttackerBombDamageReportItem]
 
 AttackerBombDamageReportItem
 {
-	"username"     : USERNAME
-	"nomenclature" : SHIP-NOMENCLATURE
-	"alive"    : Boolean
+    "username"     : USERNAME
+    "nomenclature" : SHIP-NOMENCLATURE
+    "alive"        : Boolean
 }
 ```
 Note that since an energy wormhole bomb is indiscriminate, you can hit your worn ships and the username can be your username. You do not get points for destroying your own fleet. 
@@ -359,8 +359,8 @@ The datatype CapitalShipTopUpChallenge is like this
 ```
 CapitalShipTopUpChallenge 
 {
-	"input" : "flkjadu"
-	"difficulty" : 1
+    "input"      : "flkjadu"
+    "difficulty" : 1
 }
 ```
 

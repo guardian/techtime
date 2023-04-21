@@ -47,11 +47,11 @@ Everything else you need to know to play can be found in the game manuals.
 
 ## Game manuals
 
-- **02-Game URLs (quick look)**: quick look up of all the end points.
+- [02-Game URLs](02-Game-URLs.txt): quick look up of all the end points.
 
-- **03-Game API.md**: Read this if you intend to play. It contains everything you need to drive your fleet, either manually from the command line or through a programmatic client (written in the language of your choice since the interface is just HTTP).
+- [03-Game API.md](03-Game-API.md): Read this if you intend to play. It contains everything you need to drive your fleet, either manually from the command line or through a programmatic client (written in the language of your choice since the interface is just HTTP).
 
-- **04-Game Rules**: More details about the game.
+- [04-Game Rules](04-Game-Rules.md): More details about the game.
 
 ## Roadmap
 
@@ -61,5 +61,5 @@ We don't really have a roadmap for the moment, but the API and game rules can ev
 
 The game is the result of two things that were brought together:
 
-- Challenge 20180913 (Travelling Optimization on Map of Energy Points, see Challenges Timeline for details), and 
+- [Challenge 20180913](https://github.com/guardian/techtime/tree/master/Coding%20Challenges/Challenges%20Timeline/20180913%20Travelling%20Optimization%20on%20Map%20of%20Energy%20Points) (Travelling Optimization on Map of Energy Points, see Challenges Timeline for details), and 
 - Pascal's love for [Eve Online](https://en.wikipedia.org/wiki/Eve_Online).
